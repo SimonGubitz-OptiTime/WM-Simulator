@@ -8,11 +8,17 @@ uses
 
 type
   TForm1 = class(TForm)
+
+
+  procedure DrawPageControl;
+
+
   private
     { Private-Deklarationen }
   public
     { Public-Deklarationen }
   end;
+
 
 var
   Form1: TForm1;
@@ -20,5 +26,6 @@ var
 implementation
 
 {$R *.dfm}
+
 
 end.

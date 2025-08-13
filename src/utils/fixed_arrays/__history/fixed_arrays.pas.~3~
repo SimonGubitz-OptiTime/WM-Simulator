@@ -1,9 +1,0 @@
-unit fixed_arrays;
-
-interface
-
-function LastFilledIndex(): Integer;
-
-implementation
-
-end.
