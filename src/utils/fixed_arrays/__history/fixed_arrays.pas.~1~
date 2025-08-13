@@ -1,0 +1,9 @@
+unit fixed_arrays;
+
+interface
+
+function LastFilledIndex(): Index;
+
+implementation
+
+end.

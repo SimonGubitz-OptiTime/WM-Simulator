@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+  <Transactions>
+    <Transaction>2025.08.13 11:22:58.099,=C:\Users\s.gubitz\Documents\Embarcadero\Studio\Projekte\Unit1.pas</Transaction>
+    <Transaction>2025.08.13 11:23:37.423,C:\Dev - Testprojekte\WM-Simulator\src\Main.pas=C:\Users\s.gubitz\Documents\Embarcadero\Studio\Projekte\Unit1.pas</Transaction>
+    <Transaction>2025.08.13 11:23:37.423,C:\Dev - Testprojekte\WM-Simulator\src\Main.dfm=C:\Users\s.gubitz\Documents\Embarcadero\Studio\Projekte\Unit1.dfm</Transaction>
+    <Transaction>2025.08.13 11:23:53.955,C:\Dev - Testprojekte\WM-Simulator\src\Project1.dproj=C:\Users\s.gubitz\Documents\Embarcadero\Studio\Projekte\Project1.dproj</Transaction>
+    <Transaction>2025.08.13 12:21:18.395,=C:\Dev - Testprojekte\WM-Simulator\src\Unit1.pas</Transaction>
+    <Transaction>2025.08.13 12:21:51.165,C:\Dev - Testprojekte\WM-Simulator\src\utils\fixed_arrays\fixed_arrays.pas=C:\Dev - Testprojekte\WM-Simulator\src\Unit1.pas</Transaction>
+    <Transaction>2025.08.13 12:26:09.720,=C:\Dev - Testprojekte\WM-Simulator\src\Unit1.pas</Transaction>
+    <Transaction>2025.08.13 12:26:48.855,C:\Dev - Testprojekte\WM-Simulator\src\utils\fixed_arrays\FixedArrays.pas=C:\Dev - Testprojekte\WM-Simulator\src\utils\fixed_arrays\fixed_arrays.pas</Transaction>
+    <Transaction>2025.08.13 12:27:14.909,C:\Dev - Testprojekte\WM-Simulator\src\utils\db\DB.Naming.pas=C:\Dev - Testprojekte\WM-Simulator\src\Unit1.pas</Transaction>
+    <Transaction>2025.08.13 12:27:27.274,C:\Dev - Testprojekte\WM-Simulator\src\utils\fixed_arrays\Utils.FixedArrays.pas=C:\Dev - Testprojekte\WM-Simulator\src\utils\fixed_arrays\FixedArrays.pas</Transaction>
+    <Transaction>2025.08.13 12:27:41.471,C:\Dev - Testprojekte\WM-Simulator\src\utils\db\Utils.DB.Naming.pas=C:\Dev - Testprojekte\WM-Simulator\src\utils\db\DB.Naming.pas</Transaction>
+    <Transaction>2025.08.13 12:36:24.460,C:\Dev - Testprojekte\WM-Simulator\src\WMSimulator.dproj=C:\Dev - Testprojekte\WM-Simulator\src\Project1.dproj</Transaction>
+  </Transactions>
+</BorlandProject>

@@ -16,7 +16,8 @@ Harlow Solid
 
 #### Größe
 Buttons - 9px
-Überschriften - 26px
+H1 - 26px
+H2 - 12px
 
 
 ## Types
@@ -67,3 +68,70 @@ type TWMState = class
     Stadien: array[0..15] of TStadium;  // 16 Stadien in 2026
 end;
 ```
+
+
+## Struktur
+
+### Daten-Auslese
+Bei Start des Programs wird geschaut, ob etwas in der Datenbank ist, und basiered darauf wird der "Spiel Starten" Button überhaupt erst freigeschaltet. Bedeutet es braucht eine `src/ui/main.pas -> FormCreate` funktion und eine `src/db/get?.pas` mit return Boolean, welches true oder false basierend auf der Datenlage zurückgibt.
+
+Um Modular und Erweiterbar zu bleiben, wird es keine "hard-coded" Add und Set Funktionen geben, sondern es wird alles über eine SQL-ähnliche Tabellen Struktur gespeichert, verändert und ausgelesen.
+
+Darauf basierend liegt das `src/simulation` Layer welches diese Tabellen namen "imodular" benutzt und 
+
+`src/utils/*.pas` soll zentralisiert oft verwendete Funktionen haben.
+
+
+## Datenbank
+
+Fürs erste wird alles in CSV-Datein mit `;` Trennzeichen getrennt.
+Als Mechanismus des Findens ist das Namensschema `custom_database_{*Name der Tabelle*}.csv` zu beachten.
+Um auch bei dem Namensschema flexibel zu bleiben wird es in `src/utils/db/naming.pas` eine `ChangeFileExt` inspirierte Funktion geben, welche dieses Schema populiert.
+
+
+## Aktuelle Datei-Struktur
+
+```
+C:.
+|   .gitignore
+|   README.md
+|   temp.txt
+|   
++---assets
+|   |   design-hauptfenster.png
+|   |   design-teamfenster.png
+|   |   
+|   \---icons
+|           add.png
+|           groups.png
+|           sports_soccer.png
+|           stadium.png
+|           
++---bin
+\---src
+    |   Main.dfm
+    |   Main.pas
+    |   WMSimulator.dpr
+    |   WMSimulator.dproj
+    |   WMSimulator.dproj.local
+    |   
+    +---db
+    +---simulation
+    +---types
+    +---ui
+    |       Main.dfm
+    |       Main.pas
+    |       
+    \---utils
+        +---db
+        |       Utils.DB.Naming.pas
+        |       
+        \---fixed_arrays
+                Utils.FixedArrays.pas
+```
+
+
+### src/ui/*
+
+Hier soll ausschließlich Code für Nutzer Eingaben und die wirkliche UI liegen.
+Bei einem TEdit darf allein die Eingabe abgefragt, überprüft und weitergegeben werden.
