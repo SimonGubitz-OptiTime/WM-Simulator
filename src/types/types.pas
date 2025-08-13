@@ -47,6 +47,11 @@ type TWMState = class
 end;
 
 
+
+
+// type TStadienCSVOutput
+
+
 implementation
 
 end.

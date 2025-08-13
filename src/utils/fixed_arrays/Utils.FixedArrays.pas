@@ -3,16 +3,15 @@ unit Utils.FixedArrays;
 interface
 
 uses
-    System.Generics;
+    System.Generics.Defaults;
 
-//function LastFilledIndex<T>(): Integer;
-function LastFilledIndex(): Integer;
+function LastFilledIndex<T>(ArrayToSearch: array of T): Integer;
 
 implementation
 
 
 // Gibt den letzten Index mit Füllung an, wenn alle leer sind, -1.
-function LastFilledIndex(ArrayToSearch: array of String): Integer;
+function LastFilledIndex<T>(ArrayToSearch: array of T): Integer;
 var
     i: Byte;
 begin
@@ -21,7 +20,7 @@ begin
 
     for i := Low(ArrayToSearch) to High(ArrayToSearch) do
     begin
-        if ((ArrayToSearch[i] = '') and (i - 1 > Low(ArrayToSearch))) then
+        if TEqualityComparer<T>.Default.Equals(ArrayToSearch[i], Default(T)) then
             Result := i - 1;
     end;
 
