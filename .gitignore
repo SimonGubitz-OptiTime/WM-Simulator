@@ -5,3 +5,9 @@ bin/
 # Ignore temporary files
 *.tmp
 *.log
+
+# Ignore IDE local or config files
+*.dproj.local
+
+# Other
+**/.DS_Store

@@ -1,0 +1,1 @@
+Dieser Ordner stellt den Speicherort der CSV-Dateien und später der SQL Datenbank da.
