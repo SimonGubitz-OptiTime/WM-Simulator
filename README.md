@@ -8,6 +8,7 @@ Der WM-Simulator soll mit hilfe von VCL und einem "Backend" aus CSV-Datein eine 
 ### Hauptfenster
 ![Designvorschlag - Hauptfenster](assets/design-hauptfenster.png)
 
+
 ### Team hinzufügen - Fenster
 ![Designvorschlag - Teamfenster](assets/design-teamfenster.png)
 
