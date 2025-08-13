@@ -1,6 +1,9 @@
 # WM-Simulator
 
 
+Der WM-Simulator soll mit hilfe von VCL und einem "Backend" aus CSV-Datein eine einfache Weltmeisterschaft mit Teams und Stadien simulieren.
+
+
 ## Design
 ### Hauptfenster
 ![Designvorschlag - Hauptfenster](assets/design-hauptfenster.png)
