@@ -12,7 +12,7 @@ function SerializeCSV(CSVArray: array of String): String;
 function DeserializeCSV(CSVString: String): TArray<String>;
 
 type TCSVUtils<T> = record
-  class function SerializeCSV(CSVArray: array of String): String; static;
+  class function SerializeCSV(CSVArray: TArray<T>): String; static;
   class function DeserializeCSV(CSVString: String): TArray<T>; static;
 end;
 
@@ -34,9 +34,14 @@ begin
 
     // Einer weniger, um nicht am ende ein alleiniges ';' stehen zu haben
     for i := Low(CSVArray) to High(CSVArray)-1 do
-        Result := Result + CSVArray[i] + delimiter;
+    begin
+        if i > Low(CSVArray) then
+            Result := Result + delimiter;
 
-    Result := Result + CSVArray[i];
+        Result := Result + CSVArray[i];
+    end;
+
+
 
 end;
 
@@ -66,9 +71,51 @@ begin
 end;
 
 
-class function TCSVUtils<T>.SerializeCSV(CSVArray: array of String): String;
+class function TCSVUtils<T>.SerializeCSV(CSVArray: TArray<T>): String;
+var
+    RttiContext: TRttiContext;
+    RttiType: TRttiType;
+    RttiFields: TArray<TRttiField>;
+
+    i, j: Integer;
 begin
-  raise Exception.Create('Utils.CSV.pas: Error: function TCSVUtils<T>.SerializeCSV not implemented');
+    // raise Exception.Create('Utils.CSV.pas: Error: function TCSVUtils<T>.SerializeCSV not implemented');
+
+    RttiContext := TRttiContext.Create;
+    RttiType := RttiContext.GetType(TypeInfo(T));
+    RttiFields := RttiType.GetFields;
+
+    for i := 0 to Length(RttiFields) -1 do
+    begin
+        if i > Low(RttiFields) then
+            Result := Result + delimiter;
+
+        Result := Result + RttiFields[i].Name;
+    end;
+    
+    Result := Result + sLineBreak;
+
+
+    for i := Low(CSVArray) to High(CSVArray) do
+    begin
+        if i > Low(CSVArray) then
+            Result := Result + delimiter;
+
+//        RttiType := RttiContext.GetType();
+
+        for j := 0 to Length(RttiFields)-1 do
+        begin
+            if j > Low(RttiFields) then
+                Result := Result + delimiter;
+
+            Result := Result + RttiFields[j].GetValue(@CSVArray[i]).ToString
+
+        end;
+
+        Result := Result + sLineBreak;
+    end;
+
+
 end;
 
 class function TCSVUtils<T>.DeserializeCSV(CSVString: String): TArray<T>;
@@ -115,7 +162,7 @@ begin
         for i := 0 to Length(RttiFields) -1 do
         begin
             // convert string to x
-            TempValue := Utils.RTTI.TRttiUtils<T>.StringToT(RttiFields[i], TempStringArray[i]);
+            TempValue := Utils.RTTI.TRttiUtils<T>.StrToT(RttiFields[i], TempStringArray[i]);
 
             RttiFields[i].SetValue(@TempRes, TempValue);
         end;

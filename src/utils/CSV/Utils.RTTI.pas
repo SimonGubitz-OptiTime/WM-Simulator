@@ -6,12 +6,13 @@ uses
     SysUtils, System.Rtti, System.Generics.Collections;
 
 type TRttiUtils<T> = record
-  class function StringToT(ToConvert: TRttiField; ConvertValue: String): TValue; static;
+  class function StrToT(ToConvert: TRttiField; ConvertValue: String): TValue; static;
+  class function TToStr(ConvertValue: T): String; static;
 end;
 
 implementation
 
-class function TRttiUtils<T>.StringToT(ToConvert: TRttiField; ConvertValue: String): TValue;
+class function TRttiUtils<T>.StrToT(ToConvert: TRttiField; ConvertValue: String): TValue;
 begin
     case ToConvert.FieldType.TypeKind of
         tkInteger:
@@ -31,6 +32,11 @@ begin
         else
             raise Exception.Create('Utils.RTTI.pas Error: unsupported type.');
     end;
+end;
+
+class function TRttiUtils<T>.TToStr(ConvertValue: T): String;
+begin
+    Result := TValue.From<T>(ConvertValue).ToString;
 end;
 
 end.

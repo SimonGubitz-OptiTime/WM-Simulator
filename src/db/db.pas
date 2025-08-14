@@ -5,13 +5,15 @@ interface
 uses
     Utils.DB,
     Utils.CSV,
-    System.Classes, System.SysUtils, System.IOUtils, System.Rtti;
+    Utils.RTTI,
+    System.Classes, System.SysUtils, System.IOUtils, System.Rtti, Vcl.Dialogs;
 
 
 
 type TDB<T: record> = class
   private
     FTableName: String;
+    FInitialized: Boolean;
   public
     constructor Create(TableName: String);
     
@@ -28,7 +30,7 @@ type TDB<T: record> = class
     function    GetUnstructuredTableFromCSV(): String;
     procedure   SetUnstructuredTableInCSV(CSVString: String); // unnötig eigentlich
 
-    procedure   AddCSVTableToDB(CSVObject: T);
+    function    AddCSVTableToDB(CSVObject: T): ShortInt;
     procedure   RemoveCSVTableFromDB();
 
 end;
@@ -40,6 +42,7 @@ implementation
 constructor TDB<T>.Create(TableName: String);
 begin
     FTableName := TableName;
+    FInitialized := false;
 end;
 
 
@@ -48,7 +51,7 @@ var
     CSVArray: TArray<T>;
 begin
 
-    CSVArray := GetStructuredTableFromCSV<T>();
+    CSVArray := GetStructuredTableFromCSV();
 
 
 
@@ -98,8 +101,8 @@ begin
     Row := Default(T);
 
     try
-        FS.Create(FileName, fmOpenRead);
-        SR.Create(FS);
+        FS := TFileStream.Create(FileName, fmOpenRead);
+        SR := TStreamReader.Create(FS);
 
         headline := SR.ReadLine();
         TableColumns := Length(Utils.CSV.DeserializeCSV(headline));
@@ -148,11 +151,14 @@ var
     i: Integer;
 begin
 
+    FS := nil;
+    SR := nil;
+
     FileName := Utils.DB.GetFullCSVDBTablePath(FTableName);
 
     try
-        FS.Create(FileName, fmOpenRead);
-        SR.Create(FS);
+        FS := TFileStream.Create(FileName, fmOpenRead);
+        SR := TStreamReader.Create(FS);
 
         TempRes := Utils.CSV.DeserializeCSV(SR.ReadToEnd());
 
@@ -172,11 +178,14 @@ var
     FileName: String;
 begin
 
+    FS := nil;
+    SW := nil;
+
     FileName := Utils.DB.GetFullCSVDBTablePath(FTableName);
 
     try
-        FS.Create(FileName, fmOpenWrite);
-        SW.Create(FS);
+        FS := TFileStream.Create(FileName, fmOpenWrite);
+        SW := TStreamWriter.Create(FS);
 
         SW.Write(Utils.CSV.SerializeCSV(CSVString));
 
@@ -187,33 +196,56 @@ begin
 end;
 
 
-procedure TDB<T>.AddCSVTableToDB(CSVObject: T);
+// Returns -1 if there is an error
+// Returns 1 if there already is a Table with that name
+function TDB<T>.AddCSVTableToDB(CSVObject: T): ShortInt;
 var
     FS: TFileStream;
     SW: TStreamWriter;
     FileName: String;
+
+    CSVArray: TArray<T>;
 begin
 
-    FileName := Utils.DB.GetFullCSVDBTablePath(FTableName);
+    FS := nil;
+    SW := nil;
+
+    FileName := Utils.DB.GetTablesFilePath(FTableName);
+    DirectoryPath := Utils.DB.GetTablesDirPath(FTableName);
+
 
     if (FileExists(FileName)) then
-        raise Exception.Create('db.pas Error: Database table already exists.');
-    
+    begin
+        ShowMessage('Die Tabelle "' + FTableName + '" existiert bereits.');
 
-    try
-        FS.Create(FileName, fmCreate);
-        SW.Create(FS);
+        // just add T as a new row
+        AddRowToCSV(CSVObject);
+    end
+    else
+    begin
+        try
+            FS := TFileStream.Create(FileName, fmCreate or fmShareExclusive);
+            SW := TStreamWriter.Create(FS);
 
 
-        SW.Write(Utils.CSV.TCSVUtils<T>.SerializeCSV(CSVObject));
+            SetLength(CSVArray, 1);
+            CSVArray[High(CSVArray)] := CSVObject;
+                    
+            SW.Write(Utils.CSV.TCSVUtils<T>.SerializeCSV(CSVArray));
+            
 
+            FInitialized := true;
 
-
-
-    finally
-        FS.Free;
-        SW.Free;
+        finally
+            FS.Free;
+            SW.Free;
+        end;
     end;
+end;
+
+procedure TDB<T>.RemoveCSVTableFromDB();
+begin
+  raise Exception.Create('db.pas Error: function RemoveCSVTableFromDB not implemented');
 end;
 
 

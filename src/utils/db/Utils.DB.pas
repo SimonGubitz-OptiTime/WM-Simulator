@@ -6,15 +6,19 @@ uses
     SysUtils, Vcl.Forms;
 
 
-function GetFullCSVDBTablePath(Name: String): String;
+function GetTablesFilePath(Name: String): String;
+function GetTablesDirPath: String; inline;
 
 implementation
 
-function GetFullCSVDBTablePath(Name: String): String;
+function GetTablesFilePath(Name: String): String;
 begin
+    Result := ExtractFilePath(Application.ExeName) + '..\..\..\database\' + 'custom_database_' + Name + '.csv'
+end;
 
-    Result := ExtractFilePath(Application.ExeName) + 'custom_database_' + Name + '.csv'
-
+function GetTablesDirPath: String;
+begin
+    Result := ExtractFilePath(Application.ExeName) + '..\..\..\database\';
 end;
 
 end.

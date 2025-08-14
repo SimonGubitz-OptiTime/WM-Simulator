@@ -35,7 +35,7 @@ procedure TStadionEingabeFenster.BestaetigenButtonClick(Sender: TObject);
 var
   placeholder: Integer;
   Stadion: TStadion;
-  database: DB.TDB<TStadion>;
+  database: TDB<TStadion>;
 begin
   
   // Gültigkeitsprüfung der Nutzereingabe
@@ -68,14 +68,15 @@ begin
 
   Stadion.Name := NameEingabeFeld.Text;
   Stadion.Ort := OrtEingabeFeld.Text;
-  Stadion.ZuschauerKapazität := StrToInt(ZuschauerKapazitaetEingabeFeld.Text);
+  Stadion.ZuschauerKapazitaet := StrToInt(ZuschauerKapazitaetEingabeFeld.Text);
 
 
   // Write into DB
 
   database := TDB<TStadion>.Create('Stadien');
-  database.GetPropertyFromCSV('asdkj');
-  database.AddCSVTableToDB(Stadion);
+  if database.AddCSVTableToDB(Stadion) = -1 then
+    raise Exception.Create('Konnte Keine Tabelle öffnen oder erstellen.');
+
 
 
 
