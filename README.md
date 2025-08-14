@@ -139,3 +139,17 @@ C:.
 
 Hier soll ausschließlich Code für Nutzer Eingaben und die wirkliche UI liegen.
 Bei einem TEdit darf allein die Eingabe abgefragt, überprüft und weitergegeben werden.
+
+
+
+## Mögliche Verbesserungen
+
+- Ein universelles Modal Form (an stelle von StadionEingabeFenster oder TeamEingabeFenster) mit modularem Rendering
+    - Rtti input validation
+
+↓ ModularForm.Create
+-→ TModularForm<T>.Create(TableName: String) // dynamic rendering with Rtti aware looping Length(RttiFields)
+
+↓ UserInputValidation
+-→ case RttiField.FieldType.TypeKind
+    tkInteger: -> TryStrToInt

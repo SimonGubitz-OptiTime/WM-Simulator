@@ -1,4 +1,4 @@
-unit Utils.DB.Naming;
+unit Utils.DB;
 
 interface
 

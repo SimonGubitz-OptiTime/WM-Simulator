@@ -4,7 +4,8 @@ interface
 
 
 type TStadion = record
-    Ort: String; // z.B. "Allianz Arena"
+    Name: String; // z.B. "Allianz Arena"
+    Ort: String; // z.B. "München"
     ZuschauerKapazität: UInt32; // Zuschauer Zahl kann größer als WordMax 65'535 sein
     Zuschauer: UInt32; // " - für die Simulation wenn >90% Kapazität, +5% Siegchancen wenn Heimstadion
 end;
@@ -34,7 +35,7 @@ type TSpiel = record
     Team1: TTeam;
     Team1Spielstand: Byte; // kein Spiel wird über 255 gehen
     Team2: TTeam;
-    Team2Spielstand: Byte; // "
+    Team2Spielstand: Byte; // ↑
 
     AustragunsDatum: TDate;
 

@@ -1,36 +1,60 @@
-unit DB;
+﻿unit DB;
 
 interface
 
 uses
-    System.Generics, System.SysUtils, System.IOUtils, System.Rtti;
+    Utils.DB,
+    Utils.CSV,
+    System.Classes, System.SysUtils, System.IOUtils, System.Rtti;
 
 
 
-function    GetPropertyFromCSV<T>(TableName: String): T;
-procedure   SetPropertyFromCSV<T>(TableName: String; Property: String; PropertyValue: T);
-function    GetStructuredTableFromCSV<T: record>(TableName: String): T;
-procedure   SetStructuredTableFromCSV<T: record>(TableName: String);
-function    GetUnstructuredTableFromCSV(TableName: String): String;
-procedure   SetUnstructuredTableFromCSV(TableName: String);
+type TDB<T: record> = class
+  private
+    FTableName: String;
+  public
+    constructor Create(TableName: String);
+    
+    function    GetPropertyFromCSV(PropertyName: String): T;
+    procedure   SetPropertyInCSV(PropertyName: String; PropertyValue: T);
+
+    function    GetRowFromCSV(RowID: Integer): T;
+    procedure   SetRowInCSV(RowID: Integer; RowType: T);
+    procedure   AddRowToCSV(RowType: T);
+
+    function    GetStructuredTableFromCSV(): TArray<T>;
+    procedure   SetStructuredTableInCSV();
+
+    function    GetUnstructuredTableFromCSV(): String;
+    procedure   SetUnstructuredTableInCSV(CSVString: String); // unnötig eigentlich
+
+    procedure   AddCSVTableToDB(CSVObject: T);
+    procedure   RemoveCSVTableFromDB();
+
+end;
 
 
 
 implementation
 
+constructor TDB<T>.Create(TableName: String);
+begin
+    FTableName := TableName;
+end;
 
-function GetPropertyOfIDFromCSV<T>(TableName: String; RowID: Integer): T;
+
+function TDB<T>.GetPropertyFromCSV(PropertyName: String): T;
 var
-    CSVString: String;
+    CSVArray: TArray<T>;
 begin
 
-    CSVString := GetStructuredTable<T>(TableName);
+    CSVArray := GetStructuredTableFromCSV<T>();
 
 
 
 end;
 
-procedure SetPropertyOfIDFromCSV<T>(TableName: String; RowID: Integer);
+procedure TDB<T>.SetPropertyInCSV(PropertyName: String; PropertyValue: T);
 begin
 
     // .csv öffnen
@@ -38,9 +62,20 @@ begin
 end;
 
 
-// z.B. TableName := 'Stadien'
-// z.B. T := TStadion
-function GetStructuredTableFromCSV<T: record>(TableName: String): TArray<T>;
+function TDB<T>.GetRowFromCSV(RowID: Integer): T;
+begin
+end;
+
+procedure TDB<T>.SetRowInCSV(RowID: Integer; RowType: T);
+begin
+end;
+
+procedure TDB<T>.AddRowToCSV(RowType: T);
+begin
+end;
+
+
+function TDB<T>.GetStructuredTableFromCSV(): TArray<T>;
 const
     AverageLines: Byte = 15;
     AverageBytesPerLine: Byte = 40;
@@ -52,13 +87,18 @@ var
     Lines: TStringList;
     Row: T;
     TableColumns: Byte;
+
+    line, headline: String;
+    i: Integer;
 begin
 
-    FileName := Utils.DB.Naming.GetFullCSVDBTablePath(TableName);
+    FileName := Utils.DB.GetFullCSVDBTablePath(FTableName);
     FileSize := TFile.GetSize(FileName);
 
+    Row := Default(T);
+
     try
-        FS.Create(FileName);
+        FS.Create(FileName, fmOpenRead);
         SR.Create(FS);
 
         headline := SR.ReadLine();
@@ -71,20 +111,11 @@ begin
             for i := 0 to TableColumns do
             begin
 
-                Row := Utils.CSV.DeserializeCSV<T>(line);
+                // mit line nur ein mögliches Ergebnis
+                Row := Utils.CSV.TCSVUtils<T>.DeserializeCSV(line)[0];
 
-
-
-                {
-                    RttiContext := TRttiContext.Create;
-                    RttiType := RttiContext.GetType(TypeInfo(T));
-                    RttiFields := RttiType.GetFields;
-
-
-                }
-
-
-                // Utils.CSV.DeserializeCSV<T>();
+                SetLength(Result, Length(Result) + 1);
+                Result[High(Result)] := Row;
 
             end;
 
@@ -96,32 +127,37 @@ begin
         SR.Free;
     end;
 
-    // Auf das nötige Schrumpfen
-    SetLength(Result, );
-
 end;
 
-procedure SetStructuredTableFromCSV<T: record>(TableName: String);
+procedure TDB<T>.SetStructuredTableInCSV();
 begin
 
-
+    // .csv öffnen
+    // .csv schreiben
+    // .csv schließen
 
 end;
 
 
-function GetUnstructuredTableFromCSV(TableName: String): TArray<String>;
+function TDB<T>.GetUnstructuredTableFromCSV(): String;
 var
     FS: TFileStream;
     SR: TStreamReader;
+    FileName: String;
+    TempRes: TArray<String>;
+    i: Integer;
 begin
 
-    FileName := Utils.DB.Naming.GetFullCSVDBTablePath(TableName);
+    FileName := Utils.DB.GetFullCSVDBTablePath(FTableName);
 
     try
-        FS.Create(FileName);
+        FS.Create(FileName, fmOpenRead);
         SR.Create(FS);
 
-        Result := Utils.CSV.DeserializeCSV(SR.ReadToEnd());
+        TempRes := Utils.CSV.DeserializeCSV(SR.ReadToEnd());
+
+        for i := 0 to High(TempRes) do
+            Result := Result + TempRes[i];
 
     finally
         FS.Free;
@@ -129,23 +165,54 @@ begin
     end;
 end;
 
-procedure SetUnstructuredTableFromCSV(TableName: String; TableContent: String);
+procedure TDB<T>.SetUnstructuredTableInCSV(CSVString: String);
 var
     FS: TFileStream;
     SW: TStreamWriter;
+    FileName: String;
 begin
 
-    FileName := Utils.DB.Naming.GetFullCSVDBTablePath(TableName);
+    FileName := Utils.DB.GetFullCSVDBTablePath(FTableName);
 
     try
-        FS.Create(FileName);
+        FS.Create(FileName, fmOpenWrite);
         SW.Create(FS);
 
-        SR.Write(Utils.CSV.SerializeCSV(CSVString));
+        SW.Write(Utils.CSV.SerializeCSV(CSVString));
 
     finally
         FS.Free;
-        SR.Free;
+        SW.Free;
+    end;
+end;
+
+
+procedure TDB<T>.AddCSVTableToDB(CSVObject: T);
+var
+    FS: TFileStream;
+    SW: TStreamWriter;
+    FileName: String;
+begin
+
+    FileName := Utils.DB.GetFullCSVDBTablePath(FTableName);
+
+    if (FileExists(FileName)) then
+        raise Exception.Create('db.pas Error: Database table already exists.');
+    
+
+    try
+        FS.Create(FileName, fmCreate);
+        SW.Create(FS);
+
+
+        SW.Write(Utils.CSV.TCSVUtils<T>.SerializeCSV(CSVObject));
+
+
+
+
+    finally
+        FS.Free;
+        SW.Free;
     end;
 end;
 

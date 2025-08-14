@@ -4,13 +4,17 @@ interface
 
 uses
     Utils.RTTI,
+    System.Rtti,
+    System.SysUtils,
     System.Generics.Collections;
 
-function SerializeCSV(Object: array of String): String;
-function DeserializeCSV(Object: String): TArray<String>;
+function SerializeCSV(CSVArray: array of String): String;
+function DeserializeCSV(CSVString: String): TArray<String>;
 
-// function SerializeCSV<T>(Object: array of String): T;
-// function DeserializeCSV<T>(Object: String): TArray<T>;
+type TCSVUtils<T> = record
+  class function SerializeCSV(CSVArray: array of String): String; static;
+  class function DeserializeCSV(CSVString: String): TArray<T>; static;
+end;
 
 
 const delimiter: Char = ';';
@@ -18,6 +22,8 @@ const delimiter: Char = ';';
 implementation
 
 function SerializeCSV(CSVArray: array of String): String;
+var
+  i: Integer;
 begin
 
     Result := '';
@@ -36,11 +42,10 @@ end;
 
 function DeserializeCSV(CSVString: String): TArray<String>;
 var
-    ArrayCounter, I: Integer;
+    I: Integer;
     TempString: String;
 begin
 
-    ArrayCounter := 0;
     TempString := '';
 
     SetLength(Result, 0);
@@ -50,7 +55,6 @@ begin
 
         if CSVString[i] = delimiter then
         begin
-            Inc(ArrayCounter);
             SetLength(Result, Length(Result)+1);
             Result[High(Result)] := TempString;
             TempString := '';
@@ -62,19 +66,23 @@ begin
 end;
 
 
-function DeserializeCSV<T>(CSVString: String): TArray<T>;
+class function TCSVUtils<T>.SerializeCSV(CSVArray: array of String): String;
+begin
+  raise Exception.Create('Utils.CSV.pas: Error: function TCSVUtils<T>.SerializeCSV not implemented');
+end;
+
+class function TCSVUtils<T>.DeserializeCSV(CSVString: String): TArray<T>;
 var
     RttiContext: TRttiContext;
     RttiType: TRttiType;
     RttiFields: TArray<TRttiField>;
-    ArrayCounter, I: Integer;
     TempString: String;
     TempStringArray: TArray<String>;
     TempValue: TValue;
     TempRes: T;
+    i: Integer;
 begin
 
-    ArrayCounter := 0;
     TempString := '';
 
     SetLength(TempStringArray, 0);
@@ -84,7 +92,6 @@ begin
 
         if CSVString[i] = delimiter then
         begin
-            Inc(ArrayCounter);
             SetLength(TempStringArray, Length(TempStringArray)+1);
             TempStringArray[High(TempStringArray)] := TempString;
             TempString := ''; // reset
@@ -108,7 +115,7 @@ begin
         for i := 0 to Length(RttiFields) -1 do
         begin
             // convert string to x
-            TempValue := TValue.From<String>(TempStringArray[i]);
+            TempValue := Utils.RTTI.TRttiUtils<T>.StringToT(RttiFields[i], TempStringArray[i]);
 
             RttiFields[i].SetValue(@TempRes, TempValue);
         end;

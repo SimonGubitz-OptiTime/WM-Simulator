@@ -3,9 +3,10 @@
 interface
 
 uses
+  DB,
+  Types,
   StadionEingabeFenster,
   TeamEingabeFenster,
-  Types,
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.StdCtrls,
   System.ImageList, Vcl.ImgList;
@@ -22,7 +23,6 @@ type
     Spielplan: TTabSheet;
     Spiel: TTabSheet;
     SymbolImageList: TImageList;
-
     TeamEingabe: TTeamEingabeFenster;
     StadionEingabe: TStadionEingabeFenster;
 
@@ -48,13 +48,13 @@ implementation
 
 procedure TMainForm.TeamHinzufuegenButtonClick(Sender: TObject);
 begin
-  TeamEingabe:= TTeamEingabeFenster.Create(nil);
+  TeamEingabe := TTeamEingabeFenster.Create(nil);
   TeamEingabe.Show; // ShowModal;
 end;
 
 procedure TMainForm.StadionHinzufuegenButtonClick(Sender: TObject);
 begin
-  StadionEingabe:= TStadionEingabeFenster.Create(nil);
+  StadionEingabe:= TStadionEingabeFenster.Create(self);
   StadionEingabe.Show; // ShowModal;
 end;
 
@@ -63,7 +63,8 @@ var
   i: Byte;
 begin
 
-  // GetStructured Table
+
+
 
 end;
 

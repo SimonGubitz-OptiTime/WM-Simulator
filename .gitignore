@@ -1,10 +1,12 @@
 
-# Ignore __history and __recovery directories
+# Ignore __history and __recovery directories from Delphi RAD
 **/__history/
 **/__recovery/
 
 # Ignore build artifacts
 bin/
+**/Win32/
+**/Win64/
 
 # Ignore temporary files
 *.tmp
@@ -12,6 +14,7 @@ bin/
 
 # Ignore IDE local or config files
 *.dproj.local
+*.identcache
 
 # Other
 **/.DS_Store
