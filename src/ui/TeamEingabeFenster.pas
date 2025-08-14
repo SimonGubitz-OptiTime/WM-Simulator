@@ -7,15 +7,12 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs;
 
 type
-  TForm2 = class(TForm)
+  TTeamEingabeFenster = class(TForm)
   private
     { Private-Deklarationen }
   public
     { Public-Deklarationen }
   end;
-
-var
-  Form2: TForm2;
 
 implementation
 

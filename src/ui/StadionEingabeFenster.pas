@@ -1,4 +1,4 @@
-unit Main;
+unit StadiumEingabeFenster;
 
 interface
 
@@ -7,15 +7,13 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs;
 
 type
-  TForm1 = class(TForm)
+  TStadionEingabeFenster = class(TForm)
   private
     { Private-Deklarationen }
   public
     { Public-Deklarationen }
   end;
 
-var
-  Form1: TForm1;
 
 implementation
 

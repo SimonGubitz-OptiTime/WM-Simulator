@@ -8,6 +8,7 @@ Der WM-Simulator soll mit hilfe von VCL und einem "Backend" aus CSV-Datein eine 
 ### Hauptfenster
 ![Designvorschlag - Hauptfenster](assets/design-hauptfenster.png)
 
+
 ### Team hinzufügen - Fenster
 ![Designvorschlag - Teamfenster](assets/design-teamfenster.png)
 
@@ -35,13 +36,13 @@ type TTeam = record
     FIFACode: Char[3];
     TeamVerband: TTeamVerband;
     HistorischeWMSiege: Byte;
-    Heimstadion: TStadium; // in der Simulation vielleicht +5% Siegchancen
+    Heimstadion: TStadion; // in der Simulation vielleicht +5% Siegchancen
     Flagge: Byte; // als index für eine TImageList
     SpielerListe: array[0..11] of String; // Nur Namen
     TeamRanking: TTeamRanking;
 
     // ↓ für spätere Statistiken - keine Stammdaten
-    private:
+    private
         ToreGeschossen: Byte;
         ToreKassiert: Byte;
         Siege: Byte;
@@ -49,7 +50,7 @@ type TTeam = record
         Niederlagen: Byte;
 end;
 
-type TStadium = record
+type TStadion = record
     Ort: String; // z.B. "Allianz Arena"
     ZuschauerKapazität: UInt32; // Zuschauer Zahl kann größer als WordMax 65'535 sein
     Zuschauer: UInt32; // " - für die Simulation wenn >90% Kapazität, +5% Siegchancen wenn Heimstadion
@@ -63,12 +64,12 @@ type TSpiel = record
 
     AustragunsDatum: TDate;
 
-    Stadium: TStadium;
+    Stadion: TStadion;
 end;
 
 type TWMState = class
     Teams: array[0..47] of TTeam;       // 48 Teams in 2026
-    Stadien: array[0..15] of TStadium;  // 16 Stadien in 2026
+    Stadien: array[0..15] of TStadion;  // 16 Stadien in 2026
 end;
 ```
 
@@ -108,7 +109,7 @@ C:.
 |           add.png
 |           groups.png
 |           sports_soccer.png
-|           stadium.png
+|           Stadion.png
 |           
 +---bin
 \---src

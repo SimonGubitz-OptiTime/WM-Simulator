@@ -1,9 +1,0 @@
-unit Utils.Fixed_arrays;
-
-interface
-
-function LastFilledIndex<T>(): Integer;
-
-implementation
-
-end.

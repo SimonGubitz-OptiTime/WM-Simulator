@@ -7,15 +7,13 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs;
 
 type
-  TForm3 = class(TForm)
+  TStadionEingabeFenster = class(TForm)
   private
     { Private-Deklarationen }
   public
     { Public-Deklarationen }
   end;
 
-var
-  Form3: TForm3;
 
 implementation
 
