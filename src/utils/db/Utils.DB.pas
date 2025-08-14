@@ -6,7 +6,7 @@ uses
     SysUtils, Vcl.Forms;
 
 
-function GetTablesFilePath(Name: String): String;
+function GetTablesFilePath(Name: String): String; inline;
 function GetTablesDirPath: String; inline;
 
 implementation

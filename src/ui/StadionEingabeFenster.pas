@@ -74,12 +74,7 @@ begin
   // Write into DB
 
   database := TDB<TStadion>.Create('Stadien');
-  if database.AddCSVTableToDB(Stadion) = -1 then
-    raise Exception.Create('Konnte Keine Tabelle öffnen oder erstellen.');
-
-
-
-
+  database.AddCSVTableToDB(Stadion);
 
 
 end;

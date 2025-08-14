@@ -79,7 +79,6 @@ var
 
     i, j: Integer;
 begin
-    // raise Exception.Create('Utils.CSV.pas: Error: function TCSVUtils<T>.SerializeCSV not implemented');
 
     RttiContext := TRttiContext.Create;
     RttiType := RttiContext.GetType(TypeInfo(T));
@@ -100,8 +99,6 @@ begin
     begin
         if i > Low(CSVArray) then
             Result := Result + delimiter;
-
-//        RttiType := RttiContext.GetType();
 
         for j := 0 to Length(RttiFields)-1 do
         begin
@@ -132,12 +129,17 @@ begin
 
     TempString := '';
 
+    SetLength(Result, 0);
     SetLength(TempStringArray, 0);
+
+    // To read in the last value too
+    if CSVString[High(CSVString)] <> delimiter then
+      CSVString := CSVString + delimiter;
 
     for i := 1 to Length(CSVString) do
     begin
 
-        if CSVString[i] = delimiter then
+        if CSVString[i] = delimiter then // or #13#10 <- 2 Bytes on windows sLineBreak
         begin
             SetLength(TempStringArray, Length(TempStringArray)+1);
             TempStringArray[High(TempStringArray)] := TempString;
@@ -147,6 +149,7 @@ begin
             TempString := TempString + CSVString[i];
 
     end;
+
 
     try
 
@@ -165,6 +168,9 @@ begin
             TempValue := Utils.RTTI.TRttiUtils<T>.StrToT(RttiFields[i], TempStringArray[i]);
 
             RttiFields[i].SetValue(@TempRes, TempValue);
+
+            SetLength(Result, Length(Result) + 1);
+            Result[High(Result)] := TempRes;
         end;
 
     finally

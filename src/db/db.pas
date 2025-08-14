@@ -30,7 +30,7 @@ type TDB<T: record> = class
     function    GetUnstructuredTableFromCSV(): String;
     procedure   SetUnstructuredTableInCSV(CSVString: String); // unnötig eigentlich
 
-    function    AddCSVTableToDB(CSVObject: T): ShortInt;
+    procedure   AddCSVTableToDB(CSVObject: T);
     procedure   RemoveCSVTableFromDB();
 
 end;
@@ -51,6 +51,10 @@ var
     CSVArray: TArray<T>;
 begin
 
+    if not FInitialized then
+        raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
+
+
     CSVArray := GetStructuredTableFromCSV();
 
 
@@ -60,6 +64,9 @@ end;
 procedure TDB<T>.SetPropertyInCSV(PropertyName: String; PropertyValue: T);
 begin
 
+    if not FInitialized then
+        raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
+
     // .csv öffnen
 
 end;
@@ -67,14 +74,32 @@ end;
 
 function TDB<T>.GetRowFromCSV(RowID: Integer): T;
 begin
+
+    if not FInitialized then
+        raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
+
+    // .csv öffnen
 end;
 
 procedure TDB<T>.SetRowInCSV(RowID: Integer; RowType: T);
 begin
+    if not FInitialized then
+        raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
+
+    // .csv öffnen
 end;
 
 procedure TDB<T>.AddRowToCSV(RowType: T);
 begin
+
+    if not FInitialized then
+        raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
+
+    // Read in the full CSV file
+    var CSVArray: TArray<T> := GetStructuredTableFromCSV();
+
+    // Add the new row to the end of the array
+
 end;
 
 
@@ -95,7 +120,10 @@ var
     i: Integer;
 begin
 
-    FileName := Utils.DB.GetFullCSVDBTablePath(FTableName);
+    if not FInitialized then
+        raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
+
+    FileName := Utils.DB.GetTablesFilePath(FTableName);
     FileSize := TFile.GetSize(FileName);
 
     Row := Default(T);
@@ -135,6 +163,9 @@ end;
 procedure TDB<T>.SetStructuredTableInCSV();
 begin
 
+    if not FInitialized then
+        raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
+
     // .csv öffnen
     // .csv schreiben
     // .csv schließen
@@ -151,10 +182,13 @@ var
     i: Integer;
 begin
 
+    if not FInitialized then
+        raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
+
     FS := nil;
     SR := nil;
 
-    FileName := Utils.DB.GetFullCSVDBTablePath(FTableName);
+    FileName := Utils.DB.GetTablesFilePath(FTableName);
 
     try
         FS := TFileStream.Create(FileName, fmOpenRead);
@@ -178,10 +212,13 @@ var
     FileName: String;
 begin
 
+    if not FInitialized then
+        raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
+
     FS := nil;
     SW := nil;
 
-    FileName := Utils.DB.GetFullCSVDBTablePath(FTableName);
+    FileName := Utils.DB.GetTablesFilePath(FTableName);
 
     try
         FS := TFileStream.Create(FileName, fmOpenWrite);
@@ -196,13 +233,11 @@ begin
 end;
 
 
-// Returns -1 if there is an error
-// Returns 1 if there already is a Table with that name
-function TDB<T>.AddCSVTableToDB(CSVObject: T): ShortInt;
+procedure TDB<T>.AddCSVTableToDB(CSVObject: T);
 var
     FS: TFileStream;
     SW: TStreamWriter;
-    FileName: String;
+    FileName, DirectoryPath: String;
 
     CSVArray: TArray<T>;
 begin
@@ -211,12 +246,17 @@ begin
     SW := nil;
 
     FileName := Utils.DB.GetTablesFilePath(FTableName);
-    DirectoryPath := Utils.DB.GetTablesDirPath(FTableName);
+    DirectoryPath := Utils.DB.GetTablesDirPath();
+
+
+    if not(TDirectory.Exists(DirectoryPath)) then
+      TDirectory.CreateDirectory(DirectoryPath);
+
 
 
     if (FileExists(FileName)) then
     begin
-        ShowMessage('Die Tabelle "' + FTableName + '" existiert bereits.');
+        FInitialized := true;
 
         // just add T as a new row
         AddRowToCSV(CSVObject);
@@ -245,7 +285,20 @@ end;
 
 procedure TDB<T>.RemoveCSVTableFromDB();
 begin
-  raise Exception.Create('db.pas Error: function RemoveCSVTableFromDB not implemented');
+    if not FInitialized then
+        raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
+    
+    // Delete the file
+    var FileName := Utils.DB.GetTablesFilePath(FTableName);
+    if FileExists(FileName) then
+    begin  
+        TFile.Delete(FileName);
+        FInitialized := false;
+    end
+    else
+        raise Exception.Create('db.pas Error: Table "' + FTableName + '" does not exist.');
+
+
 end;
 
 
