@@ -7,30 +7,30 @@ uses
 
 
 
-function    GetProperty<T>(TableName: String): T;
-procedure   SetProperty<T>(TableName: String; Property: String; PropertyValue: T);
-function    GetStructuredTable<T: record>(TableName: String): T;
-procedure   SetStructuredTable<T: record>(TableName: String);
-function    GetUnstructuredTable(TableName: String): String;
-procedure   SetUnstructuredTable(TableName: String);
+function    GetPropertyFromCSV<T>(TableName: String): T;
+procedure   SetPropertyFromCSV<T>(TableName: String; Property: String; PropertyValue: T);
+function    GetStructuredTableFromCSV<T: record>(TableName: String): T;
+procedure   SetStructuredTableFromCSV<T: record>(TableName: String);
+function    GetUnstructuredTableFromCSV(TableName: String): String;
+procedure   SetUnstructuredTableFromCSV(TableName: String);
 
 
 
 implementation
 
 
-function GetPropertyOfID<T>(TableName: String; RowID: Integer): T;
+function GetPropertyOfIDFromCSV<T>(TableName: String; RowID: Integer): T;
 var
     CSVString: String;
 begin
 
-    CSVString := GetStructuredTable<>(TableName);
+    CSVString := GetStructuredTable<T>(TableName);
 
 
 
 end;
 
-procedure SetPropertyOfID<T>(TableName: String; RowID: Integer);
+procedure SetPropertyOfIDFromCSV<T>(TableName: String; RowID: Integer);
 begin
 
     // .csv öffnen
@@ -40,7 +40,7 @@ end;
 
 // z.B. TableName := 'Stadien'
 // z.B. T := TStadion
-function GetStructuredTable<T: record>(TableName: String): TArray<T>;
+function GetStructuredTableFromCSV<T: record>(TableName: String): TArray<T>;
 const
     AverageLines: Byte = 15;
     AverageBytesPerLine: Byte = 40;
@@ -50,12 +50,11 @@ var
     FileName: String;
     FileSize: Int64;
     Lines: TStringList;
-    RttiContext: TRttiContext;
-    RttiType: TRttiType;
-    RttiFields: TArray<TRttiField>;
+    Row: T;
+    TableColumns: Byte;
 begin
 
-    FileName := Utils.DB.Naming.GetFullDBTablePath(TableName);
+    FileName := Utils.DB.Naming.GetFullCSVDBTablePath(TableName);
     FileSize := TFile.GetSize(FileName);
 
     try
@@ -72,12 +71,16 @@ begin
             for i := 0 to TableColumns do
             begin
 
-                Row := Utils.CSV.DeserializeCSV(line);
+                Row := Utils.CSV.DeserializeCSV<T>(line);
+
+
 
                 {
                     RttiContext := TRttiContext.Create;
                     RttiType := RttiContext.GetType(TypeInfo(T));
                     RttiFields := RttiType.GetFields;
+
+
                 }
 
 
@@ -98,7 +101,7 @@ begin
 
 end;
 
-procedure SetStructuredTable<T: record>(TableName: String);
+procedure SetStructuredTableFromCSV<T: record>(TableName: String);
 begin
 
 
@@ -106,13 +109,13 @@ begin
 end;
 
 
-function GetUnstructuredTable(TableName: String): TArray<String>;
+function GetUnstructuredTableFromCSV(TableName: String): TArray<String>;
 var
     FS: TFileStream;
     SR: TStreamReader;
 begin
 
-    FileName := Utils.DB.Naming.GetFullDBTablePath(TableName);
+    FileName := Utils.DB.Naming.GetFullCSVDBTablePath(TableName);
 
     try
         FS.Create(FileName);
@@ -126,13 +129,13 @@ begin
     end;
 end;
 
-procedure SetUnstructuredTable(TableName: String; TableContent: String);
+procedure SetUnstructuredTableFromCSV(TableName: String; TableContent: String);
 var
     FS: TFileStream;
     SW: TStreamWriter;
 begin
 
-    FileName := Utils.DB.Naming.GetFullDBTablePath(TableName);
+    FileName := Utils.DB.Naming.GetFullCSVDBTablePath(TableName);
 
     try
         FS.Create(FileName);

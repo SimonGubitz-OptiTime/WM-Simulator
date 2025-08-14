@@ -59,10 +59,7 @@ var
   i: Byte;
 begin
 
-  for i := Low() to High() do
-  begin
-    // s
-  end;
+  // GetStructured ^
 
 end;
 
