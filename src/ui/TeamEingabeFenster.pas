@@ -14,8 +14,11 @@ type
     { Public-Deklarationen }
   end;
 
+
+
 implementation
 
 {$R *.dfm}
 
 end.
+

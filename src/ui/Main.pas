@@ -1,8 +1,10 @@
-unit Main;
+﻿unit Main;
 
 interface
 
 uses
+  StadionEingabeFenster,
+  TeamEingabeFenster,
   Types,
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.StdCtrls,
@@ -21,12 +23,14 @@ type
     Spiel: TTabSheet;
     SymbolImageList: TImageList;
 
-    TeamEingabeFenster: TTeamEingabeFenster;
-    StadionEingabeFenster: TStadionEingabeFenster;
+    TeamEingabe: TTeamEingabeFenster;
+    StadionEingabe: TStadionEingabeFenster;
 
     procedure FormCreate(Sender: TObject);
     procedure TeamHinzufuegenButtonClick(Sender: TObject);
     procedure StadionHinzufuegenButtonClick(Sender: TObject);
+
+    procedure DrawTListBox();
 
   private
     { Private-Deklarationen }
@@ -42,16 +46,16 @@ implementation
 
 {$R *.dfm}
 
-procedure TeamHinzufuegenButtonClick(Sender: TObject);
+procedure TMainForm.TeamHinzufuegenButtonClick(Sender: TObject);
 begin
-  TeamEingabeFenster := TTeamEingabeFenster.Create(nil);
-  TeamEingabeFenster.Show; // ShowModal;
+  TeamEingabe:= TTeamEingabeFenster.Create(nil);
+  TeamEingabe.Show; // ShowModal;
 end;
 
-procedure StadionHinzufuegenButtonClick(Sender: TObject);
+procedure TMainForm.StadionHinzufuegenButtonClick(Sender: TObject);
 begin
-  StadionEingabeTeamEingabeFenster := TStadionEingabeTeamEingabeFenster.Create(nil);
-  StadionEingabeTeamEingabeFenster.Show; // ShowModal;
+  StadionEingabe:= TStadionEingabeFenster.Create(nil);
+  StadionEingabe.Show; // ShowModal;
 end;
 
 procedure TMainForm.DrawTListBox();
@@ -59,7 +63,7 @@ var
   i: Byte;
 begin
 
-  // GetStructured ^
+  // GetStructured Table
 
 end;
 

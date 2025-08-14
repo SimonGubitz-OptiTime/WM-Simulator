@@ -1,4 +1,4 @@
-unit Utils.FixedArrays;
+﻿unit Utils.FixedArrays;
 
 interface
 
@@ -11,7 +11,7 @@ implementation
 
 
 // Gibt den letzten Index mit Füllung an, wenn alle leer sind, -1.
-function LastFilledIndex<T>(ArrayToSearch: array of T): Integer;
+function LastFilledIndex<T: array>(ArrayToSearch: array of T): Integer;
 var
     i: Byte;
 begin

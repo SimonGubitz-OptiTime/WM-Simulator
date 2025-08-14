@@ -1,7 +1,7 @@
-object Form2: TForm2
+object TeamEingabeFenster: TTeamEingabeFenster
   Left = 429
   Top = 187
-  Caption = 'Form2'
+  Caption = 'Team Eingabe'
   ClientHeight = 441
   ClientWidth = 624
   Color = clBtnFace

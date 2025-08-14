@@ -1,13 +1,20 @@
-unit Types;
+﻿unit types;
 
 interface
+
+
+type TStadion = record
+    Ort: String; // z.B. "Allianz Arena"
+    ZuschauerKapazität: UInt32; // Zuschauer Zahl kann größer als WordMax 65'535 sein
+    Zuschauer: UInt32; // " - für die Simulation wenn >90% Kapazität, +5% Siegchancen wenn Heimstadion
+end;
 
 type TTeamRanking = (SehrStark = 4, Stark = 3, MittelStark = 2, Schwach = 1);
 type TTeamVerband = (UEFA, CONMEBOL, AFC, CAF, CONCACAF, OFC);
 
 type TTeam = record
     Name: String;
-    FIFACode: Char[3];
+    FIFACode: array[0..2] of Char;
     TeamVerband: TTeamVerband;
     HistorischeWMSiege: Byte;
     Heimstadion: TStadion; // in der Simulation vielleicht +5% Siegchancen
@@ -23,13 +30,6 @@ type TTeam = record
         Unentschieden: Byte;
         Niederlagen: Byte;
 end;
-
-type TStadion = record
-    Ort: String; // z.B. "Allianz Arena"
-    ZuschauerKapazität: UInt32; // Zuschauer Zahl kann größer als WordMax 65'535 sein
-    Zuschauer: UInt32; // " - für die Simulation wenn >90% Kapazität, +5% Siegchancen wenn Heimstadion
-end;
-
 type TSpiel = record
     Team1: TTeam;
     Team1Spielstand: Byte; // kein Spiel wird über 255 gehen

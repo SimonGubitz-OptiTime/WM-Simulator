@@ -1,7 +1,7 @@
-object Form3: TForm3
-  Left = 429
-  Top = 187
-  Caption = 'Form3'
+object StadionEingabeFenster: TStadionEingabeFenster
+  Left = 0
+  Top = 0
+  Caption = 'Stadion Eingabe'
   ClientHeight = 441
   ClientWidth = 624
   Color = clBtnFace
@@ -10,6 +10,5 @@ object Form3: TForm3
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
-  Position = poDesigned
   TextHeight = 15
 end

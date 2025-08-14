@@ -1,4 +1,4 @@
-﻿object Form1: TForm1
+object MainForm: TMainForm
   Left = 429
   Top = 187
   Caption = 'Form1'
@@ -43,7 +43,7 @@
         ItemHeight = 15
         TabOrder = 0
       end
-      object TeamHinzufügenButton: TButton
+      object TeamHinzufuegenButton: TButton
         Left = 3
         Top = 54
         Width = 126
@@ -54,7 +54,7 @@
         TabOrder = 1
         OnClick = TeamHinzufuegenButtonClick
       end
-      object StadionHinzufügenButton: TButton
+      object StadionHinzufuegenButton: TButton
         Left = 143
         Top = 54
         Width = 146

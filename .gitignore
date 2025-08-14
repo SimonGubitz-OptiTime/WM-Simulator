@@ -1,4 +1,8 @@
 
+# Ignore __history and __recovery directories
+**/__history/
+**/__recovery/
+
 # Ignore build artifacts
 bin/
 

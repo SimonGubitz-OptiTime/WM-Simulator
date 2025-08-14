@@ -1,4 +1,4 @@
-unit StadiumEingabeFenster;
+unit StadionEingabeFenster;
 
 interface
 
@@ -15,8 +15,10 @@ type
   end;
 
 
+
 implementation
 
 {$R *.dfm}
 
 end.
+

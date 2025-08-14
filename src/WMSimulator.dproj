@@ -123,12 +123,23 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="Main.pas">
+        <DCCReference Include="utils\fixed_arrays\Utils.FixedArrays.pas"/>
+        <DCCReference Include="utils\db\Utils.DB.Naming.pas"/>
+        <DCCReference Include="types\types.pas"/>
+        <DCCReference Include="ui\Main.pas">
             <Form>Form1</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="utils\fixed_arrays\Utils.FixedArrays.pas"/>
-        <DCCReference Include="utils\db\Utils.DB.Naming.pas"/>
+        <DCCReference Include="ui\StadionEingabeFenster.pas">
+            <Form>Form2</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="utils\CSV\Utils.RTTI.pas"/>
+        <DCCReference Include="utils\CSV\Utils.CSV.pas"/>
+        <DCCReference Include="ui\TeamEingabeFenster.pas">
+            <Form>Form3</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
