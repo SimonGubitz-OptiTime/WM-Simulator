@@ -52,6 +52,7 @@ object StadionEingabeFenster: TStadionEingabeFenster
     Width = 121
     Height = 23
     TabOrder = 0
+    Text = 'aaa'
     TextHint = 'Allianz Arena'
   end
   object OrtEingabeFeld: TEdit
@@ -60,6 +61,7 @@ object StadionEingabeFenster: TStadionEingabeFenster
     Width = 121
     Height = 23
     TabOrder = 1
+    Text = 'bbb'
     TextHint = 'M'#252'nchen'
   end
   object ZuschauerKapazitaetEingabeFeld: TEdit
@@ -68,6 +70,7 @@ object StadionEingabeFenster: TStadionEingabeFenster
     Width = 121
     Height = 23
     TabOrder = 2
+    Text = '123'
     TextHint = '75024'
   end
   object BestaetigenButton: TButton

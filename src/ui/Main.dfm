@@ -35,14 +35,6 @@ object MainForm: TMainForm
         Font.Style = []
         ParentFont = False
       end
-      object ListBox1: TListBox
-        Left = 3
-        Top = 104
-        Width = 1091
-        Height = 513
-        ItemHeight = 15
-        TabOrder = 0
-      end
       object TeamHinzufuegenButton: TButton
         Left = 3
         Top = 54
@@ -51,19 +43,33 @@ object MainForm: TMainForm
         Caption = 'Team Hinzuf'#252'gen'
         ImageIndex = 1
         Images = SymbolImageList
-        TabOrder = 1
+        TabOrder = 0
         OnClick = TeamHinzufuegenButtonClick
       end
       object StadionHinzufuegenButton: TButton
-        Left = 143
+        Left = 552
         Top = 54
         Width = 146
         Height = 25
         Caption = 'Stadion Hinzuf'#252'gen'
         ImageIndex = 3
         Images = SymbolImageList
-        TabOrder = 2
+        TabOrder = 1
         OnClick = StadionHinzufuegenButtonClick
+      end
+      object StadienStringGrid: TStringGrid
+        Left = 552
+        Top = 104
+        Width = 542
+        Height = 513
+        TabOrder = 2
+      end
+      object TeamsStringGrid: TStringGrid
+        Left = 3
+        Top = 104
+        Width = 542
+        Height = 513
+        TabOrder = 3
       end
     end
     object Verlosung: TTabSheet

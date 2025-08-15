@@ -76,6 +76,8 @@ begin
   database := TDB<TStadion>.Create('Stadien');
   database.AddCSVTableToDB(Stadion);
 
+  Self.Close;
+
 
 end;
 

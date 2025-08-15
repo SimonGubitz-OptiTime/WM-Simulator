@@ -16,5 +16,8 @@ bin/
 *.dproj.local
 *.identcache
 
+# Ignore the database files
+database/
+
 # Other
 **/.DS_Store
