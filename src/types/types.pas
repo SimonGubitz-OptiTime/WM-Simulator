@@ -2,6 +2,7 @@
 
 interface
 
+type TDBUpdateEvent = procedure of object;
 
 type TStadion = record
     Name: String; // z.B. "Allianz Arena"
@@ -15,12 +16,12 @@ type TTeamVerband = (UEFA, CONMEBOL, AFC, CAF, CONCACAF, OFC);
 
 type TTeam = record
     Name: String;
-    FIFACode: array[0..2] of Char;
+    FIFACode: string; // 3 Zeichen lang
     TeamVerband: TTeamVerband;
     HistorischeWMSiege: Byte;
     Heimstadion: TStadion; // in der Simulation vielleicht +5% Siegchancen
     Flagge: Byte; // als index für eine TImageList
-    SpielerListe: array[0..11] of String; // Nur Namen
+    SpielerListe: array[0..10] of String; // Nur Namen
     TeamRanking: TTeamRanking;
 
     // ↓ für spätere Statistiken - keine Stammdaten

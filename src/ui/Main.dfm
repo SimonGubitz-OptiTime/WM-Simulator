@@ -12,6 +12,7 @@ object MainForm: TMainForm
   Font.Style = []
   Position = poDesigned
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   TextHeight = 15
   object PageControl: TPageControl
     Left = 0
@@ -75,10 +76,42 @@ object MainForm: TMainForm
     object Verlosung: TTabSheet
       Caption = 'Verlosung'
       ImageIndex = 1
+      object UeberschriftVerlosung: TLabel
+        Left = 3
+        Top = 3
+        Width = 317
+        Height = 45
+        Caption = 'UeberschriftVerlosung'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -35
+        Font.Name = 'Harlow Solid Italic'
+        Font.Style = []
+        ParentFont = False
+      end
     end
     object Spielplan: TTabSheet
       Caption = 'Spielplan'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -12
+      Font.Name = 'Harlow Solid Italic'
+      Font.Style = []
       ImageIndex = 2
+      ParentFont = False
+      object UeberschriftSpielplan: TLabel
+        Left = 3
+        Top = 3
+        Width = 303
+        Height = 45
+        Caption = 'UeberschriftSpielplan'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -35
+        Font.Name = 'Harlow Solid Italic'
+        Font.Style = []
+        ParentFont = False
+      end
     end
     object Spiel: TTabSheet
       Caption = 'Spiel'
@@ -87,7 +120,7 @@ object MainForm: TMainForm
   end
   object SymbolImageList: TImageList
     Left = 1040
-    Top = 560
+    Top = 592
     Bitmap = {
       494C010104000800040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020

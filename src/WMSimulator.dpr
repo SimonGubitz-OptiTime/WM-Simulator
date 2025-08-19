@@ -10,8 +10,10 @@ uses
   Utils.RTTI in 'utils\CSV\Utils.RTTI.pas',
   Utils.CSV in 'utils\CSV\Utils.CSV.pas',
   TeamEingabeFenster in 'ui\TeamEingabeFenster.pas' {Form3},
-  Utils.userinput in 'utils\userinput\Utils.userinput.pas',
-  db in 'db\db.pas';
+  db in 'db\db.pas',
+  Utils.UserInput in 'utils\user_input\Utils.UserInput.pas',
+  Utils.StringFormating in 'utils\string_formating\Utils.StringFormating.pas',
+  Utils.TableFormating in 'utils\table_formating\Utils.TableFormating.pas';
 
 {$R *.res}
 

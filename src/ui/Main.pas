@@ -5,6 +5,7 @@ interface
 uses
   DB,
   Types,
+  Utils.TableFormating,
   StadionEingabeFenster,
   TeamEingabeFenster,
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
@@ -26,15 +27,20 @@ type
     StadionEingabe: TStadionEingabeFenster;
     StadienStringGrid: TStringGrid;
     TeamsStringGrid: TStringGrid;
+    UeberschriftVerlosung: TLabel;
+    UeberschriftSpielplan: TLabel;
 
+    procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure TeamHinzufuegenButtonClick(Sender: TObject);
     procedure StadionHinzufuegenButtonClick(Sender: TObject);
 
-    procedure DrawTListBox();
-
   private
-    { Private-Deklarationen }
+    FTeamDB: TDB<TTeam>;
+    FStadionDB: TDB<TStadion>;
+
+    procedure TeamTabelleZeichnen;
+    procedure StadionTabelleZeichnen;
   public
     { Public-Deklarationen }
   end;
@@ -47,57 +53,82 @@ implementation
 
 {$R *.dfm}
 
+procedure TMainForm.TeamTabelleZeichnen;
+var
+  Rows: TArray<TArray<String>>;
+begin
+
+  Rows := FTeamDB.GetUnstructuredTableFromCSV();
+
+  if Length(Rows) <> 0 then
+  begin
+    Utils.TableFormating.TabelleZeichnen(TeamsStringGrid, Rows);
+  end;
+
+end;
+
+procedure TMainForm.StadionTabelleZeichnen;
+var
+  Rows: TArray<TArray<String>>;
+begin
+
+  Rows := FStadionDB.GetUnstructuredTableFromCSV();
+
+  if Length(Rows) <> 0 then
+  begin
+    Utils.TableFormating.TabelleZeichnen(StadienStringGrid, Rows);
+  end;
+
+end;
+
 procedure TMainForm.TeamHinzufuegenButtonClick(Sender: TObject);
 begin
-  TeamEingabe := TTeamEingabeFenster.Create(nil);
+  TeamEingabe := TTeamEingabeFenster.Create(FTeamDB);
   TeamEingabe.Show; // ShowModal;
 end;
 
 procedure TMainForm.StadionHinzufuegenButtonClick(Sender: TObject);
 begin
-  StadionEingabe:= TStadionEingabeFenster.Create(self);
+  StadionEingabe:= TStadionEingabeFenster.Create(FStadionDB);
   StadionEingabe.Show; // ShowModal;
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 var
-  StadionDB: TDB<TStadion>;
-  TeamDB: TDB<TTeam>;
-
-  Rows: TArray<String>;
-  i, j: Integer;
+  Rows: TArray<TArray<String>>;                                                                                                
 begin
 
-  TeamDB    := TDB<TTeam>.Create('Teams');
-  StadionDB := TDB<TStadion>.Create('Stadien');
+  FTeamDB    := TDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
+  FStadionDB := TDB<TStadion>.Create('Stadien');
 
-  // Load Teams
-  if TeamDB.Initialized then
+  // Teams laden
+  if FTeamDB.Initialized then
   begin
-    Rows := TeamDB.GetStructuredTableFromCSV();
-
-    TeamsStringGrid.RowCount := Length(Rows);
-    TeamsStringGrid.ColCount := Length(Rows[0]);
-
-    TeamsStringGrid.Cells := Rows;
+    StadionTabelleZeichnen;
   end;
 
-  // Load Stadien
-  if StadionDB.Initialized then
+  FTeamDB.AddDBUpdateEventListener(TeamTabelleZeichnen);
+
+  // Stadien laden
+  if FStadionDB.Initialized then
   begin
-    Rows := StadionDB.GetUnstructuredTableFromCSV();
-
-    StadienStringGrid.RowCount := Length(Rows);
-    StadienStringGrid.ColCount := Length(Rows[0]);
-
-    StadienStringGrid.Cells := Rows;
-
-
+    StadionTabelleZeichnen;
   end;
+
+  FStadionDB.AddDBUpdateEventListener(StadionTabelleZeichnen);
 
 
   // Einen State in src/simulation erstellen
 
+
 end;
+
+procedure TMainForm.FormDestroy(Sender: TObject);
+begin
+  // Aufräumen
+  FStadionDB.Destroy;
+  FTeamDB.Destroy;
+end;
+
 
 end.

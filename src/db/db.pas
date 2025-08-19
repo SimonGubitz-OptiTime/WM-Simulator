@@ -3,25 +3,28 @@
 interface
 
 uses
+  Types,
   Utils.DB,
   Utils.CSV,
   Utils.RTTI,
-  System.Classes, System.SysUtils, System.IOUtils, System.Rtti, Vcl.Dialogs;
-
+  System.Generics.Collections, System.Classes, System.SysUtils, System.IOUtils, System.Rtti, Vcl.Dialogs;
 
 
 type TDB<T: record> = class
-  
 private
+  FDBUpdateEventListeners: TList<TDBUpdateEvent>;
   FTableName: String;
   FInitialized: Boolean;
   FFileName: String;
   FFileDirectory: String;
 
-  CachedCSV: TArray<T>; static;
-  CachedUnstructuredCSV: String; static;
-  CachedHeader: TArray<String>; static;
-  CachedHeaderString: String; static;
+  class var CachedCSV: TArray<T>;
+  class var CachedUnstructuredCSV: String;
+  class var CachedHeader: TArray<String>;
+  class var CachedHeaderString: String;
+
+
+  procedure CallDBUpdateEventListeners();
 
 public
   property Initialized: Boolean read FInitialized;
@@ -38,11 +41,18 @@ public
   function    GetStructuredTableFromCSV(): TArray<T>;
   procedure   SetStructuredTableInCSV(CSVArray: TArray<T>);
 
-  function    GetUnstructuredTableFromCSV(): TArray<String>;
+  function    GetUnstructuredTableFromCSV(): TArray<TArray<String>>;
   procedure   SetUnstructuredTableInCSV(CSVString: String); // unnötig eigentlich
 
   procedure   AddCSVTableToDB(CSVObject: T);
   procedure   RemoveCSVTableFromDB();
+
+
+  // Event listener JS equivalent
+  // adding function pointers to be called when the CSV table changes
+  procedure AddDBUpdateEventListener(CallbackFunction: TDBUpdateEvent);
+
+  destructor Destroy;
 
 end;
 
@@ -52,15 +62,15 @@ implementation
 
 constructor TDB<T>.Create(TableName: String);
 begin
-FInitialized := false;
-FTableName := TableName;
+  FInitialized := false;
+  FTableName := TableName;
 
   FFileName := Utils.DB.GetTablesFilePath(FTableName);
   FFileDirectory := Utils.DB.GetTablesDirPath();
   if ((TDirectory.Exists(FFileDirectory)) and FileExists(FFileName)) then
     FInitialized := true;
 
-
+  FDBUpdateEventListeners := TList<TDBUpdateEvent>.Create();
 end;
 
 
@@ -73,8 +83,7 @@ begin
     raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
 
 
-//    CSVArray := GetStructuredTableFromCSV()[line];
-
+  // CSVArray := GetStructuredTableFromCSV()[line];
 
 
 end;
@@ -87,6 +96,9 @@ begin
 
   // .csv öffnen
 
+  
+  // Call the event listeners 
+  CallDBUpdateEventListeners();
 end;
 
 
@@ -97,6 +109,8 @@ begin
     raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
 
   // .csv öffnen
+
+  
 end;
 
 procedure TDB<T>.SetRowInCSV(RowID: Integer; RowType: T);
@@ -105,6 +119,10 @@ begin
     raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
 
   // .csv öffnen
+  
+
+  // Call the event listeners 
+  CallDBUpdateEventListeners();
 end;
 
 procedure TDB<T>.AddRowToCSV(RowValues: T);
@@ -131,9 +149,9 @@ begin
   finally
     SW.Free;
   end;
-
   
-
+  // Call the event listeners 
+  CallDBUpdateEventListeners();
 end;
 
 
@@ -181,7 +199,6 @@ begin
       FS.Free;
       SR.Free;
   end;
-
 end;
 
 procedure TDB<T>.SetStructuredTableInCSV(CSVArray: TArray<T>);
@@ -215,10 +232,13 @@ begin
     FS.Free;
     SW.Free;
   end;
+  
+  // Call the event listeners 
+  CallDBUpdateEventListeners();
 end;
 
 
-function TDB<T>.GetUnstructuredTableFromCSV(): TArray<String>;
+function TDB<T>.GetUnstructuredTableFromCSV(): TArray<TArray<String>>;
 var
   FS: TFileStream;
   SR: TStreamReader;
@@ -227,6 +247,9 @@ begin
   if not FInitialized then
     raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
 
+
+  SetLength(Result, 0);
+
   FS := nil;
   SR := nil;
 
@@ -234,7 +257,15 @@ begin
     FS := TFileStream.Create(FFileName, fmOpenRead);
     SR := TStreamReader.Create(FS);
 
-    Result := Utils.CSV.DeserializeCSV(SR.ReadToEnd());
+    while not(SR.EndOfStream) do
+    begin
+
+      SetLength(Result, Length(Result) + 1);
+      Result[High(Result)] := Utils.CSV.DeserializeCSV(SR.ReadLine());
+
+      // Result := Result + Utils.CSV.DeserializeCSV(SR.ReadLine());
+
+    end;
 
   finally
     FS.Free;
@@ -264,6 +295,9 @@ begin
     FS.Free;
     SW.Free;
   end;
+  
+  // Call the event listeners 
+  CallDBUpdateEventListeners();
 end;
 
 
@@ -294,8 +328,9 @@ begin
       FS := TFileStream.Create(FFileName, fmCreate or fmShareExclusive);
       SW := TStreamWriter.Create(FS);
 
-      SW.Write(Utils.CSV.TCSVUtils<T>.SerializeRowCSV(CSVObject));
-          
+      SW.WriteLine(Utils.CSV.TCSVUtils<T>.GetCSVHeaderAsString);
+      SW.WriteLine(Utils.CSV.TCSVUtils<T>.SerializeRowCSV(CSVObject));
+
 
       FInitialized := true;
 
@@ -304,6 +339,9 @@ begin
       SW.Free;
     end;
   end;
+
+  // Call the event listeners 
+  CallDBUpdateEventListeners();
 end;
 
 procedure TDB<T>.RemoveCSVTableFromDB();
@@ -320,8 +358,49 @@ begin
   else
     raise Exception.Create('db.pas Error: Table "' + FTableName + '" does not exist.');
 
+  // Clear the cached data
+  SetLength(CachedCSV, 0);
+  CachedUnstructuredCSV := '';
+  SetLength(CachedHeader, 0);
+  CachedHeaderString := '';
+
+  // Call the event listeners 
+  CallDBUpdateEventListeners();
+end;
+
+procedure TDB<T>.AddDBUpdateEventListener(CallbackFunction: TDBUpdateEvent);
+begin 
+
+  // Add "CallbackFunction" to a list of event listeners
+  // This will be called whenever the CSV table changes
+  FDBUpdateEventListeners.Add(CallbackFunction);
 
 end;
 
+procedure TDB<T>.CallDBUpdateEventListeners();
+var
+  i: Integer;
+begin
+  for i := 0 to FDBUpdateEventListeners.Count -1  do
+  begin
+    FDBUpdateEventListeners[i]();
+  end;
+end;
+
+destructor TDB<T>.Destroy;
+begin
+  // Free the list of event listeners
+  FDBUpdateEventListeners.Free;
+  FDBUpdateEventListeners.Clear;
+
+  // Call the inherited destructor
+  inherited Destroy;
+
+  // Clear the cached data
+  SetLength(CachedCSV, 0);
+  CachedUnstructuredCSV := '';
+  SetLength(CachedHeader, 0);
+  CachedHeaderString := '';
+end;
 
 end.

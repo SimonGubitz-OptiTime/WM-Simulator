@@ -151,8 +151,10 @@
             <Form>Form3</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="utils\userinput\Utils.userinput.pas"/>
         <DCCReference Include="db\db.pas"/>
+        <DCCReference Include="utils\user_input\Utils.UserInput.pas"/>
+        <DCCReference Include="utils\string_formating\Utils.StringFormating.pas"/>
+        <DCCReference Include="utils\table_formating\Utils.TableFormating.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

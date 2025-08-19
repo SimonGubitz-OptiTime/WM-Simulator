@@ -49,7 +49,7 @@ object StadionEingabeFenster: TStadionEingabeFenster
   object NameEingabeFeld: TEdit
     Left = 8
     Top = 101
-    Width = 121
+    Width = 145
     Height = 23
     TabOrder = 0
     Text = 'aaa'
@@ -58,7 +58,7 @@ object StadionEingabeFenster: TStadionEingabeFenster
   object OrtEingabeFeld: TEdit
     Left = 8
     Top = 152
-    Width = 121
+    Width = 145
     Height = 23
     TabOrder = 1
     Text = 'bbb'
@@ -67,15 +67,15 @@ object StadionEingabeFenster: TStadionEingabeFenster
   object ZuschauerKapazitaetEingabeFeld: TEdit
     Left = 8
     Top = 213
-    Width = 121
+    Width = 145
     Height = 23
     TabOrder = 2
     Text = '123'
     TextHint = '75024'
   end
   object BestaetigenButton: TButton
-    Left = 8
-    Top = 264
+    Left = 541
+    Top = 408
     Width = 75
     Height = 25
     Caption = 'Best'#228'tigen'
