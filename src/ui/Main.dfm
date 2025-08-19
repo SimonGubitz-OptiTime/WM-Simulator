@@ -19,7 +19,7 @@ object MainForm: TMainForm
     Top = 0
     Width = 1105
     Height = 681
-    ActivePage = Stammdaten
+    ActivePage = Verlosung
     TabOrder = 0
     object Stammdaten: TTabSheet
       Caption = 'Stammdaten'
@@ -34,6 +34,84 @@ object MainForm: TMainForm
         Font.Height = -35
         Font.Name = 'Harlow Solid Italic'
         Font.Style = []
+        ParentFont = False
+      end
+      object StadionAnzahlLabel: TLabel
+        Left = 552
+        Top = 85
+        Width = 14
+        Height = 15
+        Caption = '00'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clRed
+        Font.Height = -12
+        Font.Name = 'Arial'
+        Font.Style = []
+        ParentFont = False
+      end
+      object StadionVergleichsLabel: TLabel
+        Left = 572
+        Top = 85
+        Width = 12
+        Height = 15
+        Caption = '<'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object StadionGewollteAnzahlLabel: TLabel
+        Left = 590
+        Top = 85
+        Width = 14
+        Height = 15
+        Caption = '16'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clGreen
+        Font.Height = -12
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object TeamAnzahlLabel: TLabel
+        Left = 3
+        Top = 85
+        Width = 14
+        Height = 15
+        Caption = '00'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clRed
+        Font.Height = -12
+        Font.Name = 'Arial'
+        Font.Style = []
+        ParentFont = False
+      end
+      object TeamVergleichsLabel: TLabel
+        Left = 23
+        Top = 85
+        Width = 12
+        Height = 15
+        Caption = '<'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object TeamGewollteAnzahlLabel: TLabel
+        Left = 41
+        Top = 85
+        Width = 14
+        Height = 15
+        Caption = '48'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clGreen
+        Font.Height = -12
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
         ParentFont = False
       end
       object TeamHinzufuegenButton: TButton
@@ -72,6 +150,16 @@ object MainForm: TMainForm
         Height = 513
         TabOrder = 3
       end
+      object ZurVerlosungButton: TButton
+        Left = 1019
+        Top = 623
+        Width = 75
+        Height = 25
+        Caption = 'Verlosen'
+        Enabled = False
+        TabOrder = 4
+        OnClick = ZurVerlosungButtonClick
+      end
     end
     object Verlosung: TTabSheet
       Caption = 'Verlosung'
@@ -89,13 +177,22 @@ object MainForm: TMainForm
         Font.Style = []
         ParentFont = False
       end
+      object ZumSpielplanButton: TButton
+        Left = 1019
+        Top = 623
+        Width = 75
+        Height = 25
+        Caption = 'Spielplan'
+        Enabled = False
+        TabOrder = 0
+      end
     end
     object Spielplan: TTabSheet
       Caption = 'Spielplan'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -12
-      Font.Name = 'Harlow Solid Italic'
+      Font.Name = 'Arial'
       Font.Style = []
       ImageIndex = 2
       ParentFont = False
@@ -112,6 +209,15 @@ object MainForm: TMainForm
         Font.Style = []
         ParentFont = False
       end
+      object ZumSpielButton: TButton
+        Left = 1019
+        Top = 623
+        Width = 75
+        Height = 25
+        Caption = 'Spielen'
+        Enabled = False
+        TabOrder = 0
+      end
     end
     object Spiel: TTabSheet
       Caption = 'Spiel'
@@ -119,7 +225,7 @@ object MainForm: TMainForm
     end
   end
   object SymbolImageList: TImageList
-    Left = 1040
+    Left = 496
     Top = 592
     Bitmap = {
       494C010104000800040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600

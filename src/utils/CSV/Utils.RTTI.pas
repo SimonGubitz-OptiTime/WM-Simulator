@@ -7,7 +7,7 @@ uses
 
 type TRttiUtils<T> = record
   class function StrToT(ToConvert: TRttiField; ConvertValue: String): TValue; static;
-  class function TToStr(ConvertValue: T): String; static;
+  class function TToStr(ConvertValue: TRttiField): String; static;
 end;
 
 implementation
@@ -34,9 +34,25 @@ begin
     end;
 end;
 
-class function TRttiUtils<T>.TToStr(ConvertValue: T): String;
+class function TRttiUtils<T>.TToStr(ConvertValue: TRttiField): String;
+var
+  tempType: TValue;
+  i: Integer;
 begin
-    Result := TValue.From<T>(ConvertValue).ToString;
+
+    tempType := TValue.From<TRttiField>(ConvertValue);
+
+    if (tempType.IsArray) then
+    begin
+        for i := 0 to tempType.GetArrayLength()-1 do
+        begin
+            Result := Result + tempType.GetArrayElement(i).ToString() + ', '
+        end;
+    end
+    else
+    begin
+      Result := ConvertValue.GetValue(@TValue.From<TRttiField>(ConvertValue)).ToString();
+    end;
 end;
 
 end.

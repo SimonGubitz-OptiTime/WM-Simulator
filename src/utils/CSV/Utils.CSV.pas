@@ -81,12 +81,7 @@ end;
 
 class function TCSVUtils<T>.SerializeCSV(CSVArray: TArray<T>): String;
 var
-    RttiContext: TRttiContext;
-    RttiType: TRttiType;
-    RttiFields: TArray<TRttiField>;
-
-    i, j: Integer;
-    headers: TArray<String>;
+    i: Integer;
 begin
 
     Result := GetCSVHeaderAsString() + sLineBreak;
@@ -204,6 +199,7 @@ var
     RttiType: TRttiType;
     RttiFields: TArray<TRttiField>;
     i: Integer;
+    debugName: String;
 begin
 
     RttiContext := TRttiContext.Create;
@@ -212,10 +208,13 @@ begin
 
     for i := 0 to Length(RttiFields)-1 do
     begin
+
+        debugName := RttiFields[i].Name;
+
         if i > Low(RttiFields) then
             Result := Result + delimiter;
 
-        Result := Result + RttiFields[i].GetValue(@Row).ToString
+        Result := Result + Utils.RTTI.TRttiUtils<T>.TToStr(RttiFields[i]);
 
     end;
 

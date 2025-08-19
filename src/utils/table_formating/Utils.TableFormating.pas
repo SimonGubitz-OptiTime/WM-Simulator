@@ -2,6 +2,7 @@ unit Utils.TableFormating;
 
 interface
 uses
+  SysUtils,
   Vcl.Grids;
 
 procedure SetColumnFullWidth(var Grid: TStringGrid; ACol: Integer);
@@ -34,15 +35,16 @@ var
   i, j: Integer;
 begin
       Grid.RowCount := Length(Rows);
-      Grid.ColCount := Length(Rows[0]);
+      Grid.ColCount := Length(Rows[0])+1;
 
 
       for i := Low(Rows) to High(Rows) do
       begin
+        Grid.Cells[0, i+1] := IntToStr(i+1);
         for j := Low(Rows[i]) to High(Rows[i]) do
         begin
-          SetColumnFullWidth(Grid, j);
-          Grid.Cells[j, i] := Rows[i][j];
+//          SetColumnFullWidth(Grid, j);
+          Grid.Cells[j+1, i] := Rows[i][j];
         end;
       end;
 end;

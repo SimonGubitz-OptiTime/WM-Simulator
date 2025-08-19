@@ -29,22 +29,38 @@ type
     TeamsStringGrid: TStringGrid;
     UeberschriftVerlosung: TLabel;
     UeberschriftSpielplan: TLabel;
+    ZumSpielplanButton: TButton;
+    ZurVerlosungButton: TButton;
+    ZumSpielButton: TButton;
+    StadionAnzahlLabel: TLabel;
+    StadionVergleichsLabel: TLabel;
+    StadionGewollteAnzahlLabel: TLabel;
+    TeamAnzahlLabel: TLabel;
+    TeamVergleichsLabel: TLabel;
+    TeamGewollteAnzahlLabel: TLabel;
 
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure TeamHinzufuegenButtonClick(Sender: TObject);
     procedure StadionHinzufuegenButtonClick(Sender: TObject);
+    procedure ZurVerlosungButtonClick(Sender: TObject);
 
   private
     FTeamDB: TDB<TTeam>;
     FStadionDB: TDB<TStadion>;
 
-    procedure TeamTabelleZeichnen;
-    procedure StadionTabelleZeichnen;
+    FTeamAnzahl: Integer;
+    FStadionAnzahl: Integer;
+    const FGewollteTeamAnzahl: Integer = 48;
+    const FGewollteStadionAnzahl: Integer = 16;
+
+    procedure TeamDBUpdate;
+    procedure TeamTabelleZeichnen(Rows: TArray<TArray<String>>);
+    procedure StadionDBUpdate;
+    procedure StadionTabelleZeichnen(Rows: TArray<TArray<String>>);
   public
     { Public-Deklarationen }
   end;
-
 
 var
   MainForm: TMainForm;
@@ -53,13 +69,39 @@ implementation
 
 {$R *.dfm}
 
-procedure TMainForm.TeamTabelleZeichnen;
+procedure TMainForm.TeamDBUpdate;
 var
   Rows: TArray<TArray<String>>;
 begin
-
+  
   Rows := FTeamDB.GetUnstructuredTableFromCSV();
+  FTeamAnzahl := Length(Rows) - 1; // Header
 
+  TeamAnzahlLabel.Caption := '0' + IntToStr(FTeamAnzahl);
+  if FTeamAnzahl >= 10 then
+  begin
+    TeamAnzahlLabel.Caption := IntToStr(FTeamAnzahl);
+  end;
+  StadionAnzahlLabel.Font.Color := clRed;
+
+  TeamVergleichsLabel.Caption := '<';
+  if FTeamAnzahl = FGewollteTeamAnzahl then
+  begin
+    TeamVergleichsLabel.Caption := '=';
+    TeamVergleichsLabel.Font.Color := clGreen;
+    TeamVergleichsLabel.Font.Style := [fsBold];
+    TeamAnzahlLabel.Font.Color := clGreen;
+    TeamAnzahlLabel.Font.Style := [fsBold];
+
+    TeamHinzufuegenButton.Enabled := false;
+  end;
+
+  // Hierdrin wird GetUnstructuredTableFromCSV aufgerufen also vorher GetStructuredTableFromCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
+  TeamTabelleZeichnen(Rows);
+end;
+
+procedure TMainForm.TeamTabelleZeichnen(Rows: TArray<TArray<String>>);
+begin
   if Length(Rows) <> 0 then
   begin
     Utils.TableFormating.TabelleZeichnen(TeamsStringGrid, Rows);
@@ -67,13 +109,39 @@ begin
 
 end;
 
-procedure TMainForm.StadionTabelleZeichnen;
+procedure TMainForm.StadionDBUpdate;
 var
   Rows: TArray<TArray<String>>;
 begin
-
+  
   Rows := FStadionDB.GetUnstructuredTableFromCSV();
+  FStadionAnzahl := Length(Rows) - 1; // Header
 
+  StadionAnzahlLabel.Caption := '0' + IntToStr(FStadionAnzahl);
+  if FStadionAnzahl >= 10 then
+  begin
+    StadionAnzahlLabel.Caption := IntToStr(FStadionAnzahl);
+  end;
+  StadionAnzahlLabel.Font.Color := clRed;
+
+  StadionVergleichsLabel.Caption := '<';
+  if FStadionAnzahl = FGewollteStadionAnzahl then
+  begin
+    StadionVergleichsLabel.Caption := '=';
+    StadionVergleichsLabel.Font.Color := clGreen;
+    StadionVergleichsLabel.Font.Style := [fsBold];
+    StadionAnzahlLabel.Font.Color := clGreen;
+    StadionAnzahlLabel.Font.Style := [fsBold];
+
+    StadionHinzufuegenButton.Enabled := false;
+  end;
+
+  // Hierdrin wird GetUnstructuredTableFromCSV aufgerufen also vorher GetStructuredTableFromCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
+  StadionTabelleZeichnen(Rows);
+end;
+
+procedure TMainForm.StadionTabelleZeichnen(Rows: TArray<TArray<String>>);
+begin
   if Length(Rows) <> 0 then
   begin
     Utils.TableFormating.TabelleZeichnen(StadienStringGrid, Rows);
@@ -94,31 +162,39 @@ begin
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
-var
-  Rows: TArray<TArray<String>>;                                                                                                
 begin
 
+  TeamGewollteAnzahlLabel.Caption := IntToStr(FGewollteTeamAnzahl);
+  StadionGewollteAnzahlLabel.Caption := IntToStr(FGewollteStadionAnzahl);
+
   FTeamDB    := TDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
-  FStadionDB := TDB<TStadion>.Create('Stadien');
+  FStadionDB := TDB<TStadion>.Create(TStadionEingabeFenster.GetTableName);
 
   // Teams laden
   if FTeamDB.Initialized then
   begin
-    StadionTabelleZeichnen;
+    TeamDBUpdate;
   end;
 
-  FTeamDB.AddDBUpdateEventListener(TeamTabelleZeichnen);
+  FTeamDB.AddDBUpdateEventListener(TeamDBUpdate);
 
   // Stadien laden
   if FStadionDB.Initialized then
   begin
-    StadionTabelleZeichnen;
+    StadionDBUpdate;
   end;
 
-  FStadionDB.AddDBUpdateEventListener(StadionTabelleZeichnen);
+  FStadionDB.AddDBUpdateEventListener(StadionDBUpdate);
 
 
   // Einen State in src/simulation erstellen
+
+
+end;
+
+procedure TMainForm.ZurVerlosungButtonClick(Sender: TObject);
+begin
+  // Gültigkeitsprüfung
 
 
 end;

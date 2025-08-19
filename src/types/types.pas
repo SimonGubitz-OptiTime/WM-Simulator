@@ -11,15 +11,16 @@ type TStadion = record
     Zuschauer: UInt32; // " - für die Simulation wenn >90% Kapazität, +5% Siegchancen wenn Heimstadion
 end;
 
-type TTeamRanking = (SehrStark = 4, Stark = 3, MittelStark = 2, Schwach = 1);
-type TTeamVerband = (UEFA, CONMEBOL, AFC, CAF, CONCACAF, OFC);
+type TTeamVerband = (AFC, CAF, CONCACAF, CONMEBOL, OFC, UEFA);
+type TTeamRanking = (SehrStark, Stark, MittelStark, Schwach);
+
 
 type TTeam = record
     Name: String;
     FIFACode: string; // 3 Zeichen lang
     TeamVerband: TTeamVerband;
     HistorischeWMSiege: Byte;
-    Heimstadion: TStadion; // in der Simulation vielleicht +5% Siegchancen
+    HeimstadionName: String; // in der Simulation vielleicht +5% Siegchancen
     Flagge: Byte; // als index für eine TImageList
     SpielerListe: array[0..10] of String; // Nur Namen
     TeamRanking: TTeamRanking;

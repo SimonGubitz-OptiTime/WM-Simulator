@@ -160,7 +160,6 @@ procedure TTeamEingabeFenster.BestaetigenButtonClick(Sender: TObject);
 var
   placeholder: Integer;
   Team: TTeam;
-  database: TDB<TTeam>;
 begin
 
   // Gültigkeitsprüfung der Eingaben
@@ -196,11 +195,9 @@ begin
   Team.FIFACode := FIFACodeEingabeFeld.Text;
   Team.TeamVerband := TTeamVerband(TeamVerbandEingabeBox.ItemIndex);
   Team.HistorischeWMSiege := StrToInt(HistorischeSiegeEingabeFeld.Text);
-  Team.Heimstadion.Name := HeimstadionEingabeFeld.Text;
+  Team.HeimstadionName := HeimstadionEingabeFeld.Text; // record ???
   Team.Flagge := 0; // TODO: Flagge setzen
   Team.TeamRanking := TTeamRanking(TeamRankingEingabeBox.ItemIndex);
-  // Die Spieler Liste füllen
-  ShowMessage('Team: ' + IntToStr(Length(Team.SpielerListe)) + #10#13 + 'SpielerListe: ' + IntToStr(SpielerListe.Count));
   for placeholder := Low(Team.SpielerListe) to High(Team.SpielerListe) do
   begin
     Team.SpielerListe[placeholder] := SpielerListe[placeholder];

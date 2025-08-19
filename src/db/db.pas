@@ -12,6 +12,7 @@ uses
 
 type TDB<T: record> = class
 private
+  FFS: TFileStream;
   FDBUpdateEventListeners: TList<TDBUpdateEvent>;
   FTableName: String;
   FInitialized: Boolean;
@@ -24,7 +25,8 @@ private
   class var CachedHeaderString: String;
 
 
-  procedure CallDBUpdateEventListeners();
+  procedure   CallDBUpdateEventListeners();
+  procedure   AddCSVTableToDB(CSVObject: T);
 
 public
   property Initialized: Boolean read FInitialized;
@@ -44,7 +46,6 @@ public
   function    GetUnstructuredTableFromCSV(): TArray<TArray<String>>;
   procedure   SetUnstructuredTableInCSV(CSVString: String); // unnötig eigentlich
 
-  procedure   AddCSVTableToDB(CSVObject: T);
   procedure   RemoveCSVTableFromDB();
 
 
@@ -67,10 +68,13 @@ begin
 
   FFileName := Utils.DB.GetTablesFilePath(FTableName);
   FFileDirectory := Utils.DB.GetTablesDirPath();
-  if ((TDirectory.Exists(FFileDirectory)) and FileExists(FFileName)) then
-    FInitialized := true;
+  if not(TDirectory.Exists(FFileDirectory)) then
+    TDirectory.CreateDirectory(FFileDirectory);
 
+  FFS := TFileStream.Create(FFileName, fmOpenReadWrite or fmShareDenyWrite);
   FDBUpdateEventListeners := TList<TDBUpdateEvent>.Create();
+
+  FInitialized := true;
 end;
 
 
@@ -128,26 +132,36 @@ end;
 procedure TDB<T>.AddRowToCSV(RowValues: T);
 var
   SW: TStreamWriter;
-  writerString: String;
+  WriterString: String;
 begin
 
-  SW := nil;
+  if not(FileExists(FFileName)) then
+  begin
+    AddCSVTableToDB(RowValues);
+    Exit;
+  end
+  else
+  begin
+    SW := nil;
 
-  if not FInitialized then
-    raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
+    if not FInitialized then
+      raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
 
-  // Read in the full CSV file
-  // CSVArray := GetStructuredTableFromCSV();
+    // Read in the full CSV file
+    // CSVArray := GetStructuredTableFromCSV();
 
-  try
-    SW := TStreamWriter.Create(FFileName, true);
+    try
+      SW := TStreamWriter.Create(FFS);
+      SW.BaseStream.Position := FFS.size;
+      {if SW.Encoding = TEncoding.UTF16 then
+        SW.BaseStream.Position := FFS.size / 2;} // 2 byte pro character
 
-    writerString := Utils.CSV.TCSVUtils<T>.SerializeRowCSV(RowValues);
+      WriterString := Utils.CSV.TCSVUtils<T>.SerializeRowCSV(RowValues);
+      SW.WriteLine(WriterString);
 
-    SW.WriteLine(writerString);
-
-  finally
-    SW.Free;
+    finally
+      SW.Free;
+    end;
   end;
   
   // Call the event listeners 
@@ -160,7 +174,6 @@ end;
 // The State of the File is determined by the FInitialized variable
 function TDB<T>.GetStructuredTableFromCSV(): TArray<T>;
 var
-  FS: TFileStream;
   SR: TStreamReader;
   FileSize: Int64;
   Lines: TStringList;
@@ -173,14 +186,12 @@ begin
   if not FInitialized then
       raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
 
-  FS := nil;
   SR := nil;
 
   Row := Default(T);
 
   try
-    FS := TFileStream.Create(FFileName, fmOpenRead);
-    SR := TStreamReader.Create(FS);
+    SR := TStreamReader.Create(FFS);
 
     // headline ignorieren
     SR.ReadLine();
@@ -196,27 +207,23 @@ begin
 
     end;
   finally
-      FS.Free;
       SR.Free;
   end;
 end;
 
 procedure TDB<T>.SetStructuredTableInCSV(CSVArray: TArray<T>);
 var
-  FS: TFileStream;
   SW: TStreamWriter;
   i: Integer;
 begin
 
   if not FInitialized then
-    raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
+    raise Exception.Create('db.pas Error: TDB is not initialized. Call .Create first.');
 
-  FS := nil;
   SW := nil;
 
   try
-    FS := TFileStream.Create(FFileName, fmCreate or fmShareExclusive);
-    SW := TStreamWriter.Create(FS);
+    SW := TStreamWriter.Create(FFS);
 
     // Write the header line
     SW.WriteLine(Utils.CSV.TCSVUtils<T>.GetCSVHeaderAsString());
@@ -229,7 +236,6 @@ begin
     end;
 
   finally
-    FS.Free;
     SW.Free;
   end;
   
@@ -240,7 +246,6 @@ end;
 
 function TDB<T>.GetUnstructuredTableFromCSV(): TArray<TArray<String>>;
 var
-  FS: TFileStream;
   SR: TStreamReader;
 begin
 
@@ -250,12 +255,10 @@ begin
 
   SetLength(Result, 0);
 
-  FS := nil;
   SR := nil;
 
   try
-    FS := TFileStream.Create(FFileName, fmOpenRead);
-    SR := TStreamReader.Create(FS);
+    SR := TStreamReader.Create(FFS);
 
     while not(SR.EndOfStream) do
     begin
@@ -268,31 +271,26 @@ begin
     end;
 
   finally
-    FS.Free;
     SR.Free;
   end;
 end;
 
 procedure TDB<T>.SetUnstructuredTableInCSV(CSVString: String);
 var
-  FS: TFileStream;
   SW: TStreamWriter;
 begin
 
   if not FInitialized then
     raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
 
-  FS := nil;
   SW := nil;
 
   try
-    FS := TFileStream.Create(FFileName, fmOpenWrite);
-    SW := TStreamWriter.Create(FS);
+    SW := TStreamWriter.Create(FFS);
 
     SW.Write(Utils.CSV.SerializeCSV(CSVString));
 
   finally
-    FS.Free;
     SW.Free;
   end;
   
@@ -303,30 +301,21 @@ end;
 
 procedure TDB<T>.AddCSVTableToDB(CSVObject: T);
 var
-  FS: TFileStream;
   SW: TStreamWriter;
 begin
 
-  FS := nil;
   SW := nil;
-
-
-  if not(TDirectory.Exists(FFileDirectory)) then
-    TDirectory.CreateDirectory(FFileDirectory);
-
 
 
   if (FileExists(FFileName)) then
   begin
     FInitialized := true;
-
     AddRowToCSV(CSVObject);
   end
   else
   begin
     try
-      FS := TFileStream.Create(FFileName, fmCreate or fmShareExclusive);
-      SW := TStreamWriter.Create(FS);
+      SW := TStreamWriter.Create(FFS);
 
       SW.WriteLine(Utils.CSV.TCSVUtils<T>.GetCSVHeaderAsString);
       SW.WriteLine(Utils.CSV.TCSVUtils<T>.SerializeRowCSV(CSVObject));
@@ -335,7 +324,6 @@ begin
       FInitialized := true;
 
     finally
-      FS.Free;
       SW.Free;
     end;
   end;
@@ -375,6 +363,7 @@ begin
   // This will be called whenever the CSV table changes
   FDBUpdateEventListeners.Add(CallbackFunction);
 
+  // ShowMessage('DB Update Event Listener added: ' + IntToStr(FDBUpdateEventListeners.Count) + ' listeners.');
 end;
 
 procedure TDB<T>.CallDBUpdateEventListeners();
@@ -383,8 +372,18 @@ var
 begin
   for i := 0 to FDBUpdateEventListeners.Count -1  do
   begin
-    FDBUpdateEventListeners[i]();
+    try
+      FDBUpdateEventListeners[i]();
+    except
+      on E: Exception do
+      begin
+        ShowMessage('Error in DB Update Event Listener: ' + E.Message);
+        // ErrorLogger.Log('Error in DB Update Event Listener: ' + E.Message);
+        continue; // Continue with the next listener
+      end;
+    end;
   end;
+  // ShowMessage('DB Update Event Listener called: ' + IntToStr(FDBUpdateEventListeners.Count) + ' listeners.');
 end;
 
 destructor TDB<T>.Destroy;
