@@ -9,7 +9,7 @@ uses
 
 type TRttiUtils<T> = record
   class function StrToT(ToConvert: TRttiField; ConvertValue: String): TValue; static;
-  class function TToStr(ConvertValue: TRttiField): String; static;
+  class function TToStr(TempRes: Pointer; ConvertField: TRttiField): String; static;
 
 private
   const ArrayDelimiter: Char = ',';
@@ -86,24 +86,30 @@ begin
     end;
 end;
 
-class function TRttiUtils<T>.TToStr(ConvertValue: TRttiField): String;
+class function TRttiUtils<T>.TToStr(TempRes: Pointer; ConvertField: TRttiField): String;
 var
-  tempType: TValue;
+  tempField: TValue;
   i: Integer;
 begin
 
-    tempType := TValue.From<TRttiField>(ConvertValue);
+    tempField := ConvertField.GetValue(TempRes);
 
-    if (tempType.IsArray) then
+    if (tempField.IsArray) then
     begin
-        for i := 0 to tempType.GetArrayLength()-1 do
+        Result := '[';
+        var l := tempField.GetArrayLength();
+        for i := 0 to tempField.GetArrayLength()-1 do
         begin
-            Result := Result + tempType.GetArrayElement(i).ToString() + ', '
+            if i > 0 then
+                Result := Result + ArrayDelimiter;
+
+            Result := Result + tempField.GetArrayElement(i).ToString();
         end;
+        Result := Result +']';
     end
     else
     begin
-//      Result := ConvertValue.GetValue(@TValue.From<TRttiField>(ConvertValue)).ToString();
+        Result := tempField.ToString;
     end;
 end;
 

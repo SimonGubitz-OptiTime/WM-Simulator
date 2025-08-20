@@ -271,7 +271,10 @@ end;
 
 procedure TMainForm.VerlosungStartenButtonClick(Sender: TObject);
 begin
- FVerlosung.VerlosungStarten(FTeamDB);
+  if (not(Assigned(FVerlosung)) or not(FVerlosung.Initialized)) then
+    FVerlosung := TVerlosungUI.Create([ StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12 ]);
+
+  FVerlosung.VerlosungStarten(FTeamDB);
 end;
 
 

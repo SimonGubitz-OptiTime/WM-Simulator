@@ -188,8 +188,6 @@ begin
   end;
 
 
-
-
   Team := Default(TTeam);
   Team.Name := NameEingabeFeld.Text;
   Team.FIFACode := FIFACodeEingabeFeld.Text;
@@ -198,8 +196,12 @@ begin
   Team.HeimstadionName := HeimstadionEingabeFeld.Text; // record ???
   Team.Flagge := 0; // TODO: Flagge setzen
   Team.TeamRanking := TTeamRanking(TeamRankingEingabeBox.ItemIndex);
+
+  SetLength(Team.SpielerListe, 11);
   for placeholder := Low(Team.SpielerListe) to High(Team.SpielerListe) do
   begin
+    var s := Team.SpielerListe[placeholder];
+    var y := SpielerListe[placeholder];
     Team.SpielerListe[placeholder] := SpielerListe[placeholder];
   end;
 

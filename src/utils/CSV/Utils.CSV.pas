@@ -105,8 +105,7 @@ var
     TempRowArray: TArray<String>;
     TempRow: String;
     TempValue: TValue;
-    TempRes: T;
-    i, j: Integer;
+    i: Integer;
 begin
 
     TempRow := '';
@@ -162,7 +161,7 @@ begin
         if i > Low(RttiFields) then
             Result := Result + delimiter;
 
-        Result := Result + Utils.RTTI.TRttiUtils<T>.TToStr(RttiFields[i]);
+        Result := Result + Utils.RTTI.TRttiUtils<T>.TToStr(@Row, RttiFields[i]);
 
     end;
 
@@ -216,10 +215,6 @@ begin
         begin
             // convert string to x
             TempValue := Utils.RTTI.TRttiUtils<T>.StrToT(RttiFields[j], TempFieldArray[j]);
-
-            if j = 6 then
-              ShowMessage(TempValue.ToString);
-
             RttiFields[j].SetValue(@TempRes, TempValue);
         end;
 
