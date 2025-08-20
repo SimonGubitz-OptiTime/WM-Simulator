@@ -55,7 +55,7 @@ begin
   // alle Stadien und Teams aus der DB laden
   Teams := TeamDB.GetStructuredTableFromCSV();
 
-  if ((Length(Teams) div 4) <> 0) then
+  if ((Length(Teams) mod 4) <> 0) then
     raise Exception.Create('TVerlosungUI.VerlosungStarten Error: The number of teams must be divisible by 4.');
     
 
@@ -69,7 +69,13 @@ begin
     for j := i * 4 + 1 to i * 4 + 4 do
     begin
       FGrids[i].Cells[0, j] := Teams[j].Name;
-      FGrids[i].Cells[0, j] := Teams[j].Name;
+      case Teams[j].TeamRanking of
+        TTeamRanking.SehrStark:   FGrids[i].Cells[1, j] := 'Sehr Stark';
+        TTeamRanking.Stark:       FGrids[i].Cells[1, j] := 'Stark';
+        TTeamRanking.MittelStark: FGrids[i].Cells[1, j] := 'Mittel Stark';                
+        TTeamRanking.Schwach:     FGrids[i].Cells[1, j] := 'Schwach Stark'
+      end;
+
     end;
 
 

@@ -24,6 +24,7 @@ var
   digits: String;
   StrArray: array of TValue;
   StrArrayIndex: Integer;
+  ArrayType: TRttiDynamicArrayType;
 begin
 
     case ToConvert.FieldType.TypeKind of
@@ -50,7 +51,7 @@ begin
 
             // input: [ d, d, d, d, d, d ]
             if ((ConvertValue[Low(ConvertValue)] <> '[') or (ConvertValue[High(ConvertValue)] <> ']')) then
-            raise Exception.Create('Utils.RTTI.pas Error: Invalid Array Structure');
+              raise Exception.Create('Utils.RTTI.pas Error: Invalid Array Structure');
 
             ConvertValue := Copy(ConvertValue, 2, Length(ConvertValue)-2);
             ConvertValue := ConvertValue + ArrayDelimiter;
@@ -74,9 +75,11 @@ begin
             end;
 
             // wieder einschränken
-            SetLength(StrArray, StrArrayIndex+1);
+            if Length(StrArray)-1 <> StrArrayIndex then
+              SetLength(StrArray, StrArrayIndex+1);
 
-            Result := TValue.FromArray(TypeInfo(TArray<String>), StrArray);
+            ArrayType := TRttiDynamicArrayType(ToConvert.FieldType);
+            Result := TValue.FromArray(ArrayType.Handle, StrArray);
         end;
         else
             raise Exception.Create('Utils.RTTI.pas Error: unsupported type. Type: ' + ToConvert.FieldType.Name);
