@@ -1,5 +1,9 @@
 Name;FIFACode;TeamVerband;HistorischeWMSiege;HeimstadionName;Flagge;SpielerListe;TeamRanking;ToreGeschossen;ToreKassiert;Siege;Unentschieden;Niederlagen
-Duetschlasn;GET;UEFA;5;olym;0;[d, d, d, d, d, d, d, d, d, d, d];SehrStark;0;0;0;0;0
-Duetschlasn;GET;UEFA;5;olym;0;[d, d, d, d, d, d, d, d, d, d, d];SehrStark;0;0;0;0;0
-Duetschlasn;GET;UEFA;5;olym;0;[d, d, d, d, d, d, d, d, d, d, d];SehrStark;0;0;0;0;0
-Duetschlasn;GET;UEFA;5;olym;0;[d, d, d, d, d, d, d, d, d, d, d];SehrStark;0;0;0;0;0
+Deutschland;GER;UEFA;4;Olympiastadion Berlin;DE;[Neuer, Kimmich, Gündogan, Havertz, Musiala, Sané, Gnabry, Rüdiger, Tah, Wirtz, Müller];SehrStark;0;0;0;0;0
+Brasilien;BRA;CONMEBOL;5;Maracanã;BR;[Alisson, Danilo, Marquinhos, Casemiro, Paquetá, Vinícius, Rodrygo, Richarlison, Neymar, Antony, Silva];SehrStark;0;0;0;0;0
+Frankreich;FRA;UEFA;2;Stade de France;FR;[Lloris, Varane, Kanté, Pogba, Mbappé, Griezmann, Coman, Camavinga, Hernández, Giroud, KoloMuani];Stark;0;0;0;0;0
+Spanien;ESP;UEFA;1;Santiago Bernabéu;ES;[DeGea, Ramos, Busquets, Pedri, Gavi, Rodri, Morata, Olmo, Torres, Carvajal, Fati];Stark;0;0;0;0;0
+Niederlande;NED;UEFA;0;Johan Cruyff Arena;NL;[Cillessen, DeLigt, VanDijk, DeJong, Blind, Malen, Depay, Koopmeiners, Gakpo, Simons, Weghorst];MittelStark;0;0;0;0;0
+Portugal;POR;UEFA;0;Estádio da Luz;PT;[Costa, Dias, Cancelo, Pepe, Neves, Bernardo, Fernandes, Félix, Leão, Ronaldo, Silva];MittelStark;0;0;0;0;0
+Kanada;CAN;CONCACAF;0;BMO Field;CA;[Borjan, Johnston, Miller, Laryea, Hutchinson, Eustaquio, Kone, Davies, Buchanan, David, Larin];Schwach;0;0;0;0;0
+Katar;QAT;AFC;0;Al Bayt Stadium;QA;[Barsham, Hassan, Khoukhi, Madibo, Hatem, Afif, Ali, AlHaydos, RoRo, Boudiaf, Waad];Schwach;0;0;0;0;0
