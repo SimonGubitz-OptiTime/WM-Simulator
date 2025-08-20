@@ -5,6 +5,7 @@ interface
 uses
   DB,
   Types,
+  Verlosung,
   Utils.TableFormating,
   StadionEingabeFenster,
   TeamEingabeFenster,
@@ -15,13 +16,15 @@ uses
 type
   TMainForm = class(TForm)
     PageControl: TPageControl;
-    Stammdaten: TTabSheet;
     UeberschriftStammdaten: TLabel;
     TeamHinzufuegenButton: TButton;
     StadionHinzufuegenButton: TButton;
-    Verlosung: TTabSheet;
+
+    Stammdaten: TTabSheet;
+    VerlosungSheet: TTabSheet;
     Spielplan: TTabSheet;
-    Spiel: TTabSheet;
+    SpielSheet: TTabSheet;
+
     SymbolImageList: TImageList;
     TeamEingabe: TTeamEingabeFenster;
     StadionEingabe: TStadionEingabeFenster;
@@ -38,11 +41,28 @@ type
     TeamAnzahlLabel: TLabel;
     TeamVergleichsLabel: TLabel;
     TeamGewollteAnzahlLabel: TLabel;
+    StringGrid1: TStringGrid;
+    StringGrid2: TStringGrid;
+    StringGrid3: TStringGrid;
+    StringGrid4: TStringGrid;
+    StringGrid5: TStringGrid;
+    StringGrid6: TStringGrid;
+    StringGrid7: TStringGrid;
+    StringGrid8: TStringGrid;
+    StringGrid9: TStringGrid;
+    StringGrid10: TStringGrid;
+    StringGrid11: TStringGrid;
+    StringGrid12: TStringGrid;
+    VerlosungStartenButton: TButton;
 
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure PageControlChange(Sender: TObject);
     procedure TeamHinzufuegenButtonClick(Sender: TObject);
     procedure StadionHinzufuegenButtonClick(Sender: TObject);
+    procedure VerlosungStartenButtonClick(Sender: TObject);
+    procedure ZumSpielButtonClick(Sender: TObject);
+    procedure ZumSpielplanButtonClick(Sender: TObject);
     procedure ZurVerlosungButtonClick(Sender: TObject);
 
   private
@@ -51,8 +71,13 @@ type
 
     FTeamAnzahl: Integer;
     FStadionAnzahl: Integer;
+
+    FVerlosung: TVerlosungUI;
+//    FSpielplan: TSpielplanUI;
+//    FSpiel: TSpielUI;
+
     const FGewollteTeamAnzahl: Integer = 48;
-    const FGewollteStadionAnzahl: Integer = 16;
+          FGewollteStadionAnzahl: Integer = 16;
 
     procedure TeamDBUpdate;
     procedure TeamTabelleZeichnen(Rows: TArray<TArray<String>>);
@@ -157,12 +182,16 @@ end;
 
 procedure TMainForm.StadionHinzufuegenButtonClick(Sender: TObject);
 begin
-  StadionEingabe:= TStadionEingabeFenster.Create(FStadionDB);
+  StadionEingabe := TStadionEingabeFenster.Create(FStadionDB);
   StadionEingabe.Show; // ShowModal;
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
+
+  FVerlosung := nil;
+//  FSpielplan := nil;
+//  FSpiel := nil;
 
   TeamGewollteAnzahlLabel.Caption := IntToStr(FGewollteTeamAnzahl);
   StadionGewollteAnzahlLabel.Caption := IntToStr(FGewollteStadionAnzahl);
@@ -195,15 +224,54 @@ end;
 procedure TMainForm.ZurVerlosungButtonClick(Sender: TObject);
 begin
   // Gültigkeitsprüfung
+end;
 
+procedure TMainForm.ZumSpielplanButtonClick(Sender: TObject);
+begin
+  // Gültigkeitsprüfung
+end;
 
+procedure TMainForm.ZumSpielButtonClick(Sender: TObject);
+begin
+  // Gültigkeitsprüfung
+end;
+
+procedure TMainForm.PageControlChange(Sender: TObject);
+begin
+  with TPageControl(Sender).ActivePage do
+  begin
+    if (Caption = 'Verlosung') then
+    begin
+      // simuliere den FormCreate
+      if not(Assigned(FVerlosung)) then
+      begin
+        FVerlosung := TVerlosungUI.Create([ StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12 ]);
+      end;
+    end
+    else if (Caption = 'Spielplan') then
+    begin
+      // FSpielplan := TSpielplanUI.Create;
+    end
+    else if (Caption = 'Spiel') then
+    begin
+      // Spiel.OnCreate();
+    end;
+  end;
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   // Aufräumen
-  FStadionDB.Destroy;
-  FTeamDB.Destroy;
+  FVerlosung.Free;
+//  FSpielplan.Free;
+//  FSpiel.Free;
+  FStadionDB.Free;
+  FTeamDB.Free;
+end;
+
+procedure TMainForm.VerlosungStartenButtonClick(Sender: TObject);
+begin
+ FVerlosung.VerlosungStarten(FTeamDB);
 end;
 
 

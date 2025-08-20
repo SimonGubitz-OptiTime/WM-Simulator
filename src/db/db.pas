@@ -191,16 +191,18 @@ begin
   Row := Default(T);
 
   try
+    FFS.Position := 0;
     SR := TStreamReader.Create(FFS);
 
     // headline ignorieren
-    SR.ReadLine();
+    line := SR.ReadLine();
 
     while not(SR.EndOfStream) do
     begin
       line := SR.ReadLine();
 
-      Row := Utils.CSV.TCSVUtils<T>.DeserializeCSV(line)[0];
+      Row := Utils.CSV.TCSVUtils<T>.DeserializeRowCSV(line);
+
 
       SetLength(Result, Length(Result) + 1);
       Result[High(Result)] := Row;
@@ -258,6 +260,7 @@ begin
   SR := nil;
 
   try
+    FFS.Position := 0;
     SR := TStreamReader.Create(FFS);
 
     while not(SR.EndOfStream) do
@@ -286,6 +289,7 @@ begin
   SW := nil;
 
   try
+    FFS.Position := 0;
     SW := TStreamWriter.Create(FFS);
 
     SW.Write(Utils.CSV.SerializeCSV(CSVString));
@@ -315,6 +319,7 @@ begin
   else
   begin
     try
+      FFS.Position := 0;
       SW := TStreamWriter.Create(FFS);
 
       SW.WriteLine(Utils.CSV.TCSVUtils<T>.GetCSVHeaderAsString);

@@ -145,6 +145,7 @@
             <Form>Form3</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="ui\verlosung\Verlosung.pas"/>
         <DCCReference Include="db\db.pas"/>
         <DCCReference Include="types\types.pas"/>
         <DCCReference Include="utils\CSV\Utils.RTTI.pas"/>

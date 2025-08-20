@@ -22,7 +22,7 @@ type TTeam = record
     HistorischeWMSiege: Byte;
     HeimstadionName: String; // in der Simulation vielleicht +5% Siegchancen
     Flagge: Byte; // als index für eine TImageList
-    SpielerListe: array[0..10] of String; // Nur Namen
+    SpielerListe: array of String; // Nur Namen
     TeamRanking: TTeamRanking;
 
     // ↓ für spätere Statistiken - keine Stammdaten

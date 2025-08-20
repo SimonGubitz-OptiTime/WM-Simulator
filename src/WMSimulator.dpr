@@ -5,6 +5,7 @@ uses
   Main in 'ui\Main.pas' {Form1},
   TeamEingabeFenster in 'ui\TeamEingabeFenster.pas' {Form2},
   StadionEingabeFenster in 'ui\StadionEingabeFenster.pas' {Form3},
+  Verlosung in 'ui\verlosung\Verlosung.pas',
   db in 'db\db.pas',
   types in 'types\types.pas',
   Utils.RTTI in 'utils\CSV\Utils.RTTI.pas',
