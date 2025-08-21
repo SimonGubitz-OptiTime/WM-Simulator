@@ -14,7 +14,7 @@ type TAnimationCallback = procedure(Count: Integer = -1; SecondCount: Integer = 
 type TAnimations = class
 public
 
-  constructor Create(var timer: TTimer; AObject: TControl; MoveToTop: Integer; MoveToLeft: Integer; ATime: Integer; ADestroyObjectOnFinish: Boolean = false);
+  constructor Create(var timer: TTimer; AObject: TControl; MoveToTop: Integer; MoveToLeft: Integer; ATime: Integer; ADestroyObjectOnFinish: Boolean = true);
 
   procedure MoveObject(callbackFn: TAnimationCallback; Count: Integer = -1; SecondCount: Integer = -1; ThirdCount: Integer = -1);
 
@@ -37,7 +37,7 @@ private
   FCallbackSecondCount: Integer;
   FCallbackThirdCount: Integer;
 
-  const FTimerInterval: Byte = 50;
+  const FTimerInterval: Byte = 10;
 
   procedure MoveObjectTick(Sender: TObject);
 
@@ -46,7 +46,7 @@ end;
 
 implementation
 
-constructor TAnimations.Create(var timer: TTimer; AObject: TControl; MoveToTop: Integer; MoveToLeft: Integer; ATime: Integer; ADestroyObjectOnFinish: Boolean = false);
+constructor TAnimations.Create(var timer: TTimer; AObject: @TControl; MoveToTop: Integer; MoveToLeft: Integer; ATime: Integer; ADestroyObjectOnFinish: Boolean = true);
 begin
 
   FDestroyObject := ADestroyObjectOnFinish;
@@ -87,7 +87,7 @@ var
 begin
 
   FTimerAmount := FTimerAmount + FTimerInterval;
-  if FTimerAmount > FTimerDuration then
+  if FTimerAmount >= FTimerDuration then
   begin
     FTimer.Enabled := false;
 
@@ -102,15 +102,13 @@ begin
   if not(FObject is TControl) then
     raise Exception.Create('TAnimations.MoveObjectTick Error: Sender is not a TControl.');
 
+  // change the top and left vals
+  // jeweils vom Startpunkt ausgehend, ein x-tel des zu gehenden Wegs beschreiten, wobei das x-tel durch die Zeit erkl�rt wird
+  progress := FTimerInterval / FTimerDuration;
+  FObject.Top := FObject.Top + Round(FWayTop * progress);
+  FObject.Left := FObject.Left + Round(FWayleft * progress);
 
-  with TControl(FObject) do
-  begin
-    // change the top and left vals
-    // jeweils vom Startpunkt ausgehend, ein x-tel des zu gehenden Wegs beschreiten, wobei das x-tel durch die Zeit erkl�rt wird
-    progress := FTimerInterval / FTimerDuration;
-    Top := FStartTop + Round(FWayTop * progress);
-    Left := FStartLeft + Round(FWayleft * progress);
-  end;
+
 end;
 
 destructor TAnimations.Free;

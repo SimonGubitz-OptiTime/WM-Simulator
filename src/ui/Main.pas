@@ -19,10 +19,9 @@ type
     UeberschriftStammdaten: TLabel;
     TeamHinzufuegenButton: TButton;
     StadionHinzufuegenButton: TButton;
-
-    Stammdaten: TTabSheet;
+    StammdatenSheet: TTabSheet;
     VerlosungSheet: TTabSheet;
-    Spielplan: TTabSheet;
+    SpielplanSheet: TTabSheet;
     SpielSheet: TTabSheet;
 
     SymbolImageList: TImageList;

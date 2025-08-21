@@ -22,8 +22,8 @@ object MainForm: TMainForm
     ActivePage = VerlosungSheet
     TabOrder = 0
     OnChange = PageControlChange
-    object Stammdaten: TTabSheet
-      Caption = 'Stammdaten'
+    object StammdatenSheet: TTabSheet
+      Caption = 'StammdatenSheet'
       object UeberschriftStammdaten: TLabel
         Left = 3
         Top = 3
@@ -332,8 +332,8 @@ object MainForm: TMainForm
         TabOrder = 13
       end
     end
-    object Spielplan: TTabSheet
-      Caption = 'Spielplan'
+    object SpielplanSheet: TTabSheet
+      Caption = 'SpielplanSheet'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -12

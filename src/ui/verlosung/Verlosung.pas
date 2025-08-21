@@ -23,7 +23,7 @@ public
   property Initialized: Boolean read FInitialized;
   constructor Create(Grids: array of TStringGrid);
 
-  procedure VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer; AOwner: TComponent);
+  procedure VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer; AOwner: TControl);
 
 //  destructor Free();
   
@@ -56,13 +56,16 @@ begin
   
 end;
 
-procedure TVerlosungUI.VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer; AOwner: TComponent);
+procedure TVerlosungUI.VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer; AOwner: TControl);
 var
   grid, forRow: Integer;
-  TempLabel: TLabel;
+  TempLabel: TButton;
   TeamIndex: Integer;
   AnimationList: TList<TAnimations>;
 begin
+
+  if TeamIndex >= Length(FTeams) then
+    TeamIndex := 0;
 
   AnimationList := TList<TAnimations>.Create;
 
@@ -72,11 +75,11 @@ begin
   // alle Stadien und Teams aus der DB laden
   FTeams := ATeamDB.GetStructuredTableFromCSV();
 
-  
+
 
   if ((Length(FTeams) mod 4) <> 0) then
     raise Exception.Create('TVerlosungUI.VerlosungStarten Error: The number of FTeams must be divisible by 4.');
-    
+
 
   // Teams shuffeln
   Utils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(FTeams);
@@ -89,7 +92,7 @@ begin
     if (TeamIndex >= Length(FTeams)) then
       break;
 
-  
+
     with FGrids[grid] do
     begin
 
@@ -97,22 +100,19 @@ begin
       begin
 
         // hier die Animation
-        TempLabel := TLabel.Create(AOwner);
-        with TempLabel do
-        begin
-          Parent  := AOwner as TWinControl;
-          Caption := FTeams[TeamIndex].Name;
-          Top     := Round((FGrids[grid].Height / 2) - (Height / 2)); // Middle
-          Left    := Round((FGrids[grid].Width / 2) - (Width / 2));   // Middle
-        end;
+        TempLabel := TButton.Create(nil);
+        TempLabel.Parent    := AOwner as TWinControl;
+        TempLabel.Caption   := FTeams[TeamIndex].Name;
+        TempLabel.Top       := 500; // Round((AOwner.Height / 2) - (Height / 2)); // Middle
+        TempLabel.Left      := Round((AOwner.Width / 2) - (Width / 2));   // Middle
 
-        AnimationList.Add(TAnimations.Create(ATimer, TempLabel, FGrids[grid].Top, FGrids[grid].Left, 3)); // 3 sek
+        AnimationList.Add(TAnimations.Create(ATimer, TControl(TempLabel), FGrids[grid].Top, FGrids[grid].Left, 600)); // 3 sek
         AnimationList.Last.MoveObject(AnimationCallbackFn, forRow, grid, TeamIndex);
       end;
     end;
   end;
 
-  AnimationList.Free;
+//  AnimationList.Free;
 end;
 
                                           // cols               // grids                   // teams 
@@ -121,6 +121,8 @@ begin
 
   if ((Count = -1) or (SecondCount = -1)) then
     raise Exception.Create('Fehlermeldung');
+
+  // ShowMessage('Team: ' + FTeams[ThirdCount].Name);
 
   try
     with FGrids[SecondCount] do
