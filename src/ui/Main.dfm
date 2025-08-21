@@ -645,4 +645,10 @@ object MainForm: TMainForm
       FFFFFFFFFFFFF81FFFFFFFFFFFFFFFFF00000000000000000000000000000000
       000000000000}
   end
+  object Timer1: TTimer
+    Enabled = False
+    Interval = 50
+    Left = 972
+    Top = 26
+  end
 end

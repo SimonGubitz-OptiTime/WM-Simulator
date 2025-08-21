@@ -5,20 +5,22 @@ interface
 uses
   db,
   types,
+  Animation,
   System.Classes, System.Math, System.SysUtils,
-  Vcl.Grids, Vcl.Dialogs;
+  Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Grids, Vcl.StdCtrls;
 
 type TVerlosungUI = class
 private
   FGrids: array[0..11] of TStringGrid;
 
   FInitialized: Boolean;
+  FAnimation: TAnimations;
 
 public
   property Initialized: Boolean read FInitialized;
   constructor Create(Grids: array of TStringGrid);
 
-  procedure VerlosungStarten(var TeamDB: TDB<TTeam>);
+  procedure VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer; AOwner: TComponent);
 
 //  destructor Free();
   
@@ -51,11 +53,12 @@ begin
   
 end;
 
-procedure TVerlosungUI.VerlosungStarten(var TeamDB: TDB<TTeam>);
+procedure TVerlosungUI.VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer; AOwner: TComponent);
 var
   grid, forCol: Integer;
   Teams: TArray<TTeam>;
   TeamArrayIndex: Integer;
+  tempLabel: TLabel;
   // Stadien: TArray<TStadion>;
 begin
 
@@ -63,7 +66,7 @@ begin
     raise Exception.Create('TVerlosungUI.VerlosungStarten Error: The UI is not initialized.');
 
   // alle Stadien und Teams aus der DB laden
-  Teams := TeamDB.GetStructuredTableFromCSV();
+  Teams := ATeamDB.GetStructuredTableFromCSV();
 
   
 
@@ -90,15 +93,18 @@ begin
       begin
 
         // hier die Animation
-        // TLabel NUR mit Teams[TeamArrayIndex].Name
-        // tempLabel := TLabel.Create();
-        // tempLabel.Caption := Teams[TeamArrayIndex].Name;
-        
-        // procedure Animation.MoveObject(TObject);
-        Animation.MoveObject(tempLabel, 3000); // 3sek
+        tempLabel := TLabel.Create(AOwner);
+        with tempLabel do
+        begin
+          Caption := Teams[TeamArrayIndex].Name;
+          Top := Round((FGrids[grid].Height / 2) - (Height / 2)); // Middle
+          Left := Round((FGrids[grid].Width / 2) / (Width / 2));  // Middle
+        end;
 
+        FAnimation := TAnimations.Create(ATimer, tempLabel, FGrids[grid].Top, FGrids[grid].Left, 3000); // 3 sek
+        FAnimation.MoveObject;
 
-        // tempLabel.Free;
+        tempLabel.Free;
 
         
         
