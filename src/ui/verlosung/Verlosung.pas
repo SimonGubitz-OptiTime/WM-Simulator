@@ -7,7 +7,7 @@ uses
   types,
   Animation,
   Utils.ShuffleArray,
-  System.Classes, System.Math, System.SysUtils,
+  System.Classes, System.Generics.Collections, System.Math, System.SysUtils,
   Vcl.Controls, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Grids, Vcl.StdCtrls;
 
 type TVerlosungUI = class
@@ -15,8 +15,6 @@ private
   FGrids: array[0..11] of TStringGrid;
 
   FInitialized: Boolean;
-  FAnimation: TAnimations;
-
   FTeams: TArray<TTeam>; // for the AnimationCallback
 
   procedure AnimationCallbackFn(Count: Integer = -1; SecondCount: Integer = -1; ThirdCount: Integer = -1);
@@ -60,11 +58,13 @@ end;
 
 procedure TVerlosungUI.VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer; AOwner: TComponent);
 var
-  grid, forCol: Integer;
+  grid, forRow: Integer;
   TempLabel: TLabel;
   TeamIndex: Integer;
-  // Stadien: TArray<TStadion>;
+  AnimationList: TList<TAnimations>;
 begin
+
+  AnimationList := TList<TAnimations>.Create;
 
   if not FInitialized then
     raise Exception.Create('TVerlosungUI.VerlosungStarten Error: The UI is not initialized.');
@@ -93,7 +93,7 @@ begin
     with FGrids[grid] do
     begin
 
-      for forCol := 0 to 3 do
+      for forRow := 0 to 3 do
       begin
 
         // hier die Animation
@@ -106,11 +106,13 @@ begin
           Left    := Round((FGrids[grid].Width / 2) - (Width / 2));   // Middle
         end;
 
-        FAnimation := TAnimations.Create(ATimer, TempLabel, FGrids[grid].Top, FGrids[grid].Left, 3); // 3 sek
-        FAnimation.MoveObject(AnimationCallbackFn, forCol, grid, TeamIndex);
+        AnimationList.Add(TAnimations.Create(ATimer, TempLabel, FGrids[grid].Top, FGrids[grid].Left, 3)); // 3 sek
+        AnimationList.Last.MoveObject(AnimationCallbackFn, forRow, grid, TeamIndex);
       end;
     end;
   end;
+
+  AnimationList.Free;
 end;
 
                                           // cols               // grids                   // teams 
