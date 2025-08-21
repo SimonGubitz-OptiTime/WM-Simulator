@@ -303,7 +303,7 @@ object MainForm: TMainForm
         Top = 329
         Width = 75
         Height = 25
-        Caption = 'Starten'
+        Caption = 'Shuffle'
         ImageIndex = 1
         Images = SymbolImageList
         TabOrder = 11

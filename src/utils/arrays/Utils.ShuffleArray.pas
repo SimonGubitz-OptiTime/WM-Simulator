@@ -1,32 +1,26 @@
-﻿unit Utils.FixedArrays;
+unit Utils.ShuffleArray;
 
 interface
 
-uses
-    System.Generics.Defaults;
-
-
-type TFixedArrayUtils<T> = record
-  class function LastFilledIndex(ArrayToSearch: array of T): Integer; static;
+type TShuffleArrayUtils<T> = record
+  class procedure Shuffle(var ArrayToShuffle: TArray<T>); static;
 end;
 
 implementation
 
-
-// Gibt den letzten Index mit Füllung an, wenn alle leer sind, -1.
-class function TFixedArrayUtils<T>.LastFilledIndex(ArrayToSearch: array of T): Integer;
+class procedure TShuffleArrayUtils<T>.Shuffle(var ArrayToShuffle: TArray<T>);
 var
-    i: Byte;
+  copyI, I, arrayLength: Integer;
+  temp: T;
 begin
-
-    Result := -1;
-
-    for i := High(ArrayToSearch) downto Low(ArrayToSearch) do
-    begin
-        if TEqualityComparer<T>.Default.Equals(ArrayToSearch[i], Default(T)) then
-            Result := i - 1;
-    end;
-
+  arrayLength := Length(ArrayToShuffle);
+  for I := arrayLength - 1 downto 0 do
+  begin
+    copyI := Random(I + 1);
+    temp := ArrayToShuffle[i];
+    ArrayToShuffle[I] := ArrayToShuffle[copyI];
+    ArrayToShuffle[copyI] := temp;
+  end;
 end;
 
 end.

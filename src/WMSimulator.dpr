@@ -11,11 +11,12 @@ uses
   Utils.RTTI in 'utils\CSV\Utils.RTTI.pas',
   Utils.CSV in 'utils\CSV\Utils.CSV.pas',
   Utils.DB in 'utils\db\Utils.DB.pas',
-  Utils.UserInput in 'utils\user_input\Utils.UserInput.pas',
-  Utils.StringFormating in 'utils\string_formating\Utils.StringFormating.pas',
-  Utils.TableFormating in 'utils\table_formating\Utils.TableFormating.pas',
   Utils.FixedArrays in 'utils\arrays\Utils.FixedArrays.pas',
-  Animation in 'ui\animations\animation.pas';
+  Utils.ShuffleArray in 'utils\arrays\Utils.ShuffleArray.pas',
+  Utils.UserInput in 'utils\user_input\Utils.UserInput.pas',
+  Utils.TableFormating in 'utils\table_formating\Utils.TableFormating.pas',
+  Utils.StringFormating in 'utils\string_formating\Utils.StringFormating.pas',
+  animation in 'ui\animations\animation.pas';
 
 {$R *.res}
 
