@@ -8,7 +8,7 @@ uses
   Animation,
   Utils.ShuffleArray,
   System.Classes, System.Generics.Collections, System.Math, System.SysUtils,
-  Vcl.Controls, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Grids, Vcl.StdCtrls;
+  Vcl.Controls, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Forms, Vcl.Grids, Vcl.StdCtrls;
 
 type TVerlosungUI = class
 private
@@ -59,7 +59,7 @@ end;
 procedure TVerlosungUI.VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer; AOwner: TControl);
 var
   grid, forRow: Integer;
-  TempLabel: TButton;
+  TempLabel: TStaticText;
   TeamIndex: Integer;
   AnimationList: TList<TAnimations>;
 begin
@@ -100,14 +100,17 @@ begin
       begin
 
         // hier die Animation
-        TempLabel := TButton.Create(nil);
+        TempLabel := TStaticText.Create(nil);
         TempLabel.Parent    := AOwner as TWinControl;
         TempLabel.Caption   := FTeams[TeamIndex].Name;
-        TempLabel.Top       := 500; // Round((AOwner.Height / 2) - (Height / 2)); // Middle
+        TempLabel.Top       := Round((AOwner.Height / 2) - (Height / 2)); // Middle
         TempLabel.Left      := Round((AOwner.Width / 2) - (Width / 2));   // Middle
 
         AnimationList.Add(TAnimations.Create(ATimer, TControl(TempLabel), FGrids[grid].Top, FGrids[grid].Left, 600)); // 3 sek
         AnimationList.Last.MoveObject(AnimationCallbackFn, forRow, grid, TeamIndex);
+
+        Inc(TeamIndex);
+
       end;
     end;
   end;
@@ -147,8 +150,6 @@ begin
         TTeamVerband.OFC:       Cells[3, Count] := 'OFC';
         TTeamVerband.UEFA:      Cells[3, Count] := 'UEFA';
       end;
-
-      Inc(ThirdCount);
 
     end;
   except
