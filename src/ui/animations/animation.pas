@@ -46,13 +46,15 @@ end;
 
 implementation
 
-constructor TAnimations.Create(var timer: TTimer; AObject: @TControl; MoveToTop: Integer; MoveToLeft: Integer; ATime: Integer; ADestroyObjectOnFinish: Boolean = true);
+constructor TAnimations.Create(var timer: TTimer; AObject: TControl; MoveToTop: Integer; MoveToLeft: Integer; ATime: Integer; ADestroyObjectOnFinish: Boolean = true);
 begin
 
   FDestroyObject := ADestroyObjectOnFinish;
   FFinishedAnimation := false;
 
+  // ShowMessage('before');
   FObject := AObject;
+  // ShowMessage('after');
 
   FTimer := timer;
   FTimer.Interval := FTimerInterval;
