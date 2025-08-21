@@ -16,6 +16,12 @@ private
   FInitialized: Boolean;
   FAnimation: TAnimations;
 
+  FTeams: TArray<TTeam>; // for the AnimationCallback
+  FTeamArrayIndex: Integer;
+  FGridIndex: Integer;
+
+  procedure AnimationCallbackFn(Count: Integer = -1);
+
 public
   property Initialized: Boolean read FInitialized;
   constructor Create(Grids: array of TStringGrid);
@@ -56,9 +62,7 @@ end;
 procedure TVerlosungUI.VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer; AOwner: TComponent);
 var
   grid, forCol: Integer;
-  Teams: TArray<TTeam>;
-  TeamArrayIndex: Integer;
-  tempLabel: TLabel;
+  TempLabel: TLabel;
   // Stadien: TArray<TStadion>;
 begin
 
@@ -66,80 +70,89 @@ begin
     raise Exception.Create('TVerlosungUI.VerlosungStarten Error: The UI is not initialized.');
 
   // alle Stadien und Teams aus der DB laden
-  Teams := ATeamDB.GetStructuredTableFromCSV();
+  FTeams := ATeamDB.GetStructuredTableFromCSV();
 
   
 
-  if ((Length(Teams) mod 4) <> 0) then
-    raise Exception.Create('TVerlosungUI.VerlosungStarten Error: The number of teams must be divisible by 4.');
+  if ((Length(FTeams) mod 4) <> 0) then
+    raise Exception.Create('TVerlosungUI.VerlosungStarten Error: The number of FTeams must be divisible by 4.');
     
 
   // Teams shuffeln
-  // Utils.ShuffleArray(Teams);
+  // Utils.ShuffleArray(FTeams);
 
   // Für alle Grids je 4 Teams eintragen
-  TeamArrayIndex := 0;
+  FTeamArrayIndex := 0;
   for grid := Low(FGrids) to High(FGrids) do
   begin
 
-    if (TeamArrayIndex >= Length(Teams)) then
+    FGridIndex := grid;
+
+    if (FTeamArrayIndex >= Length(FTeams)) then
       break;
 
   
-    with FGrids[grid] do
+    with FGrids[FGridIndex] do
     begin
 
       for forCol := 0 to 3 do
       begin
 
         // hier die Animation
-        tempLabel := TLabel.Create(AOwner);
-        with tempLabel do
+        TempLabel := TLabel.Create(AOwner);
+        with TempLabel do
         begin
-          Caption := Teams[TeamArrayIndex].Name;
-          Top := Round((FGrids[grid].Height / 2) - (Height / 2)); // Middle
-          Left := Round((FGrids[grid].Width / 2) / (Width / 2));  // Middle
+          Caption := FTeams[FTeamArrayIndex].Name;
+          Top     := Round((FGrids[FGridIndex].Height / 2) - (Height / 2)); // Middle
+          Left    := Round((FGrids[FGridIndex].Width / 2) - (Width / 2));   // Middle
         end;
 
-        FAnimation := TAnimations.Create(ATimer, tempLabel, FGrids[grid].Top, FGrids[grid].Left, 3000); // 3 sek
-        FAnimation.MoveObject;
-
-        tempLabel.Free;
-
-        
-        
-      
-        Cells[0, forCol] := Teams[TeamArrayIndex].Name;
-        case Teams[TeamArrayIndex].TeamRanking of
-          TTeamRanking.SehrStark:   Cells[1, forCol] := 'Sehr Stark';
-          TTeamRanking.Stark:       Cells[1, forCol] := 'Stark';
-          TTeamRanking.MittelStark: Cells[1, forCol] := 'Mittel Stark';                
-          TTeamRanking.Schwach:     Cells[1, forCol] := 'Schwach Stark';
-        end;
-
-
-        Cells[2, forCol] := IntToStr(Teams[TeamArrayIndex].HistorischeWMSiege);
-
-        case Teams[TeamArrayIndex].TeamVerband of
-          TTeamVerband.AFC:       Cells[3, forCol] := 'AFC';
-          TTeamVerband.CAF:       Cells[3, forCol] := 'CAF';
-          TTeamVerband.CONCACAF:  Cells[3, forCol] := 'CONCACAF';
-          TTeamVerband.CONMEBOL:  Cells[3, forCol] := 'CONMEBOL';
-          TTeamVerband.OFC:       Cells[3, forCol] := 'OFC';
-          TTeamVerband.UEFA:      Cells[3, forCol] := 'UEFA';
-        end;
-
-        // hinzufügen zweiter counter
-        Inc(TeamArrayIndex);
-        
+        FAnimation := TAnimations.Create(ATimer, TempLabel, FGrids[FGridIndex].Top, FGrids[FGridIndex].Left, 3000); // 3 sek
+        FAnimation.MoveObject(AnimationCallbackFn, forCol);
       end;
     end;
   end;
+end;
+
+procedure TVerlosungUI.AnimationCallbackFn(Count: Integer = -1);
+begin
+
+  if Count = -1 then
+    raise Exception.Create('Fehlermeldung');
+
+  try
+    with FGrids[FGridIndex] do
+    begin
+      // Hier können weitere Aktionen nach der Animation erfolgen, z.B.:
+      Cells[0, Count] := FTeams[FTeamArrayIndex].Name;
+      case FTeams[FTeamArrayIndex].TeamRanking of
+        TTeamRanking.SehrStark:   Cells[1, Count] := 'Sehr Stark';
+        TTeamRanking.Stark:       Cells[1, Count] := 'Stark';
+        TTeamRanking.MittelStark: Cells[1, Count] := 'Mittel Stark';
+        TTeamRanking.Schwach:     Cells[1, Count] := 'Schwach Stark';
+      end;
 
 
-  //
+      Cells[2, Count] := IntToStr(FTeams[FTeamArrayIndex].HistorischeWMSiege);
 
+      case FTeams[FTeamArrayIndex].TeamVerband of
+        TTeamVerband.AFC:       Cells[3, Count] := 'AFC';
+        TTeamVerband.CAF:       Cells[3, Count] := 'CAF';
+        TTeamVerband.CONCACAF:  Cells[3, Count] := 'CONCACAF';
+        TTeamVerband.CONMEBOL:  Cells[3, Count] := 'CONMEBOL';
+        TTeamVerband.OFC:       Cells[3, Count] := 'OFC';
+        TTeamVerband.UEFA:      Cells[3, Count] := 'UEFA';
+      end;
 
+      Inc(FTeamArrayIndex);
+
+    end;
+  except
+    on ERangeError do
+    begin
+      ShowMessage('FTeamArrayIndex: ' + IntToStr(FTeamArrayIndex));
+    end;
+  end;
 end;
 
 {destructor TVerlosungUI.Free();

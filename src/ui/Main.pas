@@ -275,7 +275,7 @@ begin
   if (not(Assigned(FVerlosung)) or not(FVerlosung.Initialized)) then
     FVerlosung := TVerlosungUI.Create([ StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12 ]);
 
-  FVerlosung.VerlosungStarten(FTeamDB, Timer1, Self);
+  FVerlosung.VerlosungStarten(FTeamDB, Timer1, VerlosungSheet);
 end;
 
 
