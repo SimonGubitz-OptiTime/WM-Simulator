@@ -3,9 +3,8 @@
 interface
 
 uses
-  System.SysUtils,
-  System.Classes,
-  Vcl.Controls, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls;
+  System.Classes, System.SysUtils,
+  Vcl.Controls, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Forms, Vcl.StdCtrls;
 
 
 // Optional count for when used in a indexed loop
@@ -81,6 +80,17 @@ begin
 
   FTimer.Enabled := true;
 
+  TThread.Queue(nil,
+    procedure
+    begin
+      while not FFinishedAnimation do
+      begin
+        Application.ProcessMessages;
+        Sleep(10);
+      end;
+    end
+  );
+
 end;
 
 procedure TAnimations.MoveObjectTick(Sender: TObject);
@@ -91,13 +101,21 @@ begin
   FTimerAmount := FTimerAmount + FTimerInterval;
   if FTimerAmount >= FTimerDuration then
   begin
+    // Timer stoppen
     FTimer.Enabled := false;
 
+    // Die letzte Position updaten
     FObject.Top := FStartTop + FWayTop;
     FObject.Left := FStartLeft + FWayLeft;
 
+    // Callback Funktion aufrufen
     FFinishedAnimation := true;
     FCallbackFn(FCallbackCount, FCallbackSecondCount, FCallbackThirdCount);
+    
+    // Wenn das Objekt zerstört werden soll, dann hier aufräumen
+    if FDestroyObject then
+      FObject.Free;
+
     Exit;
   end;
 
