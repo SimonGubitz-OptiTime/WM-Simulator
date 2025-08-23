@@ -230,8 +230,10 @@ end;
 destructor TTeamEingabeFenster.Destroy;
 begin
   // Aufräumen
-  SpielerListe.Destroy;
-  FDatabase.Destroy;
+  SpielerListe.Free;
+  FDatabase.Free;
+
+  inherited Destroy;
 end;
 
 

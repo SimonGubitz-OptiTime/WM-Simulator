@@ -32,7 +32,7 @@ public
   property Initialized: Boolean read FInitialized;
 
   constructor Create(TableName: String);
-  
+
   function    GetPropertyFromCSV(PropertyName: String): T;
   procedure   SetPropertyInCSV(PropertyName: String; PropertyValue: T);
 
@@ -100,8 +100,8 @@ begin
 
   // .csv öffnen
 
-  
-  // Call the event listeners 
+
+  // Call the event listeners
   CallDBUpdateEventListeners();
 end;
 
@@ -114,7 +114,7 @@ begin
 
   // .csv öffnen
 
-  
+
 end;
 
 procedure TDB<T>.SetRowInCSV(RowID: Integer; RowType: T);
@@ -123,9 +123,9 @@ begin
     raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
 
   // .csv öffnen
-  
 
-  // Call the event listeners 
+
+  // Call the event listeners
   CallDBUpdateEventListeners();
 end;
 
@@ -142,16 +142,13 @@ begin
   end
   else
   begin
-    SW := nil;
 
     if not FInitialized then
       raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
 
-    // Read in the full CSV file
-    // CSVArray := GetStructuredTableFromCSV();
+    SW := TStreamWriter.Create(FFS);
 
     try
-      SW := TStreamWriter.Create(FFS);
       SW.BaseStream.Position := FFS.size;
       {if SW.Encoding = TEncoding.UTF16 then
         SW.BaseStream.Position := FFS.size / 2;} // 2 byte pro character
@@ -163,8 +160,8 @@ begin
       SW.Free;
     end;
   end;
-  
-  // Call the event listeners 
+
+  // Call the event listeners
   CallDBUpdateEventListeners();
 end;
 
@@ -297,8 +294,8 @@ begin
   finally
     SW.Free;
   end;
-  
-  // Call the event listeners 
+
+  // Call the event listeners
   CallDBUpdateEventListeners();
 end;
 
@@ -357,12 +354,12 @@ begin
   SetLength(CachedHeader, 0);
   CachedHeaderString := '';
 
-  // Call the event listeners 
+  // Call the event listeners
   CallDBUpdateEventListeners();
 end;
 
 procedure TDB<T>.AddDBUpdateEventListener(CallbackFunction: TDBUpdateEvent);
-begin 
+begin
 
   // Add "CallbackFunction" to a list of event listeners
   // This will be called whenever the CSV table changes

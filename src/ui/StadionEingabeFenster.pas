@@ -104,7 +104,9 @@ end;
 destructor TStadionEingabeFenster.Destroy;
 begin
   // Aufräumen
-  FDatabase.Destroy;
+  FDatabase.Free;
+
+  inherited Destroy;
 end;
 
 

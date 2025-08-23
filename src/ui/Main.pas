@@ -262,9 +262,11 @@ end;
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   // Aufräumen
+  StadionEingabe.Hide;
+  StadionEingabe.Free;
+
+
   FVerlosung.Free;
-//  FSpielplan.Free;
-//  FSpiel.Free;
   FStadionDB.Free;
   FTeamDB.Free;
 end;
@@ -276,6 +278,5 @@ begin
 
   FVerlosung.VerlosungStarten(FTeamDB, Timer1, VerlosungSheet);
 end;
-
 
 end.

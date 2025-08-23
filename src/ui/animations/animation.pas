@@ -111,7 +111,7 @@ begin
     // Callback Funktion aufrufen
     FFinishedAnimation := true;
     FCallbackFn(FCallbackCount, FCallbackSecondCount, FCallbackThirdCount);
-    
+
     // Wenn das Objekt zerstört werden soll, dann hier aufräumen
     if FDestroyObject then
       FObject.Free;

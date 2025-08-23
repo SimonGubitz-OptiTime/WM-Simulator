@@ -153,16 +153,22 @@ begin
     RttiType := RttiContext.GetType(TypeInfo(T));
     RttiFields := RttiType.GetFields;
 
-    for i := 0 to Length(RttiFields)-1 do
-    begin
+    try
 
-        debugName := RttiFields[i].Name;
+        for i := 0 to Length(RttiFields)-1 do
+        begin
 
-        if i > Low(RttiFields) then
-            Result := Result + delimiter;
+            debugName := RttiFields[i].Name;
 
-        Result := Result + Utils.RTTI.TRttiUtils<T>.TToStr(@Row, RttiFields[i]);
+            if i > Low(RttiFields) then
+                Result := Result + delimiter;
 
+            Result := Result + Utils.RTTI.TRttiUtils<T>.TToStr(@Row, RttiFields[i]);
+
+        end;
+
+    finally
+        RttiContext.Free;
     end;
 
 end;
@@ -238,11 +244,16 @@ begin
     RttiType := RttiContext.GetType(TypeInfo(T));
     RttiFields := RttiType.GetFields;
 
-    SetLength(Result, Length(RttiFields));
+    try
 
-    for i := 0 to Length(RttiFields) -1 do
-    begin
-        Result[i] := RttiFields[i].Name;
+        SetLength(Result, Length(RttiFields));
+
+        for i := 0 to Length(RttiFields) -1 do
+        begin
+            Result[i] := RttiFields[i].Name;
+        end;
+    finally
+        RttiContext.Free;
     end;
 
 end;
@@ -258,14 +269,18 @@ begin
     RttiType := RttiContext.GetType(TypeInfo(T));
     RttiFields := RttiType.GetFields;
 
-    Result := '';
+    try
+        Result := '';
 
-    for i := 0 to Length(RttiFields) -1 do
-    begin
-        if i > Low(RttiFields) then
-            Result := Result + delimiter;
+        for i := 0 to Length(RttiFields) -1 do
+        begin
+            if i > Low(RttiFields) then
+                Result := Result + delimiter;
 
-        Result := Result + RttiFields[i].Name;
+            Result := Result + RttiFields[i].Name;
+        end;
+    finally
+        RttiContext.Free;
     end;
 
 end;
