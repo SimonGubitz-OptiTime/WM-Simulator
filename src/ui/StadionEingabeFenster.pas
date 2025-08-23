@@ -28,6 +28,7 @@ type
     destructor Destroy(Sender: TObject); reintroduce;
 
   private
+
     var FDatabase: TDB<TStadion>;
     const FTableName: ShortString = 'Stadien';
   end;
@@ -91,6 +92,7 @@ begin
   // In die Datenbank schreiben
   FDatabase.AddRowToCSV(Stadion);
 
+  // Fenster schließen
   Self.Close;
 
 

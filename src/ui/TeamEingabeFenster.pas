@@ -208,7 +208,7 @@ begin
   // Team in die Datenbank schreiben
   FDatabase.AddRowToCSV(Team);
 
-
+  // Fenster schließen
   Self.Close;
 
 end;

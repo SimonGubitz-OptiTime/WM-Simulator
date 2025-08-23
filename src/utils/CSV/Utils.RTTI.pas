@@ -1,4 +1,6 @@
-﻿unit Utils.RTTI;
+﻿{#DEFINE DEFAULT_PRE_ALLOC 11} // da es sich meistens um Spieler Arrays handelt, die 11 Spieler haben -> aus Effizienzgründen
+
+unit Utils.RTTI;
 
 interface
 
@@ -21,8 +23,8 @@ class function TRttiUtils<T>.StrToT(ToConvert: TRttiField; ConvertValue: String)
 var
   EnumType: TRttiEnumerationType;
   i: Integer;
-  digits: String;
-  StrArray: array of TValue;
+  Digits: String;
+  StrArray: TArray<TValue>;
   StrArrayIndex: Integer;
   ArrayType: TRttiDynamicArrayType;
 begin
@@ -43,15 +45,16 @@ begin
             EnumType := TRttiEnumerationType(ToConvert.FieldType);
             Result := TValue.FromOrdinal(EnumType.Handle, GetEnumValue(EnumType.Handle, ConvertValue));
         end;
+        // Muss Array bleiben, und darf nicht zu einem TObjectList<TValue> werden
         tkArray, tkDynArray:
         begin
             // Pre-allocate
-            SetLength(StrArray, 11); // Für das Spieler Array, welches am meisten genutzt werden wird
+            SetLength(StrArray, DEFAULT_PRE_ALLOC); // Für das Spieler Array, welches am meisten genutzt werden wird
             StrArrayIndex := 0;
 
             // input: [ d, d, d, d, d, d ]
             if ((ConvertValue[Low(ConvertValue)] <> '[') or (ConvertValue[High(ConvertValue)] <> ']')) then
-              raise Exception.Create('Utils.RTTI.pas Error: Invalid Array Structure');
+              raise Exception.Create('Utils.RTTI.pas Error: Invalid Array Structure: ' + ConvertValue + '.');
 
             ConvertValue := Copy(ConvertValue, 2, Length(ConvertValue)-2);
             ConvertValue := ConvertValue + ArrayDelimiter;
@@ -61,16 +64,17 @@ begin
 
                 if ConvertValue[i] = ArrayDelimiter then
                 begin
+                    // wenn es doch mehr als DEFAULT_PRE_ALLOC gibt, aufstocken
                     if StrArrayIndex = Length(StrArray)-1 then
                         SetLength(StrArray, Length(StrArray)+1);
 
-                    StrArray[StrArrayIndex] := TValue.From<string>(Trim(digits));
+                    StrArray[StrArrayIndex] := TValue.From<String>(Trim(Digits));
                     Inc(StrArrayIndex);
-                    digits := '';
+                    Digits := '';
                 end
                 else
                 begin
-                    digits := digits + ConvertValue[i];
+                    Digits := Digits + ConvertValue[i];
                 end;
             end;
 

@@ -80,9 +80,9 @@ type
           FGewollteStadionAnzahl: Integer = 16;
 
     procedure TeamDBUpdate;
-    procedure TeamTabelleZeichnen(Rows: TArray<TArray<String>>);
+    procedure TeamTabelleZeichnen(Rows: TObjectList<TList<String>>);
     procedure StadionDBUpdate;
-    procedure StadionTabelleZeichnen(Rows: TArray<TArray<String>>);
+    procedure StadionTabelleZeichnen(Rows: TObjectList<TList<String>>);
   public
     { Public-Deklarationen }
   end;
@@ -96,11 +96,10 @@ implementation
 
 procedure TMainForm.TeamDBUpdate;
 var
-  Rows: TArray<TArray<String>>;
+  Rows: TObjectList<TList<String>>;
 begin
-  
   Rows := FTeamDB.GetUnstructuredTableFromCSV();
-  FTeamAnzahl := Length(Rows) - 1; // Header
+  FTeamAnzahl := Rows.Count - 1; // Header
 
   TeamAnzahlLabel.Caption := '0' + IntToStr(FTeamAnzahl);
   if FTeamAnzahl >= 10 then
@@ -123,11 +122,13 @@ begin
 
   // Hierdrin wird GetUnstructuredTableFromCSV aufgerufen also vorher GetStructuredTableFromCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
   TeamTabelleZeichnen(Rows);
+
+  Rows.Free;
 end;
 
-procedure TMainForm.TeamTabelleZeichnen(Rows: TArray<TArray<String>>);
+procedure TMainForm.TeamTabelleZeichnen(Rows: TObjectList<TList<String>>);
 begin
-  if Length(Rows) <> 0 then
+  if Rows.Count <> 0 then
   begin
     Utils.TableFormating.TabelleZeichnen(TeamsStringGrid, Rows);
   end;
@@ -136,11 +137,11 @@ end;
 
 procedure TMainForm.StadionDBUpdate;
 var
-  Rows: TArray<TArray<String>>;
+  Rows: TObjectList<TList<String>>;
 begin
-  
+
   Rows := FStadionDB.GetUnstructuredTableFromCSV();
-  FStadionAnzahl := Length(Rows) - 1; // Header
+  FStadionAnzahl := Rows.Count - 1; // Header
 
   StadionAnzahlLabel.Caption := '0' + IntToStr(FStadionAnzahl);
   if FStadionAnzahl >= 10 then
@@ -163,11 +164,13 @@ begin
 
   // Hierdrin wird GetUnstructuredTableFromCSV aufgerufen also vorher GetStructuredTableFromCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
   StadionTabelleZeichnen(Rows);
+
+  Rows.Free;
 end;
 
-procedure TMainForm.StadionTabelleZeichnen(Rows: TArray<TArray<String>>);
+procedure TMainForm.StadionTabelleZeichnen(Rows: TObjectList<TList<String>>);
 begin
-  if Length(Rows) <> 0 then
+  if Rows.Count <> 0 then
   begin
     Utils.TableFormating.TabelleZeichnen(StadienStringGrid, Rows);
   end;

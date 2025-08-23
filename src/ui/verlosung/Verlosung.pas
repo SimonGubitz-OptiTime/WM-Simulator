@@ -12,10 +12,10 @@ uses
 
 type TVerlosungUI = class
 private
-  FGrids: array[0..11] of TStringGrid;
+  FGrids: TObjectList<TStringGrid>;
 
   FInitialized: Boolean;
-  FTeams: TArray<TTeam>; // for the AnimationCallback
+  FTeams: TObjectList<TTeam>; // for the AnimationCallback
 
   // array due to multiple Grids
   FColSize: array[0..11] of Integer;
@@ -29,7 +29,7 @@ public
 
   procedure VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer; AOwner: TControl);
 
-  // destructor Free();
+  destructor Destroy; override;
 end;
 
 implementation
@@ -40,6 +40,8 @@ var
 begin
   if Length(Grids) <> 12 then
     raise Exception.Create('TVerlosungUI.Create Error: There must be exactly 12 Grids.');
+
+  FGrids := TObjectList<TStringGrid>.Create;
 
   for i := 0 to 11 do
   begin
@@ -55,7 +57,7 @@ begin
     begin
       Grids[i].RowHeights[j] := FRowSize[i];
     end;
-    FGrids[i] := Grids[i];
+    FGrids.Add(Grids[i]);
   end;
 
   FInitialized := true;
@@ -67,33 +69,34 @@ var
   grid, forRow: Integer;
   TempLabel: TStaticText;
   TeamIndex: Integer;
-  AnimationList: TList<TAnimations>;
+  AnimationList: TObjectList<TAnimations>;
 begin
 
   if not FInitialized then
+  begin
     raise Exception.Create('TVerlosungUI.VerlosungStarten Error: The UI is not initialized.');
+  end;
+
+  if ((FTeams.Count mod 4) <> 0) then
+  begin
+    raise Exception.Create('TVerlosungUI.VerlosungStarten Error: The number of FTeams must be divisible by 4.');
+  end;
 
   if Assigned(TempLabel) then
   begin
     TempLabel := nil;
   end;
 
-  if TeamIndex >= Length(FTeams) then
+  if TeamIndex >= FTeams.Count then
+  begin
     TeamIndex := 0;
+  end;
 
 
-
-  AnimationList := TList<TAnimations>.Create;
+  AnimationList := TObjectList<TAnimations>.Create;
+  FTeams := ATeamDB.GetStructuredTableFromCSV();
 
   try
-    // alle Teams aus der DB laden
-    FTeams := ATeamDB.GetStructuredTableFromCSV();
-
-
-
-    if ((Length(FTeams) mod 4) <> 0) then
-      raise Exception.Create('TVerlosungUI.VerlosungStarten Error: The number of FTeams must be divisible by 4.');
-
 
     // Teams gleichmäßig aufteilen
     // Schritt 1 - anhand des FTeams.TTeamRankings (enum) sortieren
@@ -118,7 +121,7 @@ begin
     for grid := Low(FGrids) to High(FGrids) do
     begin
 
-      if (TeamIndex >= Length(FTeams)) then
+      if (TeamIndex >= FTeams.Count) then
         break;
 
 
@@ -147,6 +150,7 @@ begin
     end;
   finally
     AnimationList.Free;
+    FTeams.Free;
   end;
 end;
 
@@ -192,9 +196,11 @@ begin
   end;
 end;
 
-{destructor TVerlosungUI.Free();
+destructor TVerlosungUI.Destroy;
 begin
-  //
-  end;}
+  FGrids.Free;
+
+  inherited Destroy;
+end;
 
 end.
