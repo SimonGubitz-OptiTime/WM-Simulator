@@ -98,6 +98,8 @@ procedure TMainForm.TeamDBUpdate;
 var
   Rows: TObjectList<TList<String>>;
 begin
+
+  // Rows NICHT .Free, da es TDB<T> gehört
   Rows := FTeamDB.GetUnstructuredTableFromCSV();
   FTeamAnzahl := Rows.Count - 1; // Header
 
@@ -122,8 +124,6 @@ begin
 
   // Hierdrin wird GetUnstructuredTableFromCSV aufgerufen also vorher GetStructuredTableFromCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
   TeamTabelleZeichnen(Rows);
-
-  Rows.Free;
 end;
 
 procedure TMainForm.TeamTabelleZeichnen(Rows: TObjectList<TList<String>>);
@@ -140,6 +140,7 @@ var
   Rows: TObjectList<TList<String>>;
 begin
 
+  // Rows NICHT .Free, da es TDB<T> gehört
   Rows := FStadionDB.GetUnstructuredTableFromCSV();
   FStadionAnzahl := Rows.Count - 1; // Header
 
@@ -164,8 +165,6 @@ begin
 
   // Hierdrin wird GetUnstructuredTableFromCSV aufgerufen also vorher GetStructuredTableFromCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
   StadionTabelleZeichnen(Rows);
-
-  Rows.Free;
 end;
 
 procedure TMainForm.StadionTabelleZeichnen(Rows: TObjectList<TList<String>>);

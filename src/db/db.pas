@@ -312,12 +312,12 @@ begin
   FDBUpdateEventListeners.Free;
   FDBUpdateEventListeners.Clear;
 
-  // Call the inherited destructor
-  inherited Destroy;
-
   // Clear the cached data
   CachedCSV.Free;
   CachedUnstructuredCSV.Free;
+
+  // Call the inherited destructor
+  inherited Destroy;
 end;
 
 end.

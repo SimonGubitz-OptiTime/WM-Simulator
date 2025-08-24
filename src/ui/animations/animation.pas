@@ -80,16 +80,16 @@ begin
 
   FTimer.Enabled := true;
 
-  TThread.Queue(nil,
+  {TThread.Queue(nil,
     procedure
-    begin
+    begin}
       while not FFinishedAnimation do
       begin
         Application.ProcessMessages;
         Sleep(10);
       end;
-    end
-  );
+    {end
+  );}
 
 end;
 
