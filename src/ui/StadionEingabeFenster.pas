@@ -25,8 +25,6 @@ type
     procedure BestaetigenButtonClick(Sender: TObject);
     class function GetTableName: ShortString;
 
-    destructor Destroy(Sender: TObject); reintroduce;
-
   private
 
     var FDatabase: TDB<TStadion>;
@@ -101,14 +99,6 @@ end;
 class function TStadionEingabeFenster.GetTableName: ShortString;
 begin
   Result := FTableName;
-end;
-
-destructor TStadionEingabeFenster.Destroy;
-begin
-  // Aufräumen
-  FDatabase.Free;
-
-  inherited Destroy;
 end;
 
 

@@ -133,24 +133,27 @@ begin
 
           // hier die Animation
           TempLabel := TStaticText.Create(nil);
-          TempLabel.Parent    := AOwner as TWinControl;
-          TempLabel.Caption   := FTeams[TeamIndex].Name;
-          TempLabel.Top       := Round((AOwner.Height / 2) - (Height / 2)); // Middle
-          TempLabel.Left      := Round((AOwner.Width / 2) - (Width / 2));   // Middle
 
-          var MoveTop := FGrids[grid].Top + Round(TempLabel.Height / 2) + (forRow * FRowSize[grid]);
+          try
+            TempLabel.Parent    := AOwner as TWinControl;
+            TempLabel.Caption   := FTeams[TeamIndex].Name;
+            TempLabel.Top       := Round((AOwner.Height / 2) - (Height / 2)); // Middle
+            TempLabel.Left      := Round((AOwner.Width / 2) - (Width / 2));   // Middle
 
-          AnimationList.Add(TAnimations.Create(ATimer, TControl(TempLabel), MoveTop, FGrids[grid].Left + 15, 600)); // .6 sek
-          AnimationList.Last.MoveObject(AnimationCallbackFn, forRow, grid, TeamIndex);
+            var MoveTop := FGrids[grid].Top + Round(TempLabel.Height / 2) + (forRow * FRowSize[grid]);
 
-          Inc(TeamIndex);
+            AnimationList.Add(TAnimations.Create(ATimer, TControl(TempLabel), MoveTop, FGrids[grid].Left + 15, 600)); // .6 sek
+            AnimationList.Last.MoveObject(AnimationCallbackFn, forRow, grid, TeamIndex);
 
+            Inc(TeamIndex);
+          finally
+            TempLabel.Free;
+          end;
         end;
       end;
     end;
   finally
     AnimationList.Free;
-    FTeams.Free;
   end;
 end;
 

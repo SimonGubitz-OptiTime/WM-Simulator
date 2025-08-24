@@ -179,7 +179,7 @@ end;
 procedure TMainForm.TeamHinzufuegenButtonClick(Sender: TObject);
 begin
   TeamEingabe := TTeamEingabeFenster.Create(FTeamDB);
-  TeamEingabe.Show; // ShowModal;
+  Show; // ShowModal;
 end;
 
 procedure TMainForm.StadionHinzufuegenButtonClick(Sender: TObject);
