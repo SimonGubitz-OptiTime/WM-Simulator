@@ -21,7 +21,7 @@ object MainForm: TMainForm
     Height = 713
     ActivePage = VerlosungSheet
     TabOrder = 0
-    OnChange = PageControlChange
+    OnChanging = PageControlChanging
     object StammdatenSheet: TTabSheet
       Caption = 'StammdatenSheet'
       object UeberschriftStammdaten: TLabel

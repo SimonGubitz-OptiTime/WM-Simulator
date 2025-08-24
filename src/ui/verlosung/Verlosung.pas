@@ -27,7 +27,7 @@ public
   property Initialized: Boolean read FInitialized;
   constructor Create(Grids: array of TStringGrid);
 
-  procedure VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer; AOwner: TControl);
+  function VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer; AOwner: TControl): Boolean;
 
   destructor Destroy; override;
 end;
@@ -64,7 +64,7 @@ begin
 
 end;
 
-procedure TVerlosungUI.VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer; AOwner: TControl);
+function TVerlosungUI.VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer; AOwner: TControl): Boolean;
 var
   grid, forRow: Integer;
   TempLabel: TStaticText;
@@ -92,68 +92,78 @@ begin
     TeamIndex := 0;
   end;
 
-
-  AnimationList := TObjectList<TAnimations>.Create;
-  FTeams := ATeamDB.GetStructuredTableFromCSV();
-
   try
+    AnimationList := TObjectList<TAnimations>.Create;
+    FTeams := ATeamDB.GetStructuredTableFromCSV();
 
-    // Teams gleichmäßig aufteilen
-    // Schritt 1 - anhand des FTeams.TTeamRankings (enum) sortieren
-    // Utils.ShuffleArray.TShuffleArrayUtils<TTeam>.SortByRanking(FTeams);
+    try
 
-    // Schritt 2 - for i := 0 to High(FTeams) / 12 <- weil es 12 Teams gibt
-    {while i := 0 to High(FTeams) / 12 do
-    begin
-      // Schritt 3 - Temp Team erstellen
-      var TempTeam: TTeam := FTeams[i];
-      TempTeam[i] := FTeams[i];
+      // Teams gleichmäßig aufteilen
+      // Schritt 1 - anhand des FTeams.TTeamRankings (enum) sortieren
+      // Utils.ShuffleArray.TShuffleArrayUtils<TTeam>.SortByRanking(FTeams);
 
-      i := i + 4; // 4 Teams pro Grid
-    end;}
+      // Schritt 2 - for i := 0 to High(FTeams) / 12 <- weil es 12 Teams gibt
+      {while i := 0 to High(FTeams) / 12 do
+      begin
+        // Schritt 3 - Temp Team erstellen
+        var TempTeam: TTeam := FTeams[i];
+        TempTeam[i] := FTeams[i];
 
-    // Schritt 3 - Teams mischen
+        i := i + 4; // 4 Teams pro Grid
+      end;}
 
-    Utils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(FTeams);
+      // Schritt 3 - Teams mischen
 
-    // Für alle Grids je 4 Teams eintragen
-    TeamIndex := 0;
-    for grid := Low(FGrids) to High(FGrids) do
-    begin
+      Utils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(FTeams);
 
-      if (TeamIndex >= FTeams.Count) then
-        break;
-
-
-      with FGrids[grid] do
+      // Für alle Grids je 4 Teams eintragen
+      TeamIndex := 0;
+      for grid := Low(FGrids) to High(FGrids) do
       begin
 
-        for forRow := 0 to 3 do
+        if (TeamIndex >= FTeams.Count) then
+          break;
+
+
+        with FGrids[grid] do
         begin
 
-          // hier die Animation
-          TempLabel := TStaticText.Create(nil);
+          for forRow := 0 to 3 do
+          begin
 
-          try
-            TempLabel.Parent    := AOwner as TWinControl;
-            TempLabel.Caption   := FTeams[TeamIndex].Name;
-            TempLabel.Top       := Round((AOwner.Height / 2) - (Height / 2)); // Middle
-            TempLabel.Left      := Round((AOwner.Width / 2) - (Width / 2));   // Middle
+            // hier die Animation
+            TempLabel := TStaticText.Create(nil);
 
-            var MoveTop := FGrids[grid].Top + Round(TempLabel.Height / 2) + (forRow * FRowSize[grid]);
+            try
+              TempLabel.Parent    := AOwner as TWinControl;
+              TempLabel.Caption   := FTeams[TeamIndex].Name;
+              TempLabel.Top       := Round((AOwner.Height / 2) - (Height / 2)); // Middle
+              TempLabel.Left      := Round((AOwner.Width / 2) - (Width / 2));   // Middle
 
-            AnimationList.Add(TAnimations.Create(ATimer, TControl(TempLabel), MoveTop, FGrids[grid].Left + 15, 600)); // .6 sek
-            AnimationList.Last.MoveObject(AnimationCallbackFn, forRow, grid, TeamIndex);
+              var MoveTop := FGrids[grid].Top + Round(TempLabel.Height / 2) + (forRow * FRowSize[grid]);
 
-            Inc(TeamIndex);
-          finally
-            TempLabel.Free;
+              AnimationList.Add(TAnimations.Create(ATimer, TControl(TempLabel), MoveTop, FGrids[grid].Left + 15, 600)); // .6 sek
+              AnimationList.Last.MoveObject(AnimationCallbackFn, forRow, grid, TeamIndex);
+
+              Inc(TeamIndex);
+            finally
+              TempLabel.Free;
+            end;
           end;
         end;
       end;
+    finally
+      AnimationList.Free;
     end;
-  finally
-    AnimationList.Free;
+
+    Result := true;
+
+  except
+    on E: Exception do
+    begin
+      ShowMessage('TVerlosungUI.VerlosungStarten Error: ' + E.Message);
+      Exit(false);
+    end;
   end;
 end;
 

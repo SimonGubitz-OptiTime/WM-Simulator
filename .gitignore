@@ -14,6 +14,7 @@ bin/
 
 # Ignore IDE local or config files
 *.dproj.local
+*.res
 *.identcache
 
 # Ignore the database files
