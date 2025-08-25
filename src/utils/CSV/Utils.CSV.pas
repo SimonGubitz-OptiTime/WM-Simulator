@@ -17,6 +17,7 @@ type TCSVUtils<T> = record
     class function DeserializeCSV(CSVString: String): TObjectList<T>; static;
 
     class function SerializeRowCSV(Row: T): String; static;
+    class function SerializeRowCSVToStringArray(Row: T): TList<String>; static;
     class function DeserializeRowCSV(CSVString: String): T; static;
 
     class function GetCSVHeaderAsArray(): TList<String>; static;

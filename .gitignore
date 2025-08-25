@@ -17,8 +17,11 @@ bin/
 *.res
 *.identcache
 
-# Ignore the database files
-database/
+# Ignore everything in database/
+database/*
+
+# But keep the mock "autofill" files
+!database/custom_database_keep_*.csv
 
 # Other
 **/.DS_Store

@@ -2,9 +2,11 @@ unit Utils.ShuffleArray;
 
 interface
 
-type TShuffleArrayUtils<T> = record
-  class procedure Shuffle(var ArrayToShuffle: TArray<T>); static; overload;
-  class procedure Shuffle(var ArrayToShuffle: TObjectArray<T>); static; overload;
+uses
+  System.Generics.Collections;
+
+type TShuffleArrayUtils<T> = recordx
+  class procedure Shuffle(var ArrayToShuffle: TList<T>); static; overload;
 end;
 
 implementation
@@ -24,7 +26,7 @@ begin
   end;
 end;
 
-class procedure TShuffleArrayUtils<T>.Shuffle(var ArrayToShuffle: TObjectArray<T>);
+class procedure TShuffleArrayUtils<T>.Shuffle(var ArrayToShuffle: TList<T>);
 var
   copyI, I, arrayLength: Integer;
   temp: T;
