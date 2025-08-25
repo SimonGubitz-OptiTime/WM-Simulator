@@ -101,13 +101,40 @@ begin
     try
 
       // Nur die sehr starken Teams nehmen
+
+
+      // type TConditionFunction = reference to function(Param: T): Boolean; // Fehler - T nicht deklariert
+      // type TConditionFunction<T> = reference to function(Param: T): Boolean; // Fehler
+      Utils.FilterArray.TFilterArrayUtils<TTeam>.Filter(FTeams,
+        function(Param: TTeam): Boolean
+        begin
+          Result := Param.TeamRanking = TTeamRanking.SehrStark;
+        end
+      );
+
+
+      // TODO: in Utils.FilterArray die kommentare ändern
+      // type TCondition = reference to function(index: Integer): Boolean; // Fehler
+
+      {Utils.FilterArray.TFilterArrayUtils<TTeam>.Filter(FTeams,
+        function(index: Integer): Boolean
+        begin
+          Result := FTeams[index].TeamRanking = TTeamRanking.SehrStark;
+        end
+      );}
+
+
+      // Funktioniert 1. Overload
       var list := TList<Integer>.Create;
       list.AddRange([0, 3, 5]);
-      Utils.FilterArray.TFilterArrayUtils<Integer>.Filter(list, 5);
+      Utils.FilterArray.TFilterArrayUtils<Integer>.Filter(list, 5); // ValueToSearch: T overload
 
       list.Free;
 
+
       // Utils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(FTeams);
+
+
 
       // Für alle Grids je 4 Teams eintragen
       TeamIndex := 0;
