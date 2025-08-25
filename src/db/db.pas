@@ -19,10 +19,8 @@ private
   FFileName: String;
   FFileDirectory: String;
 
-  class var CachedCSV: TArray<T>;
-  class var CachedUnstructuredCSV: String;
-  class var CachedHeader: TArray<String>;
-  class var CachedHeaderString: String;
+  class var CachedCSV: TObjectList<T>;
+  class var CachedUnstructuredCSV: TObjectList<TList<String>>;
 
 
   procedure   CallDBUpdateEventListeners();
@@ -32,21 +30,15 @@ public
   property Initialized: Boolean read FInitialized;
 
   constructor Create(TableName: String);
-  
-  function    GetPropertyFromCSV(PropertyName: String): T;
-  procedure   SetPropertyInCSV(PropertyName: String; PropertyValue: T);
 
-  function    GetRowFromCSV(RowID: Integer): T;
-  procedure   SetRowInCSV(RowID: Integer; RowType: T);
+  // function    GetRowFromCSV(RowID: Integer): T;
+  // procedure   SetRowInCSV(RowID: Integer; Line: Integer);
   procedure   AddRowToCSV(RowValues: T);
 
-  function    GetStructuredTableFromCSV(): TArray<T>;
-  procedure   SetStructuredTableInCSV(CSVArray: TArray<T>);
+  function    GetStructuredTableFromCSV(): TObjectList<T>;
+  // procedure   SetStructuredTableInCSV(CSVArray: TObjectList<T>);
 
-  function    GetUnstructuredTableFromCSV(): TArray<TArray<String>>;
-  procedure   SetUnstructuredTableInCSV(CSVString: String); // unnötig eigentlich
-
-  procedure   RemoveCSVTableFromDB();
+  function    GetUnstructuredTableFromCSV(): TObjectList<TList<String>>;
 
 
   // Event listener JS equivalent
@@ -74,60 +66,24 @@ begin
   FFS := TFileStream.Create(FFileName, fmOpenReadWrite or fmShareDenyWrite);
   FDBUpdateEventListeners := TList<TDBUpdateEvent>.Create();
 
+  // reset all cache
+  CachedCSV := TObjectList<T>.Create;
+  CachedUnstructuredCSV := TObjectList<TList<String>>.Create;
+
   FInitialized := true;
 end;
 
+// procedure TDB<T>.SetRowInCSV(RowID: Integer; Line: Integer);
+// begin
+//   if not FInitialized then
+//     raise Exception.Create('db.pas Error: TDB is not initialized. Please add to the database first.');
 
-function TDB<T>.GetPropertyFromCSV(PropertyName: String): T;
-var
-  CSVArray: TArray<T>;
-begin
-
-  if not FInitialized then
-    raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
+//   // .csv öffnen
 
 
-  // CSVArray := GetStructuredTableFromCSV()[line];
-
-
-end;
-
-procedure TDB<T>.SetPropertyInCSV(PropertyName: String; PropertyValue: T);
-begin
-
-  if not FInitialized then
-    raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
-
-  // .csv öffnen
-
-  
-  // Call the event listeners 
-  CallDBUpdateEventListeners();
-end;
-
-
-function TDB<T>.GetRowFromCSV(RowID: Integer): T;
-begin
-
-  if not FInitialized then
-    raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
-
-  // .csv öffnen
-
-  
-end;
-
-procedure TDB<T>.SetRowInCSV(RowID: Integer; RowType: T);
-begin
-  if not FInitialized then
-    raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
-
-  // .csv öffnen
-  
-
-  // Call the event listeners 
-  CallDBUpdateEventListeners();
-end;
+//   // Call the event listeners
+//   CallDBUpdateEventListeners();
+// end;
 
 procedure TDB<T>.AddRowToCSV(RowValues: T);
 var
@@ -142,16 +98,13 @@ begin
   end
   else
   begin
-    SW := nil;
 
     if not FInitialized then
-      raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
+      raise Exception.Create('db.pas Error: TDB is not initialized. Please add to the database first.');
 
-    // Read in the full CSV file
-    // CSVArray := GetStructuredTableFromCSV();
+    SW := TStreamWriter.Create(FFS);
 
     try
-      SW := TStreamWriter.Create(FFS);
       SW.BaseStream.Position := FFS.size;
       {if SW.Encoding = TEncoding.UTF16 then
         SW.BaseStream.Position := FFS.size / 2;} // 2 byte pro character
@@ -159,12 +112,16 @@ begin
       WriterString := Utils.CSV.TCSVUtils<T>.SerializeRowCSV(RowValues);
       SW.WriteLine(WriterString);
 
+      // Append to cache as well
+      CachedCSV.Add(RowValues);
+      CachedUnstructuredCSV.Add(Utils.CSV.TCSVUtils<T>.SerializeRowCSV(RowValues));
+
     finally
       SW.Free;
     end;
   end;
-  
-  // Call the event listeners 
+
+  // Call the event listeners
   CallDBUpdateEventListeners();
 end;
 
@@ -172,7 +129,7 @@ end;
 // Returns a structured table from the CSV file
 // There will be no error if the file is empty, just an empty array
 // The State of the File is determined by the FInitialized variable
-function TDB<T>.GetStructuredTableFromCSV(): TArray<T>;
+function TDB<T>.GetStructuredTableFromCSV(): TList<T>;
 var
   SR: TStreamReader;
   FileSize: Int64;
@@ -184,124 +141,81 @@ var
 begin
 
   if not FInitialized then
-      raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
+      raise Exception.Create('db.pas Error: TDB is not initialized. Please add to the database first.');
 
-  SR := nil;
+  Result := TList<T>.Create;
 
-  Row := Default(T);
-
-  try
-    FFS.Position := 0;
+  if (Assigned(CachedCSV)) and (CachedCSV.Count > 0) then
+  begin
+    Result := CachedCSV;
+    Exit;
+  end
+  else
+  begin
+    Row := Default(T);
     SR := TStreamReader.Create(FFS);
 
-    // headline ignorieren
-    line := SR.ReadLine();
+    try
+      FFS.Position := 0;
 
-    while not(SR.EndOfStream) do
-    begin
+      // headline ignorieren
       line := SR.ReadLine();
 
-      Row := Utils.CSV.TCSVUtils<T>.DeserializeRowCSV(line);
+      while not(SR.EndOfStream) do
+      begin
+        line := SR.ReadLine();
 
-
-      SetLength(Result, Length(Result) + 1);
-      Result[High(Result)] := Row;
-
+        // Zeile direkt als serialisiertes Objekt speichern
+        Row := Utils.CSV.TCSVUtils<T>.DeserializeRowCSV(line);
+        Result.Add(Row);
+      end;
+    finally
+        SR.Free;
     end;
-  finally
-      SR.Free;
   end;
 end;
 
-procedure TDB<T>.SetStructuredTableInCSV(CSVArray: TArray<T>);
-var
-  SW: TStreamWriter;
-  i: Integer;
-begin
 
-  if not FInitialized then
-    raise Exception.Create('db.pas Error: TDB is not initialized. Call .Create first.');
-
-  SW := nil;
-
-  try
-    SW := TStreamWriter.Create(FFS);
-
-    // Write the header line
-    SW.WriteLine(Utils.CSV.TCSVUtils<T>.GetCSVHeaderAsString());
-
-
-    // Write each row to the CSV file
-    for i := Low(CSVArray) to High(CSVArray) do
-    begin
-      SW.WriteLine(Utils.CSV.TCSVUtils<T>.SerializeCSV(CSVArray));
-    end;
-
-  finally
-    SW.Free;
-  end;
-  
-  // Call the event listeners 
-  CallDBUpdateEventListeners();
-end;
-
-
-function TDB<T>.GetUnstructuredTableFromCSV(): TArray<TArray<String>>;
+function TDB<T>.GetUnstructuredTableFromCSV(): TObjectList<TList<String>>;
 var
   SR: TStreamReader;
+  Temp: TList<String>;
 begin
 
   if not FInitialized then
-    raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
+    raise Exception.Create('db.pas Error: TDB is not initialized. Please add to the database first.');
+
+  Result := TObjectList<TList<String>>.Create;
 
 
-  SetLength(Result, 0);
 
-  SR := nil;
+  if (Assigned(CachedUnstructuredCSV)) and (CachedUnstructuredCSV.Count > 0) then
+  begin
+    Result := CachedUnstructuredCSV;
+    Exit;
+  end
+  else
+  begin
+    Result := TObjectList<TList<String>>.Create;
 
-  try
-    FFS.Position := 0;
     SR := TStreamReader.Create(FFS);
 
-    while not(SR.EndOfStream) do
-    begin
-
-      SetLength(Result, Length(Result) + 1);
-      Result[High(Result)] := Utils.CSV.DeserializeCSV(SR.ReadLine());
-
-      // Result := Result + Utils.CSV.DeserializeCSV(SR.ReadLine());
-
+    try
+      FFS.Position := 0;
+      while not(SR.EndOfStream) do
+      begin
+        try
+          Temp := Utils.CSV.DeserializeCSV(SR.ReadLine());
+          Result.Add(Temp);
+        finally
+          Temp.Free;
+        end;
+      end;
+    finally
+      SR.Free;
     end;
-
-  finally
-    SR.Free;
   end;
 end;
-
-procedure TDB<T>.SetUnstructuredTableInCSV(CSVString: String);
-var
-  SW: TStreamWriter;
-begin
-
-  if not FInitialized then
-    raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
-
-  SW := nil;
-
-  try
-    FFS.Position := 0;
-    SW := TStreamWriter.Create(FFS);
-
-    SW.Write(Utils.CSV.SerializeCSV(CSVString));
-
-  finally
-    SW.Free;
-  end;
-  
-  // Call the event listeners 
-  CallDBUpdateEventListeners();
-end;
-
 
 procedure TDB<T>.AddCSVTableToDB(CSVObject: T);
 var
@@ -325,6 +239,9 @@ begin
       SW.WriteLine(Utils.CSV.TCSVUtils<T>.GetCSVHeaderAsString);
       SW.WriteLine(Utils.CSV.TCSVUtils<T>.SerializeRowCSV(CSVObject));
 
+      // Append to cache as well
+      CachedUnstructuredCSV.Add(Utils.CSV.TCSVUtils<T>.SerializeRowCSV(CSVObject));
+      CachedCSV.Add(CSVObject);
 
       FInitialized := true;
 
@@ -333,18 +250,18 @@ begin
     end;
   end;
 
-  // Call the event listeners 
+  // Call the event listeners
   CallDBUpdateEventListeners();
 end;
 
 procedure TDB<T>.RemoveCSVTableFromDB();
 begin
   if not FInitialized then
-    raise Exception.Create('db.pas Error: TDB is not initialized. Call AddCSVTableToDB first.');
-  
+    raise Exception.Create('db.pas Error: TDB is not initialized. Please add to the database first.');
+
   // Delete the file
   if FileExists(FFileName) then
-  begin  
+  begin
     TFile.Delete(FFileName);
     FInitialized := false;
   end
@@ -352,17 +269,15 @@ begin
     raise Exception.Create('db.pas Error: Table "' + FTableName + '" does not exist.');
 
   // Clear the cached data
-  SetLength(CachedCSV, 0);
-  CachedUnstructuredCSV := '';
-  SetLength(CachedHeader, 0);
-  CachedHeaderString := '';
+  CachedCSV.Free;
+  CachedUnstructuredCSV.Free;
 
-  // Call the event listeners 
+  // Call the event listeners
   CallDBUpdateEventListeners();
 end;
 
 procedure TDB<T>.AddDBUpdateEventListener(CallbackFunction: TDBUpdateEvent);
-begin 
+begin
 
   // Add "CallbackFunction" to a list of event listeners
   // This will be called whenever the CSV table changes
@@ -397,14 +312,12 @@ begin
   FDBUpdateEventListeners.Free;
   FDBUpdateEventListeners.Clear;
 
+  // Clear the cached data
+  CachedCSV.Free;
+  CachedUnstructuredCSV.Free;
+
   // Call the inherited destructor
   inherited Destroy;
-
-  // Clear the cached data
-  SetLength(CachedCSV, 0);
-  CachedUnstructuredCSV := '';
-  SetLength(CachedHeader, 0);
-  CachedHeaderString := '';
 end;
 
 end.

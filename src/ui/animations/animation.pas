@@ -80,16 +80,16 @@ begin
 
   FTimer.Enabled := true;
 
-  TThread.Queue(nil,
+  {TThread.Queue(nil,
     procedure
-    begin
+    begin}
       while not FFinishedAnimation do
       begin
         Application.ProcessMessages;
         Sleep(10);
       end;
-    end
-  );
+    {end
+  );}
 
 end;
 
@@ -111,7 +111,7 @@ begin
     // Callback Funktion aufrufen
     FFinishedAnimation := true;
     FCallbackFn(FCallbackCount, FCallbackSecondCount, FCallbackThirdCount);
-    
+
     // Wenn das Objekt zerstört werden soll, dann hier aufräumen
     if FDestroyObject then
       FObject.Free;

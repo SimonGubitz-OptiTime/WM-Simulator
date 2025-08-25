@@ -46,8 +46,6 @@ type
     procedure SpielerListeEntfernenButtonClick(Sender: TObject);
     class function GetTableName: ShortString;
 
-    destructor Destroy; reintroduce;
-
   private
     var SpielerListe: TList<String>;
     var FDatabase: TDB<TTeam>;
@@ -208,7 +206,7 @@ begin
   // Team in die Datenbank schreiben
   FDatabase.AddRowToCSV(Team);
 
-
+  // Fenster schließen
   Self.Close;
 
 end;
@@ -225,13 +223,6 @@ end;
 class function TTeamEingabeFenster.GetTableName: ShortString;
 begin
   Result := FTableName;
-end;
-
-destructor TTeamEingabeFenster.Destroy;
-begin
-  // Aufräumen
-  SpielerListe.Destroy;
-  FDatabase.Destroy;
 end;
 
 

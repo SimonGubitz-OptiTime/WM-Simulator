@@ -25,9 +25,8 @@ type
     procedure BestaetigenButtonClick(Sender: TObject);
     class function GetTableName: ShortString;
 
-    destructor Destroy(Sender: TObject); reintroduce;
-
   private
+
     var FDatabase: TDB<TStadion>;
     const FTableName: ShortString = 'Stadien';
   end;
@@ -91,6 +90,7 @@ begin
   // In die Datenbank schreiben
   FDatabase.AddRowToCSV(Stadion);
 
+  // Fenster schließen
   Self.Close;
 
 
@@ -99,12 +99,6 @@ end;
 class function TStadionEingabeFenster.GetTableName: ShortString;
 begin
   Result := FTableName;
-end;
-
-destructor TStadionEingabeFenster.Destroy;
-begin
-  // Aufräumen
-  FDatabase.Destroy;
 end;
 
 

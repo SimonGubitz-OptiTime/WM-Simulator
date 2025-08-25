@@ -6,7 +6,7 @@ uses
   Vcl.Grids;
 
 procedure SetColumnFullWidth(var Grid: TStringGrid; ACol: Integer);
-function TabelleZeichnen(var Grid: TStringGrid; Rows: TArray<TArray<String>>): String;
+function TabelleZeichnen(var Grid: TStringGrid; Rows: TObjectList<TList<String>>): String;
 
 implementation
 
@@ -30,7 +30,7 @@ begin
 
 end;
 
-function TabelleZeichnen(var Grid: TStringGrid; Rows: TArray<TArray<String>>): String;
+function TabelleZeichnen(var Grid: TStringGrid; Rows: TObjectList<TList<String>>): String;
 var
   i, j: Integer;
 begin
@@ -38,10 +38,10 @@ begin
       Grid.ColCount := Length(Rows[0])+1;
 
 
-      for i := Low(Rows) to High(Rows) do
+      for i := 0 to Rows.Count - 1 do
       begin
         Grid.Cells[0, i+1] := IntToStr(i+1);
-        for j := Low(Rows[i]) to High(Rows[i]) do
+        for j := 0 to Rows[i].Count - 1 do
         begin
 //          SetColumnFullWidth(Grid, j);
           Grid.Cells[j+1, i] := Rows[i][j];
