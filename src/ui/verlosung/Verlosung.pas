@@ -105,12 +105,12 @@ begin
 
       // type TConditionFunction = reference to function(Param: T): Boolean; // Fehler - T nicht deklariert
       // type TConditionFunction<T> = reference to function(Param: T): Boolean; // Fehler
-      Utils.FilterArray.TFilterArrayUtils<TTeam>.Filter(FTeams,
+      {Utils.FilterArray.TFilterArrayUtils<TTeam>.Filter(FTeams,
         function(Param: TTeam): Boolean
         begin
           Result := Param.TeamRanking = TTeamRanking.SehrStark;
         end
-      );
+      );}
 
 
       // TODO: in Utils.FilterArray die kommentare ändern
@@ -126,8 +126,9 @@ begin
 
       // Funktioniert 1. Overload
       var list := TList<Integer>.Create;
-      list.AddRange([0, 3, 5]);
-      Utils.FilterArray.TFilterArrayUtils<Integer>.Filter(list, 5); // ValueToSearch: T overload
+      list.AddRange([0, 3, 5, 6, 9, 10]);
+      var filtered_res: TList<Integer> := Utils.FilterArray.TFilterArrayUtils<Integer>.Filter(list, 3); // ValueToSearch: T overload
+      ShowMessage(IntToStr(filtered_res[0])); // Gibt sowieso nur ein Ergebnis
 
       list.Free;
 
