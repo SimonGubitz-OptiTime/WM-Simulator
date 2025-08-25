@@ -1,6 +1,4 @@
-﻿{#DEFINE DEFAULT_PRE_ALLOC 11} // da es sich meistens um Spieler Arrays handelt, die 11 Spieler haben -> aus Effizienzgründen
-
-unit Utils.RTTI;
+﻿unit Utils.RTTI;
 
 interface
 
@@ -16,6 +14,8 @@ type TRttiUtils<T> = record
 private
   const ArrayDelimiter: Char = ',';
 end;
+
+const DEFAULT_PRE_ALLOC = 11; // da es sich meistens um Spieler Arrays handelt, die 11 Spieler haben -> aus Effizienzgründen
 
 implementation
 

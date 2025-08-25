@@ -10,9 +10,10 @@ uses
   Utils.TableFormating,
   StadionEingabeFenster,
   TeamEingabeFenster,
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.StdCtrls,
-  System.ImageList, Vcl.ImgList, Vcl.Grids, Vcl.ExtCtrls;
+  System.Classes, System.Generics.Collections, System.SysUtils, System.Variants,
+  Vcl.ComCtrls, Vcl.Controls, Vcl.Dialogs, Vcl.Forms, Vcl.Graphics, Vcl.StdCtrls,
+  Vcl.ImgList, Vcl.Grids, Vcl.ExtCtrls,
+  Winapi.Windows, Winapi.Messages, System.ImageList;
 
 type
   TMainForm = class(TForm)
@@ -58,10 +59,10 @@ type
 
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure PageControlChange(Sender: TObject);
+    procedure PageControlChanging(    Sender: TObject; var AllowChange: Boolean);
     procedure TeamHinzufuegenButtonClick(Sender: TObject);
     procedure StadionHinzufuegenButtonClick(Sender: TObject);
-    procedure VerlosungStartenButtonClick(Sender: TObject);
+//    procedure VerlosungStartenButtonClick(Sender: TObject);
     procedure ZumSpielButtonClick(Sender: TObject);
     procedure ZumSpielplanButtonClick(Sender: TObject);
     procedure ZurVerlosungButtonClick(Sender: TObject);
@@ -183,7 +184,7 @@ end;
 procedure TMainForm.TeamHinzufuegenButtonClick(Sender: TObject);
 begin
   TeamEingabe := TTeamEingabeFenster.Create(FTeamDB);
-  Show; // ShowModal;
+  TeamEingabe.Show; // ShowModal;
 end;
 
 procedure TMainForm.StadionHinzufuegenButtonClick(Sender: TObject);
@@ -224,7 +225,7 @@ end;
 procedure TMainForm.ZurVerlosungButtonClick(Sender: TObject);
 begin
   // Gültigkeitsprüfung
-  if not(Utils.Routing.OnVerlosungChange((FTeamAnzahl = FTeamGewollteAnzahl) and (FStadionAnzahl = FStadionGewollteAnzahl)))
+  if not(Utils.Routing.OnVerlosungChanging((FTeamAnzahl = FGewollteTeamAnzahl) and (FStadionAnzahl = FGewollteStadionAnzahl))) then
     Exit;
 
   // Verlosung starten
@@ -247,9 +248,9 @@ end;
 procedure TMainForm.PageControlChanging(Sender: TObject; var AllowChange: Boolean);
 begin
   case TPageControl(Sender).ActivePageIndex of
-    0: AllowChange := Utils.Routing.OnStammdatenChange(True); // man kann immer zurück zu den Stammdaten
+    0: AllowChange := Utils.Routing.OnStammdatenChanging(True); // man kann immer zurück zu den Stammdaten
     1: begin
-      AllowChange := Utils.Routing.OnVerlosungChange((FTeamAnzahl = FTeamGewollteAnzahl) and (FStadionAnzahl = FStadionGewollteAnzahl));
+      AllowChange := Utils.Routing.OnVerlosungChanging((FTeamAnzahl = FGewollteTeamAnzahl) and (FStadionAnzahl = FGewollteStadionAnzahl));
 
       if not(Assigned(FVerlosung)) then
       begin
@@ -257,7 +258,7 @@ begin
       end;
     end;
     2: begin
-      AllowChange := Utils.Routing.OnSpielplanChange((FVerlosungFertig));
+      AllowChange := Utils.Routing.OnSpielplanChanging((FVerlosungFertig));
 
       // Spielplan Klasse erstellen?
       // if not(Assigned(FSpielplan)) then
@@ -266,7 +267,7 @@ begin
       // end;
     end;
     3: begin
-      AllowChange := Utils.Routing.OnSpielChange((FSpielplanFertig));
+      AllowChange := Utils.Routing.OnSpielChanging((FSpielplanFertig));
     end;
   end;
 
@@ -276,7 +277,6 @@ end;
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   // Aufräumen
-  StadionEingabe.Hide;
   StadionEingabe.Free;
 
   FVerlosung.Free;

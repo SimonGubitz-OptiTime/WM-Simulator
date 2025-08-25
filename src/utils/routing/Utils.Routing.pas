@@ -1,4 +1,4 @@
-unit Utils.Routing;
+﻿unit Utils.Routing;
 
 
 interface
@@ -13,7 +13,7 @@ function OnSpielChanging(Condition: Boolean): Boolean;
 
 implementation
 
-function OnStammdatenChanging(Condition: Boolean): Boolean;;
+function OnStammdatenChanging(Condition: Boolean): Boolean;
 begin
 
     // JS equivalent to block default
@@ -24,15 +24,14 @@ begin
     begin
         ShowMessage('Es gibt unvollständige oder falsche Eingaben. Du musst zurück und alles richtig ausfüllen.');
         Exit;
-    en
+    end
     else
     begin
         // Der Nutzer darf weiter
-        MainForm.PageControl.ActivePageIndex := 0;
     end;
 end;
 
-function OnVerlosungChanging(Condition: Boolean): Boolean;;
+function OnVerlosungChanging(Condition: Boolean): Boolean;
 begin
 
     // JS equivalent to block default
@@ -47,11 +46,11 @@ begin
     else
     begin
         // Der Nutzer darf weiter
-        MainForm.PageControl.ActivePageIndex := 1;
+//        MainForm.PageControl.ActivePageIndex := 1;
     end;
 end;
 
-function OnSpielplanChanging(Condition: Boolean): Boolean;;
+function OnSpielplanChanging(Condition: Boolean): Boolean;
 begin
 
     // JS equivalent to block default
@@ -66,11 +65,11 @@ begin
     else
     begin
         // Der Nutzer darf weiter
-        MainForm.PageControl.ActivePageIndex := 2;
+//        MainForm.PageControl.ActivePageIndex := 2;
     end;
 end;
 
-function OnSpielChanging(Condition: Boolean): Boolean;;
+function OnSpielChanging(Condition: Boolean): Boolean;
 begin
 
     // JS equivalent to block default
@@ -85,7 +84,7 @@ begin
     else
     begin
         // Der Nutzer darf weiter
-        MainForm.PageControl.ActivePageIndex := 3;
+//        MainForm.PageControl.ActivePageIndex := 3;
     end;
 end;
 

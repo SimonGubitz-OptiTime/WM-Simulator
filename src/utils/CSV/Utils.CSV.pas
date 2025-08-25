@@ -12,11 +12,12 @@ uses
 function SerializeCSV(CSVArray: TList<String>): String;
 function DeserializeCSV(CSVString: String): TList<String>;
 
-type TCSVUtils<T> = record
-    class function SerializeCSV(CSVArray: TObjectList<T>): String; static;
-    class function DeserializeCSV(CSVString: String): TObjectList<T>; static;
+type TCSVUtils<T: record> = record
+    class function SerializeCSV(CSVArray: TList<T>): String; static;
+    class function DeserializeCSV(CSVString: String): TList<T>; static;
 
     class function SerializeRowCSV(Row: T): String; static;
+    class function ParseRowCSVToArray(Row: T): TList<String>; static;
     class function DeserializeRowCSV(CSVString: String): T; static;
 
     class function GetCSVHeaderAsArray(): TList<String>; static;
@@ -79,13 +80,11 @@ begin
 end;
 
 
-class function TCSVUtils<T>.SerializeCSV(CSVArray: TObjectList<T>): String;
+class function TCSVUtils<T>.SerializeCSV(CSVArray: TList<T>): String;
 var
     i: Integer;
 begin
-
     Result := GetCSVHeaderAsString() + sLineBreak;
-
     for i := 0 to CSVArray.Count - 1 do
     begin
         if i > 0 then
@@ -93,20 +92,18 @@ begin
 
         Result := Result + SerializeRowCSV(CSVArray[i]);
     end;
-
-
 end;
 
-class function TCSVUtils<T>.DeserializeCSV(CSVString: String): TObjectList<T>;
+class function TCSVUtils<T>.DeserializeCSV(CSVString: String): TList<T>;
 var
-    TempRowArray: TObjectList<String>;
+    TempRowArray: TList<String>;
     TempRow: String;
     i: Integer;
 begin
 
     TempRow := '';
-    Result := TObjectList<T>.Create;
-    TempRowArray := TObjectList<String>.Create;
+    Result := TList<T>.Create;
+    TempRowArray := TList<String>.Create;
 
     try
         if Copy(CSVString[High(CSVString)], High(CSVString)-1, High(CSVString)) <> sLineBreak then
@@ -125,10 +122,9 @@ begin
         end;
 
 
-        for i := 0 to Length(TempRowArray) -1 do
+        for i := 0 to TempRowArray.Count - 1 do
         begin
-            SetLength(Result, Length(Result) + 1);
-            Result[High(Result)] := DeserializeRowCSV(TempRowArray[i]);
+            Result.Add(DeserializeRowCSV(TempRowArray[i]));
         end;
     finally
         TempRowArray.Free;
@@ -144,14 +140,15 @@ var
     debugName: String;
 begin
 
-    RttiFields := TObjectList<TRttiField>.Create
+    RttiContext := TRttiContext.Create;
 
     try
-        RttiContext := TRttiContext.Create;
-        RttiType := RttiContext.GetType(TypeInfo(T));
-        RttiFields.AddRange(RttiType.GetFields);
+        RttiFields := TObjectList<TRttiField>.Create;
 
         try
+            RttiType := RttiContext.GetType(TypeInfo(T));
+            RttiFields.AddRange(RttiType.GetFields);
+
             for i := 0 to RttiFields.Count - 1 do
             begin
                 if i > 0 then
@@ -161,10 +158,40 @@ begin
 
             end;
         finally
-            RttiContext.Free;
+            RttiFields.Free;
         end;
     finally
-        RttiFields.Free;
+        RttiContext.Free;
+    end;
+
+end;
+
+class function TCSVUtils<T>.ParseRowCSVToArray(Row: T): TList<String>;
+var
+    RttiContext: TRttiContext;
+    RttiType: TRttiType;
+    RttiFields: TObjectList<TRttiField>;
+    i: Integer;
+begin
+
+    Result := TList<String>.Create;
+    RttiContext := TRttiContext.Create;
+
+    try
+        RttiFields := TObjectList<TRttiField>.Create;
+        try
+            RttiType := RttiContext.GetType(TypeInfo(T));
+            RttiFields.AddRange(RttiType.GetFields);
+
+            for i := 0 to RttiFields.Count - 1 do
+            begin
+                Result.Add(Utils.RTTI.TRttiUtils<T>.TToStr(@Row, RttiFields[i]));
+            end;
+        finally
+            RttiFields.Free;
+        end;
+    finally
+        RttiContext.Free;
     end;
 
 end;
@@ -241,18 +268,24 @@ var
 begin
     RttiContext := TRttiContext.Create;
     RttiType := RttiContext.GetType(TypeInfo(T));
-    RttiFields := RttiType.GetFields;
+
+    RttiFields := TObjectList<TRttiField>.Create;
 
     try
 
-        SetLength(Result, Length(RttiFields));
+      RttiFields.AddRange(RttiType.GetFields);
 
-        for i := 0 to Length(RttiFields) -1 do
-        begin
-            Result[i] := RttiFields[i].Name;
-        end;
+      try
+
+          for i := 0 to RttiFields.Count -1 do
+          begin
+              Result.Add(RttiFields[i].Name);
+          end;
+      finally
+          RttiContext.Free;
+      end;
     finally
-        RttiContext.Free;
+      RttiFields.Free;
     end;
 
 end;
@@ -271,14 +304,14 @@ begin
 
     try
 
-        RttiFields := RttiType.GetFields;
+        RttiFields.AddRange(RttiType.GetFields);
 
         try
             Result := '';
 
             for i := 0 to RttiFields.Count - 1 do
             begin
-                if i > Low(RttiFields) then
+                if i > 0 then
                     Result := Result + delimiter;
 
                 Result := Result + RttiFields[i].Name;

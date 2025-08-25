@@ -157,6 +157,7 @@
         <DCCReference Include="utils\table_formating\Utils.TableFormating.pas"/>
         <DCCReference Include="utils\string_formating\Utils.StringFormating.pas"/>
         <DCCReference Include="ui\animations\animation.pas"/>
+        <DCCReference Include="utils\routing\Utils.Routing.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
