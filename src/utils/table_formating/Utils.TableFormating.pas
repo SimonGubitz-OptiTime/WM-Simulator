@@ -2,7 +2,7 @@ unit Utils.TableFormating;
 
 interface
 uses
-  SysUtils,
+  System.Generics.Collections, System.SysUtils,
   Vcl.Grids;
 
 procedure SetColumnFullWidth(var Grid: TStringGrid; ACol: Integer);
@@ -34,8 +34,8 @@ function TabelleZeichnen(var Grid: TStringGrid; Rows: TObjectList<TList<String>>
 var
   i, j: Integer;
 begin
-      Grid.RowCount := Length(Rows);
-      Grid.ColCount := Length(Rows[0])+1;
+      Grid.RowCount := Rows.Count;
+      Grid.ColCount := Rows[0].Count;
 
 
       for i := 0 to Rows.Count - 1 do

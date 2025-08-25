@@ -16,7 +16,8 @@ uses
   Utils.UserInput in 'utils\user_input\Utils.UserInput.pas',
   Utils.TableFormating in 'utils\table_formating\Utils.TableFormating.pas',
   Utils.StringFormating in 'utils\string_formating\Utils.StringFormating.pas',
-  animation in 'ui\animations\animation.pas';
+  animation in 'ui\animations\animation.pas',
+  Utils.Routing in 'utils\routing\Utils.Routing.pas';
 
 {$R *.res}
 

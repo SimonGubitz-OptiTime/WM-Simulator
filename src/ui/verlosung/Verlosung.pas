@@ -15,7 +15,7 @@ private
   FGrids: TObjectList<TStringGrid>;
 
   FInitialized: Boolean;
-  FTeams: TObjectList<TTeam>; // for the AnimationCallback
+  FTeams: TList<TTeam>; // for the AnimationCallback
 
   // array due to multiple Grids
   FColSize: array[0..11] of Integer;
@@ -118,7 +118,7 @@ begin
 
       // Für alle Grids je 4 Teams eintragen
       TeamIndex := 0;
-      for grid := Low(FGrids) to High(FGrids) do
+      for grid := 0 to FGrids.Count - 1 do
       begin
 
         if (TeamIndex >= FTeams.Count) then

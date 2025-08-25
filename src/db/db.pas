@@ -19,7 +19,7 @@ private
   FFileName: String;
   FFileDirectory: String;
 
-  class var CachedCSV: TObjectList<T>;
+  class var CachedCSV: TList<T>;
   class var CachedUnstructuredCSV: TObjectList<TList<String>>;
 
 
@@ -35,7 +35,7 @@ public
   // procedure   SetRowInCSV(RowID: Integer; Line: Integer);
   procedure   AddRowToCSV(RowValues: T);
 
-  function    GetStructuredTableFromCSV(): TObjectList<T>;
+  function    GetStructuredTableFromCSV(): TList<T>;
   // procedure   SetStructuredTableInCSV(CSVArray: TObjectList<T>);
 
   function    GetUnstructuredTableFromCSV(): TObjectList<TList<String>>;
@@ -67,7 +67,7 @@ begin
   FDBUpdateEventListeners := TList<TDBUpdateEvent>.Create();
 
   // reset all cache
-  CachedCSV := TObjectList<T>.Create;
+  CachedCSV := TList<T>.Create;
   CachedUnstructuredCSV := TObjectList<TList<String>>.Create;
 
   FInitialized := true;
@@ -114,7 +114,7 @@ begin
 
       // Append to cache as well
       CachedCSV.Add(RowValues);
-      CachedUnstructuredCSV.Add(Utils.CSV.TCSVUtils<T>.SerializeRowCSV(RowValues));
+      CachedUnstructuredCSV.Add(Utils.CSV.TCSVUtils<T>.ParseRowCSVToArray(RowValues));
 
     finally
       SW.Free;
@@ -204,12 +204,8 @@ begin
       FFS.Position := 0;
       while not(SR.EndOfStream) do
       begin
-        try
-          Temp := Utils.CSV.DeserializeCSV(SR.ReadLine());
-          Result.Add(Temp);
-        finally
-          Temp.Free;
-        end;
+        Temp := Utils.CSV.DeserializeCSV(SR.ReadLine());
+        Result.Add(Temp);
       end;
     finally
       SR.Free;
@@ -240,7 +236,7 @@ begin
       SW.WriteLine(Utils.CSV.TCSVUtils<T>.SerializeRowCSV(CSVObject));
 
       // Append to cache as well
-      CachedUnstructuredCSV.Add(Utils.CSV.TCSVUtils<T>.SerializeRowCSV(CSVObject));
+      CachedUnstructuredCSV.Add(Utils.CSV.TCSVUtils<T>.ParseRowCSVToArray(CSVObject));
       CachedCSV.Add(CSVObject);
 
       FInitialized := true;
@@ -249,28 +245,6 @@ begin
       SW.Free;
     end;
   end;
-
-  // Call the event listeners
-  CallDBUpdateEventListeners();
-end;
-
-procedure TDB<T>.RemoveCSVTableFromDB();
-begin
-  if not FInitialized then
-    raise Exception.Create('db.pas Error: TDB is not initialized. Please add to the database first.');
-
-  // Delete the file
-  if FileExists(FFileName) then
-  begin
-    TFile.Delete(FFileName);
-    FInitialized := false;
-  end
-  else
-    raise Exception.Create('db.pas Error: Table "' + FTableName + '" does not exist.');
-
-  // Clear the cached data
-  CachedCSV.Free;
-  CachedUnstructuredCSV.Free;
 
   // Call the event listeners
   CallDBUpdateEventListeners();
