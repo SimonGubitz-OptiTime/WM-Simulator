@@ -98,23 +98,9 @@ begin
 
     try
 
-      // Teams gleichmäßig aufteilen
-      // Schritt 1 - anhand des FTeams.TTeamRankings (enum) sortieren
-      // Utils.ShuffleArray.TShuffleArrayUtils<TTeam>.SortByRanking(FTeams);
+      
 
-      // Schritt 2 - for i := 0 to High(FTeams) / 12 <- weil es 12 Teams gibt
-      {while i := 0 to High(FTeams) / 12 do
-      begin
-        // Schritt 3 - Temp Team erstellen
-        var TempTeam: TTeam := FTeams[i];
-        TempTeam[i] := FTeams[i];
-
-        i := i + 4; // 4 Teams pro Grid
-      end;}
-
-      // Schritt 3 - Teams mischen
-
-      Utils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(FTeams);
+      // Utils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(FTeams);
 
       // Für alle Grids je 4 Teams eintragen
       TeamIndex := 0;
