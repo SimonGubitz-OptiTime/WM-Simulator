@@ -77,24 +77,24 @@ begin
     raise Exception.Create('TVerlosungUI.VerlosungStarten Error: The UI is not initialized.');
   end;
 
-  if ((FTeams.Count mod 4) <> 0) then
-  begin
-    raise Exception.Create('TVerlosungUI.VerlosungStarten Error: The number of FTeams must be divisible by 4.');
-  end;
-
   if Assigned(TempLabel) then
   begin
     TempLabel := nil;
   end;
 
-  if TeamIndex >= FTeams.Count then
-  begin
-    TeamIndex := 0;
-  end;
-
   try
     AnimationList := TObjectList<TAnimations>.Create;
     FTeams := ATeamDB.GetStructuredTableFromCSV();
+
+
+    if ((FTeams.Count mod 4) <> 0) then
+    begin
+      raise Exception.Create('TVerlosungUI.VerlosungStarten Error: The number of FTeams must be divisible by 4.');
+    end;
+    if TeamIndex >= FTeams.Count then
+    begin
+      TeamIndex := 0;
+    end;
 
     try
 
@@ -134,7 +134,7 @@ begin
             // hier die Animation
             TempLabel := TStaticText.Create(nil);
 
-            try
+            {try}
               TempLabel.Parent    := AOwner as TWinControl;
               TempLabel.Caption   := FTeams[TeamIndex].Name;
               TempLabel.Top       := Round((AOwner.Height / 2) - (Height / 2)); // Middle
@@ -146,9 +146,9 @@ begin
               AnimationList.Last.MoveObject(AnimationCallbackFn, forRow, grid, TeamIndex);
 
               Inc(TeamIndex);
-            finally
-              TempLabel.Free;
-            end;
+            {finally
+                          TempLabel.Destroy;
+                                      end;}
           end;
         end;
       end;

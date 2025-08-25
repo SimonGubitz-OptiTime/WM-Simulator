@@ -62,7 +62,7 @@ type
     procedure PageControlChanging(    Sender: TObject; var AllowChange: Boolean);
     procedure TeamHinzufuegenButtonClick(Sender: TObject);
     procedure StadionHinzufuegenButtonClick(Sender: TObject);
-//    procedure VerlosungStartenButtonClick(Sender: TObject);
+    procedure VerlosungStartenButtonClick(Sender: TObject);
     procedure ZumSpielButtonClick(Sender: TObject);
     procedure ZumSpielplanButtonClick(Sender: TObject);
     procedure ZurVerlosungButtonClick(Sender: TObject);
@@ -272,6 +272,14 @@ begin
   end;
 
   AllowChange := True;
+end;
+
+procedure TMainForm.VerlosungStartenButtonClick(Sender: TObject);
+begin
+  if (not(Assigned(FVerlosung)) or not(FVerlosung.Initialized)) then
+    FVerlosung := TVerlosungUI.Create([ StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12 ]);
+
+  FVerlosung.VerlosungStarten(FTeamDB, Timer1, VerlosungSheet);
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);

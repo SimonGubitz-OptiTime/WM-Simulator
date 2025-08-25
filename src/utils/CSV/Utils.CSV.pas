@@ -17,7 +17,6 @@ type TCSVUtils<T: record> = record
     class function DeserializeCSV(CSVString: String): TList<T>; static;
 
     class function SerializeRowCSV(Row: T): String; static;
-    class function SerializeRowCSVToStringArray(Row: T): TList<String>; static;
     class function ParseRowCSVToArray(Row: T): TList<String>; static;
     class function DeserializeRowCSV(CSVString: String): T; static;
 
@@ -210,49 +209,55 @@ var
 begin
     // raise Exception.Create('Utils.CSV.pas Error: DeserializeRowFromCSV is not implemented yet.');
 
+    TempFieldArray := TList<String>.Create;
 
-    // To read in the last value too
-    if CSVString[High(CSVString)] <> delimiter then
-      CSVString := CSVString + delimiter;
-
-    // Den String mit "delimiter" in Chunks trennen
-    for i := 1 to Length(CSVString) do
-    begin
-        if (CSVString[i] = delimiter) then
-        begin
-            TempFieldArray.Add(TempField);
-            TempField := ''; // reset
-        end
-        else
-            TempField := TempField + CSVString[i]; // Buchstaben hinzufügen
-    end;
-
-
-    // Für jedes Feld in TempFieldArray den Wert in das richtige Feld von TempRes schreiben
-    RttiContext := TRttiContext.Create;
     try
 
-        RttiType := RttiContext.GetType(TypeInfo(T));
+      // To read in the last value too
+      if CSVString[High(CSVString)] <> delimiter then
+        CSVString := CSVString + delimiter;
 
-        RttiFields := TObjectList<TRttiField>.Create;
+      // Den String mit "delimiter" in Chunks trennen
+      for i := 1 to Length(CSVString) do
+      begin
+          if (CSVString[i] = delimiter) then
+          begin
+              TempFieldArray.Add(TempField);
+              TempField := ''; // reset
+          end
+          else
+              TempField := TempField + CSVString[i]; // Buchstaben hinzufügen
+      end;
 
-        try
-            RttiFields.AddRange(RttiType.GetFields);
 
-            if RttiFields.Count <> TempFieldArray.Count then
-                raise Exception.Create('Utils.CSV.pas Error: Deserializing CSV with custom type, not enough information for type conversion.');
+      // Für jedes Feld in TempFieldArray den Wert in das richtige Feld von TempRes schreiben
+      RttiContext := TRttiContext.Create;
+      try
 
-            for j := 0 to RttiFields.Count - 1 do // columns / fields
-            begin
-                // convert string to x
-                TempValue := Utils.RTTI.TRttiUtils<T>.StrToT(RttiFields[j], TempFieldArray[j]);
-                RttiFields[j].SetValue(@TempRes, TempValue);
-            end;
-        finally
-            RttiFields.Free;
-        end;
+          RttiType := RttiContext.GetType(TypeInfo(T));
+
+          RttiFields := TObjectList<TRttiField>.Create;
+
+          {try}
+              RttiFields.AddRange(RttiType.GetFields);
+
+              if RttiFields.Count <> TempFieldArray.Count then
+                  raise Exception.Create('Utils.CSV.pas Error: Deserializing CSV with custom type, not enough information for type conversion.');
+
+              for j := 0 to RttiFields.Count - 1 do // columns / fields
+              begin
+                  // convert string to x
+                  TempValue := Utils.RTTI.TRttiUtils<T>.StrToT(RttiFields[j], TempFieldArray[j]);
+                  RttiFields[j].SetValue(@TempRes, TempValue);
+              end;
+          {finally
+                        RttiFields.Destroy; //
+                                  end;}
+      finally
+          RttiContext.Free;
+      end;
     finally
-        RttiContext.Free;
+      TempFieldArray.Free;
     end;
 
     Result := TempRes;

@@ -19,7 +19,7 @@ object MainForm: TMainForm
     Top = 0
     Width = 1105
     Height = 713
-    ActivePage = StammdatenSheet
+    ActivePage = VerlosungSheet
     TabOrder = 0
     OnChanging = PageControlChanging
     object StammdatenSheet: TTabSheet
@@ -307,6 +307,7 @@ object MainForm: TMainForm
         ImageIndex = 1
         Images = SymbolImageList
         TabOrder = 11
+        OnClick = VerlosungStartenButtonClick
       end
       object StringGrid11: TStringGrid
         Left = 388
