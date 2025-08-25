@@ -5,7 +5,8 @@ interface
 uses
   DB,
   Types,
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls;
 
 type
@@ -19,7 +20,6 @@ type
     ZuschauerKapazitaetEingabeFeld: TEdit;
     BestaetigenButton: TButton;
 
-
     constructor Create(var database: TDB<TStadion>); reintroduce;
 
     procedure BestaetigenButtonClick(Sender: TObject);
@@ -27,11 +27,12 @@ type
 
   private
 
-    var FDatabase: TDB<TStadion>;
-    const FTableName: ShortString = 'Stadien';
+  var
+    FDatabase: TDB<TStadion>;
+
+  const
+    FTableName: ShortString = 'Stadien';
   end;
-
-
 
 implementation
 
@@ -53,9 +54,10 @@ var
   placeholder: Integer;
   Stadion: TStadion;
 begin
-  
+
   // Gültigkeitsprüfung der Nutzereingabe
-  if (NameEingabeFeld.Text = '') or (OrtEingabeFeld.Text = '') or (ZuschauerKapazitaetEingabeFeld.Text = '') then
+  if (NameEingabeFeld.Text = '') or (OrtEingabeFeld.Text = '') or
+    (ZuschauerKapazitaetEingabeFeld.Text = '') then
   begin
     ShowMessage('Bitte füllen Sie alle Felder aus.');
     Exit;
@@ -69,23 +71,22 @@ begin
 
   if (StrToInt(ZuschauerKapazitaetEingabeFeld.Text) < 0) then
   begin
-    ShowMessage('Diese Zahl ist zu klein - bitte tragen sie eine gültige Zahl ein.');
+    ShowMessage
+      ('Diese Zahl ist zu klein - bitte tragen sie eine gültige Zahl ein.');
     Exit;
   end;
 
-//  if (StrToInt(ZuschauerkapazitaetEingabeFeld.Text) > High(UInt32)) then
-//  begin
-//    ShowMessage('Diese Zahl ist zu groß - bitte tragen sie eine gültige Zahl ein.');
-//    Exit;
-//  end;
+  // if (StrToInt(ZuschauerkapazitaetEingabeFeld.Text) > High(UInt32)) then
+  // begin
+  // ShowMessage('Diese Zahl ist zu groß - bitte tragen sie eine gültige Zahl ein.');
+  // Exit;
+  // end;
 
-
-  Stadion := Default(TStadion);
+  Stadion := Default (TStadion);
 
   Stadion.Name := NameEingabeFeld.Text;
   Stadion.Ort := OrtEingabeFeld.Text;
   Stadion.ZuschauerKapazitaet := StrToInt(ZuschauerKapazitaetEingabeFeld.Text);
-
 
   // In die Datenbank schreiben
   FDatabase.AddRowToCSV(Stadion);
@@ -93,13 +94,11 @@ begin
   // Fenster schließen
   Self.Close;
 
-
 end;
 
 class function TStadionEingabeFenster.GetTableName: ShortString;
 begin
   Result := FTableName;
 end;
-
 
 end.

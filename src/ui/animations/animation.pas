@@ -6,46 +6,53 @@ uses
   System.Classes, System.SysUtils,
   Vcl.Controls, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Forms, Vcl.StdCtrls;
 
-
 // Optional count for when used in a indexed loop
-type TAnimationCallback = procedure(Count: Integer = -1; SecondCount: Integer = -1; ThirdCount: Integer = -1) of object;
+type
+  TAnimationCallback = procedure(Count: Integer = -1; SecondCount: Integer = -1;
+    ThirdCount: Integer = -1) of object;
 
-type TAnimations = class
-public
+type
+  TAnimations = class
+  public
 
-  constructor Create(var timer: TTimer; AObject: TControl; MoveToTop: Integer; MoveToLeft: Integer; ATime: Integer; ADestroyObjectOnFinish: Boolean = true);
+    constructor Create(var timer: TTimer; AObject: TControl; MoveToTop: Integer;
+      MoveToLeft: Integer; ATime: Integer;
+      ADestroyObjectOnFinish: Boolean = true);
 
-  procedure MoveObject(callbackFn: TAnimationCallback; Count: Integer = -1; SecondCount: Integer = -1; ThirdCount: Integer = -1);
+    procedure MoveObject(callbackFn: TAnimationCallback; Count: Integer = -1;
+      SecondCount: Integer = -1; ThirdCount: Integer = -1);
 
-  destructor Free;
+    destructor Free;
 
-private
-  FTimer: TTimer;
-  FTimerAmount: Integer;
-  FObject: TControl;
-  FFinishedAnimation: Boolean;
-  FTimerDuration: Integer;
-  FWayTop: Integer;
-  FWayLeft: Integer;
-  FStartTop: Integer;
-  FStartLeft: Integer;
+  private
+    FTimer: TTimer;
+    FTimerAmount: Integer;
+    FObject: TControl;
+    FFinishedAnimation: Boolean;
+    FTimerDuration: Integer;
+    FWayTop: Integer;
+    FWayLeft: Integer;
+    FStartTop: Integer;
+    FStartLeft: Integer;
 
-  FDestroyObject: Boolean;
-  FCallbackFn: TAnimationCallback;
-  FCallbackCount: Integer;
-  FCallbackSecondCount: Integer;
-  FCallbackThirdCount: Integer;
+    FDestroyObject: Boolean;
+    FCallbackFn: TAnimationCallback;
+    FCallbackCount: Integer;
+    FCallbackSecondCount: Integer;
+    FCallbackThirdCount: Integer;
 
-  const FTimerInterval: Byte = 10;
+  const
+    FTimerInterval: Byte = 10;
 
-  procedure MoveObjectTick(Sender: TObject);
+    procedure MoveObjectTick(Sender: TObject);
 
-end;
-
+  end;
 
 implementation
 
-constructor TAnimations.Create(var timer: TTimer; AObject: TControl; MoveToTop: Integer; MoveToLeft: Integer; ATime: Integer; ADestroyObjectOnFinish: Boolean = true);
+constructor TAnimations.Create(var timer: TTimer; AObject: TControl;
+  MoveToTop: Integer; MoveToLeft: Integer; ATime: Integer;
+  ADestroyObjectOnFinish: Boolean = true);
 begin
 
   FDestroyObject := ADestroyObjectOnFinish;
@@ -69,8 +76,8 @@ begin
 
 end;
 
-
-procedure TAnimations.MoveObject(callbackFn: TAnimationCallback; Count: Integer = -1; SecondCount: Integer = -1; ThirdCount: Integer = -1);
+procedure TAnimations.MoveObject(callbackFn: TAnimationCallback;
+  Count: Integer = -1; SecondCount: Integer = -1; ThirdCount: Integer = -1);
 begin
 
   FCallbackFn := callbackFn;
@@ -80,16 +87,16 @@ begin
 
   FTimer.Enabled := true;
 
-  {TThread.Queue(nil,
+  { TThread.Queue(nil,
     procedure
-    begin}
-      while not FFinishedAnimation do
-      begin
-        Application.ProcessMessages;
-        Sleep(10);
-      end;
-    {end
-  );}
+    begin }
+  while not FFinishedAnimation do
+  begin
+    Application.ProcessMessages;
+    Sleep(10);
+  end;
+  { end
+    ); }
 
 end;
 
@@ -120,14 +127,14 @@ begin
   end;
 
   if not(FObject is TControl) then
-    raise Exception.Create('TAnimations.MoveObjectTick Error: Sender is not a TControl.');
+    raise Exception.Create
+      ('TAnimations.MoveObjectTick Error: Sender is not a TControl.');
 
   // change the top and left vals
   // jeweils vom Startpunkt ausgehend, ein x-tel des zu gehenden Wegs beschreiten, wobei das x-tel durch die Zeit erkl�rt wird
   progress := FTimerInterval / FTimerDuration;
   FObject.Top := FObject.Top + Round(FWayTop * progress);
-  FObject.Left := FObject.Left + Round(FWayleft * progress);
-
+  FObject.Left := FObject.Left + Round(FWayLeft * progress);
 
 end;
 
@@ -139,6 +146,5 @@ begin
   if FDestroyObject then
     FObject.Free;
 end;
-
 
 end.

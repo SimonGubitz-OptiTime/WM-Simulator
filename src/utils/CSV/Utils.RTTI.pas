@@ -3,23 +3,29 @@
 interface
 
 uses
-    SysUtils, System.Rtti, System.Generics.Collections,
-    TypInfo,
-    Vcl.Dialogs;
+  SysUtils, System.RTTI, System.Generics.Collections,
+  TypInfo,
+  Vcl.Dialogs;
 
-type TRttiUtils<T> = record
-  class function StrToT(ToConvert: TRttiField; ConvertValue: String): TValue; static;
-  class function TToStr(TempRes: Pointer; ConvertField: TRttiField): String; static;
+type
+  TRttiUtils<T> = record
+    class function StrToT(ToConvert: TRttiField; ConvertValue: String)
+      : TValue; static;
+    class function TToStr(TempRes: Pointer; ConvertField: TRttiField)
+      : String; static;
 
-private
-  const ArrayDelimiter: Char = ',';
-end;
+  private const
+    ArrayDelimiter: Char = ',';
+  end;
 
-const DEFAULT_PRE_ALLOC = 11; // da es sich meistens um Spieler Arrays handelt, die 11 Spieler haben -> aus Effizienzgründen
+const
+  DEFAULT_PRE_ALLOC = 11;
+  // da es sich meistens um Spieler Arrays handelt, die 11 Spieler haben -> aus Effizienzgründen
 
 implementation
 
-class function TRttiUtils<T>.StrToT(ToConvert: TRttiField; ConvertValue: String): TValue;
+class function TRttiUtils<T>.StrToT(ToConvert: TRttiField;
+  ConvertValue: String): TValue;
 var
   EnumType: TRttiEnumerationType;
   i: Integer;
@@ -29,92 +35,100 @@ var
   ArrayType: TRttiDynamicArrayType;
 begin
 
-    case ToConvert.FieldType.TypeKind of
-        tkInteger:
-            Result := TValue.From<Integer>(StrToInt(ConvertValue));
-        tkInt64:
-            Result := TValue.From<Int64>(StrToInt64(ConvertValue));
-        tkString, tkLString, tkWString, tkUString:
-            Result := TValue.From<String>(ConvertValue);
-        tkChar:
-            Result := TValue.From<Char>(ConvertValue[1]);
-        tkFloat:
-            Result := TValue.From<Double>(StrToFloatDef(ConvertValue, 0.0));
-        tkEnumeration:
+  case ToConvert.FieldType.TypeKind of
+    tkInteger:
+      Result := TValue.From<Integer>(StrToInt(ConvertValue));
+    tkInt64:
+      Result := TValue.From<Int64>(StrToInt64(ConvertValue));
+    tkString, tkLString, tkWString, tkUString:
+      Result := TValue.From<String>(ConvertValue);
+    tkChar:
+      Result := TValue.From<Char>(ConvertValue[1]);
+    tkFloat:
+      Result := TValue.From<Double>(StrToFloatDef(ConvertValue, 0.0));
+    tkEnumeration:
+      begin
+        EnumType := TRttiEnumerationType(ToConvert.FieldType);
+        Result := TValue.FromOrdinal(EnumType.Handle,
+          GetEnumValue(EnumType.Handle, ConvertValue));
+      end;
+    // Muss Array bleiben, und darf nicht zu einem TObjectList<TValue> werden
+    tkArray, tkDynArray:
+      begin
+        // Pre-allocate
+        SetLength(StrArray, DEFAULT_PRE_ALLOC);
+        // Für das Spieler Array, welches am meisten genutzt werden wird
+        StrArrayIndex := 0;
+
+        // input: [ d, d, d, d, d, d ]
+        if ((ConvertValue[Low(ConvertValue)] <> '[') or
+          (ConvertValue[High(ConvertValue)] <> ']')) then
+          raise Exception.Create
+            ('Utils.RTTI.pas Error: Invalid Array Structure: ' +
+            ConvertValue + '.');
+
+        ConvertValue := Copy(ConvertValue, 2, Length(ConvertValue) - 2);
+        ConvertValue := ConvertValue + ArrayDelimiter;
+
+        for i := Low(ConvertValue) to High(ConvertValue) do
         begin
-            EnumType := TRttiEnumerationType(ToConvert.FieldType);
-            Result := TValue.FromOrdinal(EnumType.Handle, GetEnumValue(EnumType.Handle, ConvertValue));
+
+          if ConvertValue[i] = ArrayDelimiter then
+          begin
+            // wenn es doch mehr als DEFAULT_PRE_ALLOC gibt, aufstocken
+            if StrArrayIndex = Length(StrArray) - 1 then
+              SetLength(StrArray, Length(StrArray) + 1);
+
+            StrArray[StrArrayIndex] := TValue.From<String>(Trim(Digits));
+            Inc(StrArrayIndex);
+            Digits := '';
+          end
+          else
+          begin
+            Digits := Digits + ConvertValue[i];
+          end;
         end;
-        // Muss Array bleiben, und darf nicht zu einem TObjectList<TValue> werden
-        tkArray, tkDynArray:
-        begin
-            // Pre-allocate
-            SetLength(StrArray, DEFAULT_PRE_ALLOC); // Für das Spieler Array, welches am meisten genutzt werden wird
-            StrArrayIndex := 0;
 
-            // input: [ d, d, d, d, d, d ]
-            if ((ConvertValue[Low(ConvertValue)] <> '[') or (ConvertValue[High(ConvertValue)] <> ']')) then
-              raise Exception.Create('Utils.RTTI.pas Error: Invalid Array Structure: ' + ConvertValue + '.');
+        // wieder einschränken
+        if Length(StrArray) - 1 <> StrArrayIndex then
+          SetLength(StrArray, StrArrayIndex + 1);
 
-            ConvertValue := Copy(ConvertValue, 2, Length(ConvertValue)-2);
-            ConvertValue := ConvertValue + ArrayDelimiter;
-
-            for I := Low(ConvertValue) to High(ConvertValue) do
-            begin
-
-                if ConvertValue[i] = ArrayDelimiter then
-                begin
-                    // wenn es doch mehr als DEFAULT_PRE_ALLOC gibt, aufstocken
-                    if StrArrayIndex = Length(StrArray)-1 then
-                        SetLength(StrArray, Length(StrArray)+1);
-
-                    StrArray[StrArrayIndex] := TValue.From<String>(Trim(Digits));
-                    Inc(StrArrayIndex);
-                    Digits := '';
-                end
-                else
-                begin
-                    Digits := Digits + ConvertValue[i];
-                end;
-            end;
-
-            // wieder einschränken
-            if Length(StrArray)-1 <> StrArrayIndex then
-              SetLength(StrArray, StrArrayIndex+1);
-
-            ArrayType := TRttiDynamicArrayType(ToConvert.FieldType);
-            Result := TValue.FromArray(ArrayType.Handle, StrArray);
-        end;
-        else
-            raise Exception.Create('Utils.RTTI.pas Error: unsupported type. Type: ' + ToConvert.FieldType.Name);
-    end;
+        ArrayType := TRttiDynamicArrayType(ToConvert.FieldType);
+        Result := TValue.FromArray(ArrayType.Handle, StrArray);
+      end;
+  else
+    raise Exception.Create('Utils.RTTI.pas Error: unsupported type. Type: ' +
+      ToConvert.FieldType.Name);
+  end;
 end;
 
-class function TRttiUtils<T>.TToStr(TempRes: Pointer; ConvertField: TRttiField): String;
+class function TRttiUtils<T>.TToStr(TempRes: Pointer;
+  ConvertField: TRttiField): String;
 var
   tempField: TValue;
   i: Integer;
 begin
 
-    tempField := ConvertField.GetValue(TempRes);
+  tempField := ConvertField.GetValue(TempRes);
 
-    if (tempField.IsArray) then
+  if (tempField.IsArray) then
+  begin
+    Result := '[';
+    var
+    l := tempField.GetArrayLength();
+    for i := 0 to tempField.GetArrayLength() - 1 do
     begin
-        Result := '[';
-        var l := tempField.GetArrayLength();
-        for i := 0 to tempField.GetArrayLength()-1 do
-        begin
-            if i > 0 then
-                Result := Result + ArrayDelimiter;
+      if i > 0 then
+        Result := Result + ArrayDelimiter;
 
-            Result := Result + tempField.GetArrayElement(i).ToString();
-        end;
-        Result := Result +']';
-    end
-    else
-    begin
-        Result := tempField.ToString;
+      Result := Result + tempField.GetArrayElement(i).ToString();
     end;
+    Result := Result + ']';
+  end
+  else
+  begin
+    Result := tempField.ToString;
+  end;
 end;
 
 end.

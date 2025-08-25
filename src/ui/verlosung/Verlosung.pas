@@ -7,30 +7,34 @@ uses
   types,
   Animation,
   Utils.ShuffleArray,
+  Utils.FilterArray,
   System.Classes, System.Generics.Collections, System.Math, System.SysUtils,
   Vcl.Controls, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Forms, Vcl.Grids, Vcl.StdCtrls;
 
-type TVerlosungUI = class
-private
-  FGrids: TObjectList<TStringGrid>;
+type
+  TVerlosungUI = class
+  private
+    FGrids: TObjectList<TStringGrid>;
 
-  FInitialized: Boolean;
-  FTeams: TList<TTeam>; // for the AnimationCallback
+    FInitialized: Boolean;
+    FTeams: TList<TTeam>; // for the AnimationCallback
 
-  // array due to multiple Grids
-  FColSize: array[0..11] of Integer;
-  FRowSize: array[0..11] of Integer;
+    // array due to multiple Grids
+    FColSize: array [0 .. 11] of Integer;
+    FRowSize: array [0 .. 11] of Integer;
 
-  procedure AnimationCallbackFn(Count: Integer = -1; SecondCount: Integer = -1; ThirdCount: Integer = -1);
+    procedure AnimationCallbackFn(Count: Integer = -1;
+      SecondCount: Integer = -1; ThirdCount: Integer = -1);
 
-public
-  property Initialized: Boolean read FInitialized;
-  constructor Create(Grids: array of TStringGrid);
+  public
+    property Initialized: Boolean read FInitialized;
+    constructor Create(Grids: array of TStringGrid);
 
-  function VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer; AOwner: TControl): Boolean;
+    function VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer;
+      AOwner: TControl): Boolean;
 
-  destructor Destroy; override;
-end;
+    destructor Destroy; override;
+  end;
 
 implementation
 
@@ -39,7 +43,8 @@ var
   i, j: Integer;
 begin
   if Length(Grids) <> 12 then
-    raise Exception.Create('TVerlosungUI.Create Error: There must be exactly 12 Grids.');
+    raise Exception.Create
+      ('TVerlosungUI.Create Error: There must be exactly 12 Grids.');
 
   FGrids := TObjectList<TStringGrid>.Create;
 
@@ -49,11 +54,11 @@ begin
     FColSize[i] := Floor(Grids[i].Width / Grids[i].ColCount) - 2;
     FRowSize[i] := Floor(Grids[i].Height / Grids[i].RowCount) - 2;
 
-    for j := 0 to Grids[i].ColCount-1 do
+    for j := 0 to Grids[i].ColCount - 1 do
     begin
       Grids[i].ColWidths[j] := FColSize[i];
     end;
-    for j := 0 to Grids[i].RowCount-1 do
+    for j := 0 to Grids[i].RowCount - 1 do
     begin
       Grids[i].RowHeights[j] := FRowSize[i];
     end;
@@ -64,7 +69,8 @@ begin
 
 end;
 
-function TVerlosungUI.VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer; AOwner: TControl): Boolean;
+function TVerlosungUI.VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer;
+  AOwner: TControl): Boolean;
 var
   grid, forRow: Integer;
   TempLabel: TStaticText;
@@ -74,22 +80,18 @@ begin
 
   if not FInitialized then
   begin
-    raise Exception.Create('TVerlosungUI.VerlosungStarten Error: The UI is not initialized.');
-  end;
-
-  if Assigned(TempLabel) then
-  begin
-    TempLabel := nil;
+    raise Exception.Create
+      ('TVerlosungUI.VerlosungStarten Error: The UI is not initialized.');
   end;
 
   try
     AnimationList := TObjectList<TAnimations>.Create;
     FTeams := ATeamDB.GetStructuredTableFromCSV();
 
-
     if ((FTeams.Count mod 4) <> 0) then
     begin
-      raise Exception.Create('TVerlosungUI.VerlosungStarten Error: The number of FTeams must be divisible by 4.');
+      raise Exception.Create
+        ('TVerlosungUI.VerlosungStarten Error: The number of FTeams must be divisible by 4.');
     end;
     if TeamIndex >= FTeams.Count then
     begin
@@ -98,7 +100,12 @@ begin
 
     try
 
-      
+      // Nur die sehr starken Teams nehmen
+      var list := TList<Integer>.Create;
+      list.AddRange([0, 3, 5]);
+      Utils.FilterArray.TFilterArrayUtils<Integer>.Filter(list, 5);
+
+      list.Free;
 
       // Utils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(FTeams);
 
@@ -110,7 +117,6 @@ begin
         if (TeamIndex >= FTeams.Count) then
           break;
 
-
         with FGrids[grid] do
         begin
 
@@ -120,21 +126,22 @@ begin
             // hier die Animation
             TempLabel := TStaticText.Create(nil);
 
-            {try}
-              TempLabel.Parent    := AOwner as TWinControl;
-              TempLabel.Caption   := FTeams[TeamIndex].Name;
-              TempLabel.Top       := Round((AOwner.Height / 2) - (Height / 2)); // Middle
-              TempLabel.Left      := Round((AOwner.Width / 2) - (Width / 2));   // Middle
+            TempLabel.Parent := AOwner as TWinControl;
+            TempLabel.Caption := FTeams[TeamIndex].Name;
+            TempLabel.Top := Round((AOwner.Height / 2) - (Height / 2));
+            // Middle
+            TempLabel.Left := Round((AOwner.Width / 2) - (Width / 2)); // Middle
 
-              var MoveTop := FGrids[grid].Top + Round(TempLabel.Height / 2) + (forRow * FRowSize[grid]);
+            var
+            MoveTop := FGrids[grid].Top + Round(TempLabel.Height / 2) +
+              (forRow * FRowSize[grid]);
 
-              AnimationList.Add(TAnimations.Create(ATimer, TControl(TempLabel), MoveTop, FGrids[grid].Left + 15, 600)); // .6 sek
-              AnimationList.Last.MoveObject(AnimationCallbackFn, forRow, grid, TeamIndex);
+            AnimationList.Add(TAnimations.Create(ATimer, TControl(TempLabel),
+              MoveTop, FGrids[grid].Left + 15, 150)); // .6 sek
+            AnimationList.Last.MoveObject(AnimationCallbackFn, forRow, grid,
+              TeamIndex);
 
-              Inc(TeamIndex);
-            {finally
-                          TempLabel.Destroy;
-                                      end;}
+            Inc(TeamIndex);
           end;
         end;
       end;
@@ -153,8 +160,9 @@ begin
   end;
 end;
 
-                                          // cols               // grids                   // teams
-procedure TVerlosungUI.AnimationCallbackFn(Count: Integer = -1; SecondCount: Integer = -1; ThirdCount: Integer = -1);
+// cols               // grids                   // teams
+procedure TVerlosungUI.AnimationCallbackFn(Count: Integer = -1;
+SecondCount: Integer = -1; ThirdCount: Integer = -1);
 begin
 
   if ((Count = -1) or (SecondCount = -1)) then
@@ -168,22 +176,31 @@ begin
       // Hier können weitere Aktionen nach der Animation erfolgen, z.B.:
       Cells[0, Count] := FTeams[ThirdCount].Name;
       case FTeams[ThirdCount].TeamRanking of
-        TTeamRanking.SehrStark:   Cells[1, Count] := 'Sehr Stark';
-        TTeamRanking.Stark:       Cells[1, Count] := 'Stark';
-        TTeamRanking.MittelStark: Cells[1, Count] := 'Mittel Stark';
-        TTeamRanking.Schwach:     Cells[1, Count] := 'Schwach Stark';
+        TTeamRanking.SehrStark:
+          Cells[1, Count] := 'Sehr Stark';
+        TTeamRanking.Stark:
+          Cells[1, Count] := 'Stark';
+        TTeamRanking.MittelStark:
+          Cells[1, Count] := 'Mittel Stark';
+        TTeamRanking.Schwach:
+          Cells[1, Count] := 'Schwach Stark';
       end;
-
 
       Cells[2, Count] := IntToStr(FTeams[ThirdCount].HistorischeWMSiege);
 
       case FTeams[ThirdCount].TeamVerband of
-        TTeamVerband.AFC:       Cells[3, Count] := 'AFC';
-        TTeamVerband.CAF:       Cells[3, Count] := 'CAF';
-        TTeamVerband.CONCACAF:  Cells[3, Count] := 'CONCACAF';
-        TTeamVerband.CONMEBOL:  Cells[3, Count] := 'CONMEBOL';
-        TTeamVerband.OFC:       Cells[3, Count] := 'OFC';
-        TTeamVerband.UEFA:      Cells[3, Count] := 'UEFA';
+        TTeamVerband.AFC:
+          Cells[3, Count] := 'AFC';
+        TTeamVerband.CAF:
+          Cells[3, Count] := 'CAF';
+        TTeamVerband.CONCACAF:
+          Cells[3, Count] := 'CONCACAF';
+        TTeamVerband.CONMEBOL:
+          Cells[3, Count] := 'CONMEBOL';
+        TTeamVerband.OFC:
+          Cells[3, Count] := 'OFC';
+        TTeamVerband.UEFA:
+          Cells[3, Count] := 'UEFA';
       end;
 
     end;
@@ -198,6 +215,7 @@ end;
 destructor TVerlosungUI.Destroy;
 begin
   FGrids.Free;
+  FTeams.Free;
 
   inherited Destroy;
 end;

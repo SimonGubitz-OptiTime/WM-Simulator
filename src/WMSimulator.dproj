@@ -92,6 +92,7 @@
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
         <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
@@ -107,14 +108,14 @@
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <DCC_ExeOutput>..\bin\$(Platform)\$(Config)</DCC_ExeOutput>
-        <DCC_DcuOutput>.\bin\units\$(Platform)\$(Config)</DCC_DcuOutput>
+        <DCC_DcuOutput>..\bin\units\$(Platform)\$(Config)</DCC_DcuOutput>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <DCC_ExeOutput>..\bin\$(Platform)\$(Config)</DCC_ExeOutput>
-        <DCC_DcuOutput>.\bin\units\$(Platform)\$(Config)</DCC_DcuOutput>
+        <DCC_DcuOutput>..\bin\units\$(Platform)\$(Config)</DCC_DcuOutput>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
@@ -140,24 +141,26 @@
         </DCCReference>
         <DCCReference Include="ui\TeamEingabeFenster.pas">
             <Form>Form2</Form>
+            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="ui\StadionEingabeFenster.pas">
             <Form>Form3</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="ui\verlosung\Verlosung.pas"/>
+        <DCCReference Include="ui\verlosung\verlosung.pas"/>
+        <DCCReference Include="ui\animations\animation.pas"/>
         <DCCReference Include="db\db.pas"/>
         <DCCReference Include="types\types.pas"/>
         <DCCReference Include="utils\CSV\Utils.RTTI.pas"/>
         <DCCReference Include="utils\CSV\Utils.CSV.pas"/>
         <DCCReference Include="utils\db\Utils.DB.pas"/>
+        <DCCReference Include="utils\routing\Utils.Routing.pas"/>
+        <DCCReference Include="utils\user_input\Utils.UserInput.pas"/>
         <DCCReference Include="utils\arrays\Utils.FixedArrays.pas"/>
         <DCCReference Include="utils\arrays\Utils.ShuffleArray.pas"/>
-        <DCCReference Include="utils\user_input\Utils.UserInput.pas"/>
         <DCCReference Include="utils\table_formating\Utils.TableFormating.pas"/>
         <DCCReference Include="utils\string_formating\Utils.StringFormating.pas"/>
-        <DCCReference Include="ui\animations\animation.pas"/>
-        <DCCReference Include="utils\routing\Utils.Routing.pas"/>
+        <DCCReference Include="utils\arrays\Utils.FilterArray.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -1145,6 +1148,7 @@
                 <Platform value="Win32">True</Platform>
                 <Platform value="Win64">True</Platform>
             </Platforms>
+            <ModelSupport>False</ModelSupport>
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>
     </ProjectExtensions>

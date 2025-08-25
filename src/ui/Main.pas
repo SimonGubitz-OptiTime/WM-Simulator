@@ -6,12 +6,13 @@ uses
   DB,
   Types,
   Verlosung,
+  TeamEingabeFenster,
+  StadionEingabeFenster,
   Utils.Routing,
   Utils.TableFormating,
-  StadionEingabeFenster,
-  TeamEingabeFenster,
   System.Classes, System.Generics.Collections, System.SysUtils, System.Variants,
-  Vcl.ComCtrls, Vcl.Controls, Vcl.Dialogs, Vcl.Forms, Vcl.Graphics, Vcl.StdCtrls,
+  Vcl.ComCtrls, Vcl.Controls, Vcl.Dialogs, Vcl.Forms, Vcl.Graphics,
+  Vcl.StdCtrls,
   Vcl.ImgList, Vcl.Grids, Vcl.ExtCtrls,
   Winapi.Windows, Winapi.Messages, System.ImageList;
 
@@ -59,7 +60,7 @@ type
 
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure PageControlChanging(    Sender: TObject; var AllowChange: Boolean);
+    procedure PageControlChanging(Sender: TObject; var AllowChange: Boolean);
     procedure TeamHinzufuegenButtonClick(Sender: TObject);
     procedure StadionHinzufuegenButtonClick(Sender: TObject);
     procedure VerlosungStartenButtonClick(Sender: TObject);
@@ -75,19 +76,20 @@ type
     FStadionAnzahl: Integer;
 
     FVerlosung: TVerlosungUI;
-//    FSpielplan: TSpielplanUI;
-//    FSpiel: TSpielUI;
+    // FSpielplan: TSpielplanUI;
+    // FSpiel: TSpielUI;
 
     FVerlosungFertig: Boolean;
     FSpielplanFertig: Boolean;
 
-    const FGewollteTeamAnzahl: Integer = 48;
-          FGewollteStadionAnzahl: Integer = 16;
+  const
+    FGewollteTeamAnzahl: Integer = 48;
+    FGewollteStadionAnzahl: Integer = 16;
 
     procedure TeamDBUpdate;
-    procedure TeamTabelleZeichnen(Rows: TObjectList<TList<String>>);
+    procedure TeamTabelleZeichnen(Rows: TObjectList < TList < String >> );
     procedure StadionDBUpdate;
-    procedure StadionTabelleZeichnen(Rows: TObjectList<TList<String>>);
+    procedure StadionTabelleZeichnen(Rows: TObjectList < TList < String >> );
   public
     { Public-Deklarationen }
   end;
@@ -104,7 +106,6 @@ var
   Rows: TObjectList<TList<String>>;
 begin
 
-  // Rows NICHT .Free, da es TDB<T> gehört
   Rows := FTeamDB.GetUnstructuredTableFromCSV();
   FTeamAnzahl := Rows.Count - 1; // Header
 
@@ -129,9 +130,11 @@ begin
 
   // Hierdrin wird GetUnstructuredTableFromCSV aufgerufen also vorher GetStructuredTableFromCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
   TeamTabelleZeichnen(Rows);
+
+  Rows.Free;
 end;
 
-procedure TMainForm.TeamTabelleZeichnen(Rows: TObjectList<TList<String>>);
+procedure TMainForm.TeamTabelleZeichnen(Rows: TObjectList < TList < String >> );
 begin
   if Rows.Count <> 0 then
   begin
@@ -145,7 +148,6 @@ var
   Rows: TObjectList<TList<String>>;
 begin
 
-  // Rows NICHT .Free, da es TDB<T> gehört
   Rows := FStadionDB.GetUnstructuredTableFromCSV();
   FStadionAnzahl := Rows.Count - 1; // Header
 
@@ -170,9 +172,12 @@ begin
 
   // Hierdrin wird GetUnstructuredTableFromCSV aufgerufen also vorher GetStructuredTableFromCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
   StadionTabelleZeichnen(Rows);
+
+  Rows.Free;
 end;
 
-procedure TMainForm.StadionTabelleZeichnen(Rows: TObjectList<TList<String>>);
+procedure TMainForm.StadionTabelleZeichnen(Rows: TObjectList < TList <
+  String >> );
 begin
   if Rows.Count <> 0 then
   begin
@@ -197,13 +202,13 @@ procedure TMainForm.FormCreate(Sender: TObject);
 begin
 
   FVerlosung := nil;
-//  FSpielplan := nil;
-//  FSpiel := nil;
+  // FSpielplan := nil;
+  // FSpiel := nil;
 
   TeamGewollteAnzahlLabel.Caption := IntToStr(FGewollteTeamAnzahl);
   StadionGewollteAnzahlLabel.Caption := IntToStr(FGewollteStadionAnzahl);
 
-  FTeamDB    := TDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
+  FTeamDB := TDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
   FStadionDB := TDB<TStadion>.Create(TStadionEingabeFenster.GetTableName);
 
   // Teams laden
@@ -225,14 +230,18 @@ end;
 procedure TMainForm.ZurVerlosungButtonClick(Sender: TObject);
 begin
   // Gültigkeitsprüfung
-  if not(Utils.Routing.OnVerlosungChanging((FTeamAnzahl = FGewollteTeamAnzahl) and (FStadionAnzahl = FGewollteStadionAnzahl))) then
+  if not(Utils.Routing.OnVerlosungChanging((FTeamAnzahl = FGewollteTeamAnzahl)
+    and (FStadionAnzahl = FGewollteStadionAnzahl))) then
     Exit;
 
   // Verlosung starten
   if not Assigned(FVerlosung) then
-    FVerlosung := TVerlosungUI.Create([ StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12 ]);
+    FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3,
+      StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8,
+      StringGrid9, StringGrid10, StringGrid11, StringGrid12]);
 
-  FVerlosungFertig := FVerlosung.VerlosungStarten(FTeamDB, Timer1, VerlosungSheet);
+  FVerlosungFertig := FVerlosung.VerlosungStarten(FTeamDB, Timer1,
+    VerlosungSheet);
 end;
 
 procedure TMainForm.ZumSpielplanButtonClick(Sender: TObject);
@@ -245,30 +254,41 @@ begin
   // Gültigkeitsprüfung
 end;
 
-procedure TMainForm.PageControlChanging(Sender: TObject; var AllowChange: Boolean);
+procedure TMainForm.PageControlChanging(Sender: TObject;
+  var AllowChange: Boolean);
 begin
   case TPageControl(Sender).ActivePageIndex of
-    0: AllowChange := Utils.Routing.OnStammdatenChanging(True); // man kann immer zurück zu den Stammdaten
-    1: begin
-      AllowChange := Utils.Routing.OnVerlosungChanging((FTeamAnzahl = FGewollteTeamAnzahl) and (FStadionAnzahl = FGewollteStadionAnzahl));
-
-      if not(Assigned(FVerlosung)) then
+    0:
+      AllowChange := Utils.Routing.OnStammdatenChanging(True);
+      // man kann immer zurück zu den Stammdaten
+    1:
       begin
-        FVerlosung := TVerlosungUI.Create([ StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12 ]);
-      end;
-    end;
-    2: begin
-      AllowChange := Utils.Routing.OnSpielplanChanging((FVerlosungFertig));
+        AllowChange := Utils.Routing.OnVerlosungChanging
+          ((FTeamAnzahl = FGewollteTeamAnzahl) and
+          (FStadionAnzahl = FGewollteStadionAnzahl));
 
-      // Spielplan Klasse erstellen?
-      // if not(Assigned(FSpielplan)) then
-      // begin
-      //   FSpielplan := TSpielplanUI.Create();
-      // end;
-    end;
-    3: begin
-      AllowChange := Utils.Routing.OnSpielChanging((FSpielplanFertig));
-    end;
+        if not(Assigned(FVerlosung)) then
+        begin
+          FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2,
+            StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7,
+            StringGrid8, StringGrid9, StringGrid10, StringGrid11,
+            StringGrid12]);
+        end;
+      end;
+    2:
+      begin
+        AllowChange := Utils.Routing.OnSpielplanChanging((FVerlosungFertig));
+
+        // Spielplan Klasse erstellen?
+        // if not(Assigned(FSpielplan)) then
+        // begin
+        // FSpielplan := TSpielplanUI.Create();
+        // end;
+      end;
+    3:
+      begin
+        AllowChange := Utils.Routing.OnSpielChanging((FSpielplanFertig));
+      end;
   end;
 
   AllowChange := True;
@@ -277,7 +297,9 @@ end;
 procedure TMainForm.VerlosungStartenButtonClick(Sender: TObject);
 begin
   if (not(Assigned(FVerlosung)) or not(FVerlosung.Initialized)) then
-    FVerlosung := TVerlosungUI.Create([ StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12 ]);
+    FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3,
+      StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8,
+      StringGrid9, StringGrid10, StringGrid11, StringGrid12]);
 
   FVerlosung.VerlosungStarten(FTeamDB, Timer1, VerlosungSheet);
 end;
@@ -288,9 +310,8 @@ begin
   StadionEingabe.Free;
 
   FVerlosung.Free;
-  FStadionDB.Free;
-  FTeamDB.Free;
+  FStadionDB.Destroy;
+  FTeamDB.Destroy;
 end;
-
 
 end.

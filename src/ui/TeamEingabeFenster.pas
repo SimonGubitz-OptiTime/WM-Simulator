@@ -7,7 +7,8 @@ uses
   Types,
   Utils.StringFormating,
   Utils.TableFormating,
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Menus,
   System.ImageList, Vcl.ImgList, System.Generics.Collections;
 
@@ -41,17 +42,21 @@ type
     procedure EingabeDerListeHinzufuegen;
     procedure EingabeDerListeEntfernen;
     procedure SpielerListeEingabeButtonClick(Sender: TObject);
-    procedure SpielerListeEingabeFeldKeyDown(Sender: TObject; var Key: Word; Shift:
-        TShiftState);
+    procedure SpielerListeEingabeFeldKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
     procedure SpielerListeEntfernenButtonClick(Sender: TObject);
     class function GetTableName: ShortString;
 
   private
-    var SpielerListe: TList<String>;
-    var FDatabase: TDB<TTeam>;
-    const FTableName: ShortString = 'Teams';
-  end;
+  var
+    SpielerListe: TList<String>;
 
+  var
+    FDatabase: TDB<TTeam>;
+
+  const
+    FTableName: ShortString = 'Teams';
+  end;
 
 implementation
 
@@ -89,7 +94,7 @@ end;
 
 procedure TTeamEingabeFenster.EingabeDerListeHinzufuegen;
 begin
-    if SpielerListeEingabeFeld.Text = '' then
+  if SpielerListeEingabeFeld.Text = '' then
     Exit;
 
   // Der Liste hinzufügen
@@ -99,7 +104,8 @@ begin
   SpielerListeEingabeFeld.Text := '';
 
   // Das Ausgabe Feld neu rendern
-  SpielerListeAnzeigeLabel.Caption := Utils.StringFormating.FormatSpielerListe(SpielerListe);
+  SpielerListeAnzeigeLabel.Caption := Utils.StringFormating.FormatSpielerListe
+    (SpielerListe);
 
   // Fokus auf das Eingabefeld setzen
   SpielerListeEingabeFeld.SetFocus;
@@ -110,7 +116,7 @@ begin
   // Wenn das Eingabefeld für Spieler leer ist, wird der letzte Spieler Entfernt, sonst der
   if (SpielerListeEingabeFeld.Text = '') then
   begin
-    SpielerListe.Delete(SpielerListe.Count-1);
+    SpielerListe.Delete(SpielerListe.Count - 1);
   end
   else
   begin
@@ -121,7 +127,8 @@ begin
   SpielerListeEingabeFeld.Text := '';
 
   // Neu formatieren
-  SpielerListeAnzeigeLabel.Caption := Utils.StringFormating.FormatSpielerListe(SpielerListe);
+  SpielerListeAnzeigeLabel.Caption := Utils.StringFormating.FormatSpielerListe
+    (SpielerListe);
 
   // Fokus auf das Eingabefeld setzen
   SpielerListeEingabeFeld.SetFocus;
@@ -133,7 +140,7 @@ begin
 end;
 
 procedure TTeamEingabeFenster.SpielerListeEingabeFeldKeyDown(Sender: TObject;
-    var Key: Word; Shift: TShiftState);
+  var Key: Word; Shift: TShiftState);
 begin
   // https://adrenalinebot.com/en/api/usefull/delphi-keycodes
   // Wenn Enter gedrückt wird
@@ -161,7 +168,10 @@ var
 begin
 
   // Gültigkeitsprüfung der Eingaben
-  if (NameEingabeFeld.Text = '') or (FifaCodeEingabeFeld.Text = '') or (TeamVerbandEingabeBox.Text = '') or (TeamRankingEingabeBox.Text = '') or (HistorischeSiegeEingabeFeld.Text = '') or (HeimstadionEingabeFeld.Text = '') or (SpielerListe.Count = 0) then
+  if (NameEingabeFeld.Text = '') or (FIFACodeEingabeFeld.Text = '') or
+    (TeamVerbandEingabeBox.Text = '') or (TeamRankingEingabeBox.Text = '') or
+    (HistorischeSiegeEingabeFeld.Text = '') or
+    (HeimstadionEingabeFeld.Text = '') or (SpielerListe.Count = 0) then
   begin
     ShowMessage('Bitte füllen Sie alle Felder aus.');
     Exit;
@@ -178,15 +188,14 @@ begin
     ShowMessage('Bitte tragen sie eine gültige Zahl ein.');
     Exit;
   end;
-  
+
   if not(SpielerListe.Count = 11) then
   begin
     ShowMessage('Bitte tragen Sie genau 11 Spieler ein.');
     Exit;
   end;
 
-
-  Team := Default(TTeam);
+  Team := Default (TTeam);
   Team.Name := NameEingabeFeld.Text;
   Team.FIFACode := FIFACodeEingabeFeld.Text;
   Team.TeamVerband := TTeamVerband(TeamVerbandEingabeBox.ItemIndex);
@@ -198,8 +207,10 @@ begin
   SetLength(Team.SpielerListe, 11);
   for placeholder := Low(Team.SpielerListe) to High(Team.SpielerListe) do
   begin
-    var s := Team.SpielerListe[placeholder];
-    var y := SpielerListe[placeholder];
+    var
+    s := Team.SpielerListe[placeholder];
+    var
+    y := SpielerListe[placeholder];
     Team.SpielerListe[placeholder] := SpielerListe[placeholder];
   end;
 
@@ -224,6 +235,5 @@ class function TTeamEingabeFenster.GetTableName: ShortString;
 begin
   Result := FTableName;
 end;
-
 
 end.

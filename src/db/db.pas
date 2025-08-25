@@ -7,49 +7,46 @@ uses
   Utils.DB,
   Utils.CSV,
   Utils.RTTI,
-  System.Generics.Collections, System.Classes, System.SysUtils, System.IOUtils, System.Rtti, Vcl.Dialogs;
+  System.Generics.Collections, System.Classes, System.SysUtils, System.IOUtils,
+  System.RTTI, Vcl.Dialogs;
 
+type
+  TDB<T: record > = class
+  private
+    FFS: TFileStream;
+    FDBUpdateEventListeners: TList<TDBUpdateEvent>;
+    FTableName: String;
+    FInitialized: Boolean;
+    FFileName: String;
+    FFileDirectory: String;
 
-type TDB<T: record> = class
-private
-  FFS: TFileStream;
-  FDBUpdateEventListeners: TList<TDBUpdateEvent>;
-  FTableName: String;
-  FInitialized: Boolean;
-  FFileName: String;
-  FFileDirectory: String;
+    class var CachedCSV: TList<T>;
+    class var CachedUnstructuredCSV: TObjectList<TList<String>>;
 
-  class var CachedCSV: TList<T>;
-  class var CachedUnstructuredCSV: TObjectList<TList<String>>;
+    procedure CallDBUpdateEventListeners();
+    procedure AddCSVTableToDB(CSVObject: T);
 
+  public
+    property Initialized: Boolean read FInitialized;
 
-  procedure   CallDBUpdateEventListeners();
-  procedure   AddCSVTableToDB(CSVObject: T);
+    constructor Create(TableName: String);
 
-public
-  property Initialized: Boolean read FInitialized;
+    // function    GetRowFromCSV(RowID: Integer): T;
+    // procedure   SetRowInCSV(RowID: Integer; Line: Integer);
+    procedure AddRowToCSV(RowValues: T);
 
-  constructor Create(TableName: String);
+    function GetStructuredTableFromCSV(): TList<T>;
+    // procedure   SetStructuredTableInCSV(CSVArray: TObjectList<T>);
 
-  // function    GetRowFromCSV(RowID: Integer): T;
-  // procedure   SetRowInCSV(RowID: Integer; Line: Integer);
-  procedure   AddRowToCSV(RowValues: T);
+    function GetUnstructuredTableFromCSV(): TObjectList<TList<String>>;
 
-  function    GetStructuredTableFromCSV(): TList<T>;
-  // procedure   SetStructuredTableInCSV(CSVArray: TObjectList<T>);
+    // Event listener JS equivalent
+    // adding function pointers to be called when the CSV table changes
+    procedure AddDBUpdateEventListener(CallbackFunction: TDBUpdateEvent);
 
-  function    GetUnstructuredTableFromCSV(): TObjectList<TList<String>>;
+    destructor Destroy;
 
-
-  // Event listener JS equivalent
-  // adding function pointers to be called when the CSV table changes
-  procedure AddDBUpdateEventListener(CallbackFunction: TDBUpdateEvent);
-
-  destructor Destroy;
-
-end;
-
-
+  end;
 
 implementation
 
@@ -63,26 +60,29 @@ begin
   if not(TDirectory.Exists(FFileDirectory)) then
     TDirectory.CreateDirectory(FFileDirectory);
 
+  if not(FileExists(FFileName)) then
+    TFile.Create(FFileName).Free; // Schnell erstellen und wieder schließen
+
   FFS := TFileStream.Create(FFileName, fmOpenReadWrite or fmShareDenyWrite);
   FDBUpdateEventListeners := TList<TDBUpdateEvent>.Create();
 
   // reset all cache
   CachedCSV := TList<T>.Create;
-  CachedUnstructuredCSV := TObjectList<TList<String>>.Create;
+  CachedUnstructuredCSV := TObjectList < TList < String >>.Create;
 
   FInitialized := true;
 end;
 
 // procedure TDB<T>.SetRowInCSV(RowID: Integer; Line: Integer);
 // begin
-//   if not FInitialized then
-//     raise Exception.Create('db.pas Error: TDB is not initialized. Please add to the database first.');
+// if not FInitialized then
+// raise Exception.Create('db.pas Error: TDB is not initialized. Please add to the database first.');
 
-//   // .csv öffnen
+// // .csv öffnen
 
 
-//   // Call the event listeners
-//   CallDBUpdateEventListeners();
+// // Call the event listeners
+// CallDBUpdateEventListeners();
 // end;
 
 procedure TDB<T>.AddRowToCSV(RowValues: T);
@@ -100,21 +100,23 @@ begin
   begin
 
     if not FInitialized then
-      raise Exception.Create('db.pas Error: TDB is not initialized. Please add to the database first.');
+      raise Exception.Create
+        ('db.pas Error: TDB is not initialized. Please add to the database first.');
 
     SW := TStreamWriter.Create(FFS);
 
     try
       SW.BaseStream.Position := FFS.size;
-      {if SW.Encoding = TEncoding.UTF16 then
-        SW.BaseStream.Position := FFS.size / 2;} // 2 byte pro character
+      { if SW.Encoding = TEncoding.UTF16 then
+        SW.BaseStream.Position := FFS.size / 2; } // 2 byte pro character
 
       WriterString := Utils.CSV.TCSVUtils<T>.SerializeRowCSV(RowValues);
       SW.WriteLine(WriterString);
 
       // Append to cache as well
       CachedCSV.Add(RowValues);
-      CachedUnstructuredCSV.Add(Utils.CSV.TCSVUtils<T>.ParseRowCSVToArray(RowValues));
+      CachedUnstructuredCSV.Add(Utils.CSV.TCSVUtils<T>.ParseRowCSVToArray
+        (RowValues));
 
     finally
       SW.Free;
@@ -124,7 +126,6 @@ begin
   // Call the event listeners
   CallDBUpdateEventListeners();
 end;
-
 
 // Returns a structured table from the CSV file
 // There will be no error if the file is empty, just an empty array
@@ -141,7 +142,8 @@ var
 begin
 
   if not FInitialized then
-      raise Exception.Create('db.pas Error: TDB is not initialized. Please add to the database first.');
+    raise Exception.Create
+      ('db.pas Error: TDB is not initialized. Please add to the database first.');
 
   Result := TList<T>.Create;
 
@@ -152,7 +154,7 @@ begin
   end
   else
   begin
-    Row := Default(T);
+    Row := Default (T);
     SR := TStreamReader.Create(FFS);
 
     try
@@ -170,11 +172,10 @@ begin
         Result.Add(Row);
       end;
     finally
-        SR.Free;
+      SR.Free;
     end;
   end;
 end;
-
 
 function TDB<T>.GetUnstructuredTableFromCSV(): TObjectList<TList<String>>;
 var
@@ -183,20 +184,18 @@ var
 begin
 
   if not FInitialized then
-    raise Exception.Create('db.pas Error: TDB is not initialized. Please add to the database first.');
+    raise Exception.Create
+      ('db.pas Error: TDB is not initialized. Please add to the database first.');
 
-  Result := TObjectList<TList<String>>.Create;
-
-
-
-  if (Assigned(CachedUnstructuredCSV)) and (CachedUnstructuredCSV.Count > 0) then
+  if (Assigned(CachedUnstructuredCSV)) and (CachedUnstructuredCSV.Count > 0)
+  then
   begin
     Result := CachedUnstructuredCSV;
     Exit;
   end
   else
   begin
-    Result := TObjectList<TList<String>>.Create;
+    Result := TObjectList < TList < String >>.Create;
 
     SR := TStreamReader.Create(FFS);
 
@@ -220,7 +219,6 @@ begin
 
   SW := nil;
 
-
   if (FileExists(FFileName)) then
   begin
     FInitialized := true;
@@ -236,7 +234,8 @@ begin
       SW.WriteLine(Utils.CSV.TCSVUtils<T>.SerializeRowCSV(CSVObject));
 
       // Append to cache as well
-      CachedUnstructuredCSV.Add(Utils.CSV.TCSVUtils<T>.ParseRowCSVToArray(CSVObject));
+      CachedUnstructuredCSV.Add(Utils.CSV.TCSVUtils<T>.ParseRowCSVToArray
+        (CSVObject));
       CachedCSV.Add(CSVObject);
 
       FInitialized := true;
@@ -264,7 +263,7 @@ procedure TDB<T>.CallDBUpdateEventListeners();
 var
   i: Integer;
 begin
-  for i := 0 to FDBUpdateEventListeners.Count -1  do
+  for i := 0 to FDBUpdateEventListeners.Count - 1 do
   begin
     try
       FDBUpdateEventListeners[i]();
@@ -282,6 +281,9 @@ end;
 
 destructor TDB<T>.Destroy;
 begin
+  // Close the file stream
+  FFS.Free;
+
   // Free the list of event listeners
   FDBUpdateEventListeners.Free;
   FDBUpdateEventListeners.Clear;

@@ -5,10 +5,11 @@ interface
 uses
   System.Generics.Collections;
 
-type TShuffleArrayUtils<T> = class
-public
-  class procedure Shuffle(var ArrayToShuffle: TList<T>); static;
-end;
+type
+  TShuffleArrayUtils<T> = class
+  public
+    class procedure Shuffle(var ArrayToShuffle: TList<T>); static;
+  end;
 
 implementation
 
@@ -26,6 +27,5 @@ begin
     ArrayToShuffle[copyI] := temp;
   end;
 end;
-
 
 end.
