@@ -4,16 +4,15 @@ interface
 
 type TDBUpdateEvent = procedure of object;
 
+type TTeamVerband = (AFC, CAF, CONCACAF, CONMEBOL, OFC, UEFA);
+type TTeamRanking = (SehrStark, Stark, MittelStark, Schwach);
+
 type TStadion = record
     Name: String; // z.B. "Allianz Arena"
     Ort: String; // z.B. "München"
     ZuschauerKapazitaet: UInt32; // Zuschauer Zahl kann größer als WordMax 65'535 sein
     Zuschauer: UInt32; // " - für die Simulation wenn >90% Kapazität, +5% Siegchancen wenn Heimstadion
 end;
-
-type TTeamVerband = (AFC, CAF, CONCACAF, CONMEBOL, OFC, UEFA);
-type TTeamRanking = (SehrStark, Stark, MittelStark, Schwach);
-
 
 type TTeam = record
     Name: String;
@@ -33,6 +32,7 @@ type TTeam = record
         Unentschieden: Byte;
         Niederlagen: Byte;
 end;
+
 type TSpiel = record
     Team1: TTeam;
     Team1Spielstand: Byte; // kein Spiel wird über 255 gehen
