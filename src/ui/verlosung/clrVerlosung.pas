@@ -113,12 +113,14 @@ begin
 
       // type TConditionFunction = reference to function(Param: T): Boolean; // Fehler - T nicht deklariert
       // type TConditionFunction<T> = reference to function(Param: T): Boolean; // Fehler
+       {
       clrUtils.FilterArray.TFilterArrayUtils<TTeam>.Filter2(FTeams,
         function(Param: TTeam): Boolean
         begin
           Result := Param.TeamRanking = TTeamRanking.SehrStark;
         end
       );
+      //}
 
 
       // TODO: in Utils.FilterArray die kommentare ändern
@@ -151,7 +153,9 @@ begin
       begin
 
         if ( TeamIndex >= FTeams.Count ) then
+        begin
           break;
+        end;
 
         with FGrids[grid] do
         begin

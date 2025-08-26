@@ -3,11 +3,18 @@
 interface
 
 uses
-  DB,
-  Types,
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls;
+  System.Classes,
+  System.SysUtils,
+  System.Variants,
+  Vcl.Controls,
+  Vcl.Dialogs,
+  Vcl.Forms,
+  Vcl.Graphics,
+  Vcl.StdCtrls,
+  Winapi.Messages,
+  Winapi.Windows,
+  clrDB,
+  damTypes;
 
 type
   TStadionEingabeFenster = class(TForm)

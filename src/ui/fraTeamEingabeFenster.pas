@@ -3,26 +3,36 @@
 interface
 
 uses
-  DB,
-  Types,
-  Utils.StringFormating,
-  Utils.TableFormating,
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Menus,
-  System.ImageList, Vcl.ImgList, System.Generics.Collections;
+  System.Classes,
+  System.Generics.Collections,
+  System.ImageList,
+  System.SysUtils,
+  System.Variants,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Dialogs,
+  Vcl.Forms,
+  Vcl.StdCtrls,
+  Vcl.Menus,
+  Vcl.ImgList,
+  Winapi.Messages,
+  Winapi.Windows,
+  clrDB,
+  damTypes,
+  clrUtils.StringFormating,
+  clrUtils.TableFormating;
 
 type
   TTeamEingabeFenster = class(TForm)
   private
-  var
-    SpielerListe: TList<String>;
+    var
+      SpielerListe: TList<String>;
 
-  var
-    FDatabase: TDB<TTeam>;
+    var
+      FDatabase: TDB<TTeam>;
 
-  const
-    FTableName: ShortString = 'Teams';
+    const
+      FTableName: ShortString = 'Teams';
 
   public
     Label1: TLabel;
@@ -105,7 +115,7 @@ begin
   SpielerListeEingabeFeld.Text := '';
 
   // Das Ausgabe Feld neu rendern
-  SpielerListeAnzeigeLabel.Caption := Utils.StringFormating.FormatSpielerListe
+  SpielerListeAnzeigeLabel.Caption := clrUtils.StringFormating.FormatSpielerListe
     (SpielerListe);
 
   // Fokus auf das Eingabefeld setzen
@@ -128,7 +138,7 @@ begin
   SpielerListeEingabeFeld.Text := '';
 
   // Neu formatieren
-  SpielerListeAnzeigeLabel.Caption := Utils.StringFormating.FormatSpielerListe
+  SpielerListeAnzeigeLabel.Caption := clrUtils.StringFormating.FormatSpielerListe
     (SpielerListe);
 
   // Fokus auf das Eingabefeld setzen

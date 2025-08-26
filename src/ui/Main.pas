@@ -197,7 +197,7 @@ begin
   StadionEingabe.Show; // ShowModal;
 end;
 
-procedure TMainForm.FormCreate(ASender: TObject);
+procedure TMainForm.FormCreate(Sender: TObject);
 begin
 
   FVerlosung := nil;
@@ -229,7 +229,7 @@ end;
 procedure TMainForm.ZurVerlosungButtonClick(Sender: TObject);
 begin
   // Gültigkeitsprüfung
-  if not ( Utils.Routing.OnVerlosungChanging((FTeamAnzahl = FGewollteTeamAnzahl)
+  if not ( clrUtils.Routing.OnVerlosungChanging((FTeamAnzahl = FGewollteTeamAnzahl)
     and ( FStadionAnzahl = FGewollteStadionAnzahl)) ) then
     Exit;
 
@@ -258,11 +258,11 @@ procedure TMainForm.PageControlChanging(Sender: TObject;
 begin
   case TPageControl(Sender).ActivePageIndex of
     0:
-      AllowChange := Utils.Routing.OnStammdatenChanging(True);
+      AllowChange := clrUtils.Routing.OnStammdatenChanging(True);
       // man kann immer zurück zu den Stammdaten
     1:
       begin
-        AllowChange := Utils.Routing.OnVerlosungChanging
+        AllowChange := clrUtils.Routing.OnVerlosungChanging
           ((FTeamAnzahl = FGewollteTeamAnzahl) and
           (FStadionAnzahl = FGewollteStadionAnzahl));
 
@@ -276,7 +276,7 @@ begin
       end;
     2:
       begin
-        AllowChange := Utils.Routing.OnSpielplanChanging((FVerlosungFertig));
+        AllowChange := clrUtils.Routing.OnSpielplanChanging((FVerlosungFertig));
 
         // Spielplan Klasse erstellen?
         // if not ( Assigned(FSpielplan) ) then
@@ -286,7 +286,7 @@ begin
       end;
     3:
       begin
-        AllowChange := Utils.Routing.OnSpielChanging((FSpielplanFertig));
+        AllowChange := clrUtils.Routing.OnSpielChanging((FSpielplanFertig));
       end;
   end;
 

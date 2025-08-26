@@ -145,7 +145,7 @@ object MainForm: TMainForm
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -12
-        Font.Name = 'Agency FB'
+        Font.Name = 'Arial'
         Font.Style = []
         ParentFont = False
         TabOrder = 2
