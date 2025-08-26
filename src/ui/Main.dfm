@@ -19,7 +19,7 @@ object MainForm: TMainForm
     Top = 0
     Width = 1105
     Height = 713
-    ActivePage = VerlosungSheet
+    ActivePage = StammdatenSheet
     TabOrder = 0
     OnChanging = PageControlChanging
     object StammdatenSheet: TTabSheet
@@ -27,13 +27,13 @@ object MainForm: TMainForm
       object UeberschriftStammdaten: TLabel
         Left = 3
         Top = 3
-        Width = 351
-        Height = 45
-        Caption = 'UeberschriftStammdaten'
+        Width = 193
+        Height = 40
+        Caption = 'Stammdaten'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -35
-        Font.Name = 'Harlow Solid Italic'
+        Font.Name = 'Arial'
         Font.Style = []
         ParentFont = False
       end
@@ -142,6 +142,12 @@ object MainForm: TMainForm
         Top = 104
         Width = 542
         Height = 513
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Agency FB'
+        Font.Style = []
+        ParentFont = False
         TabOrder = 2
       end
       object TeamsStringGrid: TStringGrid
@@ -168,13 +174,13 @@ object MainForm: TMainForm
       object UeberschriftVerlosung: TLabel
         Left = 3
         Top = 3
-        Width = 317
-        Height = 45
-        Caption = 'UeberschriftVerlosung'
+        Width = 151
+        Height = 40
+        Caption = 'Verlosung'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -35
-        Font.Name = 'Harlow Solid Italic'
+        Font.Name = 'Arial'
         Font.Style = []
         ParentFont = False
       end
@@ -344,13 +350,13 @@ object MainForm: TMainForm
       object UeberschriftSpielplan: TLabel
         Left = 3
         Top = 3
-        Width = 303
-        Height = 45
-        Caption = 'UeberschriftSpielplan'
+        Width = 137
+        Height = 40
+        Caption = 'Spielplan'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -35
-        Font.Name = 'Harlow Solid Italic'
+        Font.Name = 'Arial'
         Font.Style = []
         ParentFont = False
       end

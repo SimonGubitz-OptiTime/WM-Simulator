@@ -1,4 +1,4 @@
-﻿unit types;
+﻿unit damTypes;
 
 interface
 
@@ -11,8 +11,7 @@ type
 type
   TTeamRanking = (SehrStark, Stark, MittelStark, Schwach);
 
-type
-  TStadion = record
+type TStadion = record
     Name: String; // z.B. "Allianz Arena"
     Ort: String; // z.B. "München"
     ZuschauerKapazitaet: UInt32;
@@ -21,8 +20,14 @@ type
     // " - für die Simulation wenn >90% Kapazität, +5% Siegchancen wenn Heimstadion
   end;
 
-type
-  TTeam = record
+type TTeam = record
+  private
+    ToreGeschossen: Byte;
+    ToreKassiert: Byte;
+    Siege: Byte;
+    Unentschieden: Byte;
+    Niederlagen: Byte;
+  public
     Name: String;
     FIFACode: string; // 3 Zeichen lang
     TeamVerband: TTeamVerband;
@@ -30,17 +35,10 @@ type
     HeimstadionName: String; // in der Simulation vielleicht +5% Siegchancen
     Flagge: Byte; // als index für eine TImageList
     SpielerListe: array of String;
-    // Nur Namen, muss um simplizität in der Rtti array bleiben, kein TList<string>
+    // ↑ Nur Namen, muss um Simplizität in der Rtti array bleiben, kein TList<string>
     TeamRanking: TTeamRanking;
-
-    // ↓ für spätere Statistiken - keine Stammdaten
-  private
-    ToreGeschossen: Byte;
-    ToreKassiert: Byte;
-    Siege: Byte;
-    Unentschieden: Byte;
-    Niederlagen: Byte;
-  end;
+ 
+end;
 
 type
   TSpiel = record

@@ -1,12 +1,12 @@
-﻿unit DB;
+﻿unit clrDB;
 
 interface
 
 uses
-  Types,
-  Utils.DB,
-  Utils.CSV,
-  Utils.RTTI,
+  damTypes,
+  clrUtils.DB,
+  clrUtils.CSV,
+  clrUtils.RTTI,
   System.Generics.Collections, System.Classes, System.SysUtils, System.IOUtils,
   System.RTTI, Vcl.Dialogs;
 
@@ -29,11 +29,11 @@ type
   public
     property Initialized: Boolean read FInitialized;
 
-    constructor Create(TableName: String);
+    constructor Create(ATableName: String);
 
     // function    GetRowFromCSV(RowID: Integer): T;
     // procedure   SetRowInCSV(RowID: Integer; Line: Integer);
-    procedure AddRowToCSV(RowValues: T);
+    procedure AddRowToCSV(ARowValues: T);
 
     function GetStructuredTableFromCSV(): TList<T>;
     // procedure   SetStructuredTableInCSV(CSVArray: TObjectList<T>);
@@ -50,18 +50,22 @@ type
 
 implementation
 
-constructor TDB<T>.Create(TableName: String);
+constructor TDB<T>.Create(ATableName: String);
 begin
   FInitialized := false;
-  FTableName := TableName;
+  FTableName := ATableName;
 
-  FFileName := Utils.DB.GetTablesFilePath(FTableName);
-  FFileDirectory := Utils.DB.GetTablesDirPath();
-  if not(TDirectory.Exists(FFileDirectory)) then
+  FFileName := clrUtils.DB.GetTablesFilePath(FTableName);
+  FFileDirectory := clrUtils.DB.GetTablesDirPath();
+  if not ( TDirectory.Exists(FFileDirectory) ) then
+  begin
     TDirectory.CreateDirectory(FFileDirectory);
+  end;
 
-  if not(FileExists(FFileName)) then
+  if not ( FileExists(FFileName) ) then
+  begin
     TFile.Create(FFileName).Free; // Schnell erstellen und wieder schließen
+  end;
 
   FFS := TFileStream.Create(FFileName, fmOpenReadWrite or fmShareDenyWrite);
   FDBUpdateEventListeners := TList<TDBUpdateEvent>.Create();
@@ -73,10 +77,12 @@ begin
   FInitialized := true;
 end;
 
-// procedure TDB<T>.SetRowInCSV(RowID: Integer; Line: Integer);
+// procedure TDB<T>.SetRowInCSV(ARowID: Integer; ALine: Integer);
 // begin
-// if not FInitialized then
-// raise Exception.Create('db.pas Error: TDB is not initialized. Please add to the database first.');
+// if not ( FInitialized ) then
+// begin
+//  raise Exception.Create('db.pas Error: TDB is not initialized. Please add to the database first.');
+// end;
 
 // // .csv öffnen
 
@@ -85,21 +91,21 @@ end;
 // CallDBUpdateEventListeners();
 // end;
 
-procedure TDB<T>.AddRowToCSV(RowValues: T);
+procedure TDB<T>.AddRowToCSV(ARowValues: T);
 var
   SW: TStreamWriter;
   WriterString: String;
 begin
 
-  if not(FileExists(FFileName)) then
+  if not ( FileExists(FFileName) ) then
   begin
-    AddCSVTableToDB(RowValues);
+    AddCSVTableToDB(ARowValues);
     Exit;
   end
   else
   begin
 
-    if not FInitialized then
+    if not ( FInitialized  ) then
       raise Exception.Create
         ('db.pas Error: TDB is not initialized. Please add to the database first.');
 
@@ -110,13 +116,13 @@ begin
       { if SW.Encoding = TEncoding.UTF16 then
         SW.BaseStream.Position := FFS.size / 2; } // 2 byte pro character
 
-      WriterString := Utils.CSV.TCSVUtils<T>.SerializeRowCSV(RowValues);
+      WriterString := clrUtils.CSV.TCSVUtils<T>.SerializeRowCSV(ARowValues);
       SW.WriteLine(WriterString);
 
       // Append to cache as well
-      CachedCSV.Add(RowValues);
-      CachedUnstructuredCSV.Add(Utils.CSV.TCSVUtils<T>.ParseRowCSVToArray
-        (RowValues));
+      CachedCSV.Add(ARowValues);
+      CachedUnstructuredCSV.Add(clrUtils.CSV.TCSVUtils<T>.ParseRowCSVToArray
+        (ARowValues));
 
     finally
       SW.Free;
@@ -137,17 +143,16 @@ var
   Lines: TStringList;
   Row: T;
 
-  line: String;
-  i: Integer;
+  Line: String;
 begin
 
-  if not FInitialized then
+  if not ( FInitialized  ) then
     raise Exception.Create
       ('db.pas Error: TDB is not initialized. Please add to the database first.');
 
   Result := TList<T>.Create;
 
-  if (Assigned(CachedCSV)) and (CachedCSV.Count > 0) then
+  if ( Assigned(CachedCSV)) and ( CachedCSV.Count > 0 ) then
   begin
     Result := CachedCSV;
     Exit;
@@ -161,14 +166,14 @@ begin
       FFS.Position := 0;
 
       // headline ignorieren
-      line := SR.ReadLine();
+      Line := SR.ReadLine();
 
       while not(SR.EndOfStream) do
       begin
-        line := SR.ReadLine();
+        Line := SR.ReadLine();
 
         // Zeile direkt als serialisiertes Objekt speichern
-        Row := Utils.CSV.TCSVUtils<T>.DeserializeRowCSV(line);
+        Row := clrUtils.CSV.TCSVUtils<T>.DeserializeRowCSV(Line);
         Result.Add(Row);
       end;
     finally
@@ -183,11 +188,11 @@ var
   Temp: TList<String>;
 begin
 
-  if not FInitialized then
+  if not ( FInitialized ) then
     raise Exception.Create
       ('db.pas Error: TDB is not initialized. Please add to the database first.');
 
-  if (Assigned(CachedUnstructuredCSV)) and (CachedUnstructuredCSV.Count > 0)
+  if ( Assigned(CachedUnstructuredCSV)) and ( CachedUnstructuredCSV.Count > 0)
   then
   begin
     Result := CachedUnstructuredCSV;
@@ -203,7 +208,7 @@ begin
       FFS.Position := 0;
       while not(SR.EndOfStream) do
       begin
-        Temp := Utils.CSV.DeserializeCSV(SR.ReadLine());
+        Temp := clrUtils.CSV.DeserializeCSV(SR.ReadLine());
         Result.Add(Temp);
       end;
     finally
@@ -219,7 +224,7 @@ begin
 
   SW := nil;
 
-  if (FileExists(FFileName)) then
+  if ( FileExists(FFileName) ) then
   begin
     FInitialized := true;
     AddRowToCSV(CSVObject);
@@ -230,11 +235,11 @@ begin
       FFS.Position := 0;
       SW := TStreamWriter.Create(FFS);
 
-      SW.WriteLine(Utils.CSV.TCSVUtils<T>.GetCSVHeaderAsString);
-      SW.WriteLine(Utils.CSV.TCSVUtils<T>.SerializeRowCSV(CSVObject));
+      SW.WriteLine(clrUtils.CSV.TCSVUtils<T>.GetCSVHeaderAsString);
+      SW.WriteLine(clrUtils.CSV.TCSVUtils<T>.SerializeRowCSV(CSVObject));
 
       // Append to cache as well
-      CachedUnstructuredCSV.Add(Utils.CSV.TCSVUtils<T>.ParseRowCSVToArray
+      CachedUnstructuredCSV.Add(clrUtils.CSV.TCSVUtils<T>.ParseRowCSVToArray
         (CSVObject));
       CachedCSV.Add(CSVObject);
 
@@ -261,12 +266,12 @@ end;
 
 procedure TDB<T>.CallDBUpdateEventListeners();
 var
-  i: Integer;
+  idx: Integer;
 begin
-  for i := 0 to FDBUpdateEventListeners.Count - 1 do
+  for idx := 0 to FDBUpdateEventListeners.Count - 1 do
   begin
     try
-      FDBUpdateEventListeners[i]();
+      FDBUpdateEventListeners[idx]();
     except
       on E: Exception do
       begin

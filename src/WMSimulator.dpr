@@ -2,23 +2,22 @@ program WMSimulator;
 
 uses
   Vcl.Forms,
-  Main in 'ui\Main.pas' {Form1} ,
-  TeamEingabeFenster in 'ui\TeamEingabeFenster.pas' {Form2} ,
-  StadionEingabeFenster in 'ui\StadionEingabeFenster.pas' {Form3} ,
-  verlosung in 'ui\verlosung\verlosung.pas',
-  animation in 'ui\animations\animation.pas',
-  db in 'db\db.pas',
-  types in 'types\types.pas',
-  Utils.RTTI in 'utils\CSV\Utils.RTTI.pas',
-  Utils.CSV in 'utils\CSV\Utils.CSV.pas',
-  Utils.db in 'utils\db\Utils.DB.pas',
-  Utils.Routing in 'utils\routing\Utils.Routing.pas',
-  Utils.UserInput in 'utils\user_input\Utils.UserInput.pas',
-  Utils.FixedArrays in 'utils\arrays\Utils.FixedArrays.pas',
-  Utils.ShuffleArray in 'utils\arrays\Utils.ShuffleArray.pas',
-  Utils.TableFormating in 'utils\table_formating\Utils.TableFormating.pas',
-  Utils.StringFormating in 'utils\string_formating\Utils.StringFormating.pas',
-  Utils.FilterArray in 'utils\arrays\Utils.FilterArray.pas';
+  Main in 'ui\Main.pas' {Form1},
+  fraTeamEingabeFenster in 'ui\fraTeamEingabeFenster.pas' {Form2},
+  fraStadionEingabeFenster in 'ui\fraStadionEingabeFenster.pas' {Form3},
+  clrVerlosung in 'ui\verlosung\clrVerlosung.pas',
+  clrAnimation in 'ui\animations\clrAnimation.pas',
+  clrDB in 'db\clrDB.pas',
+  damTypes in 'types\damTypes.pas',
+  clrUtils.RTTI in 'utils\CSV\clrUtils.RTTI.pas',
+  clrUtils.CSV in 'utils\CSV\clrUtils.CSV.pas',
+  clrUtils.DB in 'utils\db\clrUtils.DB.pas',
+  clrUtils.Routing in 'utils\routing\clrUtils.Routing.pas',
+  clrUtils.ShuffleArray in 'utils\arrays\clrUtils.ShuffleArray.pas',
+  clrUtils.TableFormating in 'utils\table_formating\clrUtils.TableFormating.pas',
+  clrUtils.StringFormating in 'utils\string_formating\clrUtils.StringFormating.pas',
+  clrUtils.FilterArray in 'utils\arrays\clrUtils.FilterArray.pas',
+  clrUtils.FixedArrays in 'utils\arrays\clrUtils.FixedArrays.pas';
 
 {$R *.res}
 

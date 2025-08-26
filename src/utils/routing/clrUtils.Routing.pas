@@ -1,24 +1,24 @@
-﻿unit Utils.Routing;
+﻿unit clrUtils.Routing;
 
 interface
 
 uses
   Vcl.Dialogs;
 
-function OnStammdatenChanging(Condition: Boolean): Boolean;
-function OnVerlosungChanging(Condition: Boolean): Boolean;
-function OnSpielplanChanging(Condition: Boolean): Boolean;
-function OnSpielChanging(Condition: Boolean): Boolean;
+function OnStammdatenChanging(ACondtion: Boolean): Boolean;
+function OnVerlosungChanging(ACondtion: Boolean): Boolean;
+function OnSpielplanChanging(ACondtion: Boolean): Boolean;
+function OnSpielChanging(ACondtion: Boolean): Boolean;
 
 implementation
 
-function OnStammdatenChanging(Condition: Boolean): Boolean;
+function OnStammdatenChanging(ACondtion: Boolean): Boolean;
 begin
 
   // JS equivalent to block default
 
   // Gültigkeitsüberprüfung
-  {if not Condition then
+  {if not ( ACondition ) then
     begin
         ShowMessage
               ('Es gibt unvollständige oder falsche Eingaben. Du musst zurück und alles richtig ausfüllen.');
@@ -30,13 +30,13 @@ begin
                               end;}
 end;
 
-function OnVerlosungChanging(Condition: Boolean): Boolean;
+function OnVerlosungChanging(ACondtion: Boolean): Boolean;
 begin
 
   // JS equivalent to block default
 
   // Gültigkeitsüberprüfung
- { if not Condition then
+ { if not ( ACondition ) then
    begin
        ShowMessage
              ('Es gibt unvollständige oder falsche Eingaben. Du musst zurück und alles richtig ausfüllen.');
@@ -49,13 +49,13 @@ begin
                                  end;}
 end;
 
-function OnSpielplanChanging(Condition: Boolean): Boolean;
+function OnSpielplanChanging(ACondtion: Boolean): Boolean;
 begin
 
   // JS equivalent to block default
 
   // Gültigkeitsüberprüfung
-  {if not Condition then
+  {if not ( ACondition ) then
     begin
         ShowMessage
               ('Es gibt unvollständige oder falsche Eingaben. Du musst zurück und alles richtig ausfüllen.');
@@ -68,13 +68,13 @@ begin
                                   end;}
 end;
 
-function OnSpielChanging(Condition: Boolean): Boolean;
+function OnSpielChanging(ACondtion: Boolean): Boolean;
 begin
 
   // JS equivalent to block default
 
   // Gültigkeitsüberprüfung
-  {if not Condition then
+  {if not ( ACondition ) then
     begin
         ShowMessage
               ('Es gibt unvollständige oder falsche Eingaben. Du musst zurück und alles richtig ausfüllen.');

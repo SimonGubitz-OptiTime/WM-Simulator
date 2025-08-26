@@ -1,4 +1,4 @@
-﻿unit Utils.FixedArrays;
+﻿unit clrUtils.FixedArrays;
 
 interface
 
@@ -21,7 +21,7 @@ begin
   Result := -1;
   for i := ArrayToSearch.Count - 1 downto 0 do
   begin
-    if TEqualityComparer<T>.Default.Equals(ArrayToSearch[i], Default (T)) then
+    if TEqualityComparer<T>.Default.Equals(ArrayToSearch[i], Default (T) ) then
       Result := i - 1;
   end;
 end;

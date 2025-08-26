@@ -3,13 +3,13 @@
 interface
 
 uses
-  DB,
-  Types,
-  Verlosung,
-  TeamEingabeFenster,
-  StadionEingabeFenster,
-  Utils.Routing,
-  Utils.TableFormating,
+  clrDB,
+  damTypes,
+  clrVerlosung,
+  fraTeamEingabeFenster,
+  fraStadionEingabeFenster,
+  clrUtils.Routing,
+  clrUtils.TableFormating,
   System.Classes, System.Generics.Collections, System.SysUtils, System.Variants,
   Vcl.ComCtrls, Vcl.Controls, Vcl.Dialogs, Vcl.Forms, Vcl.Graphics,
   Vcl.StdCtrls,
@@ -87,9 +87,9 @@ type
     FGewollteStadionAnzahl: Integer = 16;
 
     procedure TeamDBUpdate;
-    procedure TeamTabelleZeichnen(Rows: TObjectList < TList < String >> );
+    procedure TeamTabelleZeichnen(ARows: TObjectList < TList < String >> );
     procedure StadionDBUpdate;
-    procedure StadionTabelleZeichnen(Rows: TObjectList < TList < String >> );
+    procedure StadionTabelleZeichnen(ARows: TObjectList < TList < String >> );
   public
     { Public-Deklarationen }
   end;
@@ -110,14 +110,14 @@ begin
   FTeamAnzahl := Rows.Count - 1; // Header
 
   TeamAnzahlLabel.Caption := '0' + IntToStr(FTeamAnzahl);
-  if FTeamAnzahl >= 10 then
+  if ( FTeamAnzahl >= 10 ) then
   begin
     TeamAnzahlLabel.Caption := IntToStr(FTeamAnzahl);
   end;
   StadionAnzahlLabel.Font.Color := clRed;
 
   TeamVergleichsLabel.Caption := '<';
-  if FTeamAnzahl = FGewollteTeamAnzahl then
+  if ( FTeamAnzahl = FGewollteTeamAnzahl ) then
   begin
     TeamVergleichsLabel.Caption := '=';
     TeamVergleichsLabel.Font.Color := clGreen;
@@ -134,11 +134,11 @@ begin
   Rows.Free;
 end;
 
-procedure TMainForm.TeamTabelleZeichnen(Rows: TObjectList < TList < String >> );
+procedure TMainForm.TeamTabelleZeichnen(ARows: TObjectList < TList < String >> );
 begin
-  if Rows.Count <> 0 then
+  if ( ARows.Count <> 0 ) then
   begin
-    Utils.TableFormating.TabelleZeichnen(TeamsStringGrid, Rows);
+    clrUtils.TableFormating.TabelleZeichnen(TeamsStringGrid, ARows);
   end;
 
 end;
@@ -152,14 +152,14 @@ begin
   FStadionAnzahl := Rows.Count - 1; // Header
 
   StadionAnzahlLabel.Caption := '0' + IntToStr(FStadionAnzahl);
-  if FStadionAnzahl >= 10 then
+  if ( FStadionAnzahl >= 10 ) then
   begin
     StadionAnzahlLabel.Caption := IntToStr(FStadionAnzahl);
   end;
   StadionAnzahlLabel.Font.Color := clRed;
 
   StadionVergleichsLabel.Caption := '<';
-  if FStadionAnzahl = FGewollteStadionAnzahl then
+  if ( FStadionAnzahl = FGewollteStadionAnzahl ) then
   begin
     StadionVergleichsLabel.Caption := '=';
     StadionVergleichsLabel.Font.Color := clGreen;
@@ -176,12 +176,11 @@ begin
   Rows.Free;
 end;
 
-procedure TMainForm.StadionTabelleZeichnen(Rows: TObjectList < TList <
-  String >> );
+procedure TMainForm.StadionTabelleZeichnen(ARows: TObjectList < TList < String >> );
 begin
-  if Rows.Count <> 0 then
+  if ARows.Count <> 0 then
   begin
-    Utils.TableFormating.TabelleZeichnen(StadienStringGrid, Rows);
+    clrUtils.TableFormating.TabelleZeichnen(StadienStringGrid, ARows);
   end;
 
 end;
@@ -198,7 +197,7 @@ begin
   StadionEingabe.Show; // ShowModal;
 end;
 
-procedure TMainForm.FormCreate(Sender: TObject);
+procedure TMainForm.FormCreate(ASender: TObject);
 begin
 
   FVerlosung := nil;
@@ -212,14 +211,14 @@ begin
   FStadionDB := TDB<TStadion>.Create(TStadionEingabeFenster.GetTableName);
 
   // Teams laden
-  if FTeamDB.Initialized then
+  if ( FTeamDB.Initialized ) then
   begin
     TeamDBUpdate;
   end;
   FTeamDB.AddDBUpdateEventListener(TeamDBUpdate);
 
   // Stadien laden
-  if FStadionDB.Initialized then
+  if ( FStadionDB.Initialized ) then
   begin
     StadionDBUpdate;
   end;
@@ -230,12 +229,12 @@ end;
 procedure TMainForm.ZurVerlosungButtonClick(Sender: TObject);
 begin
   // Gültigkeitsprüfung
-  if not(Utils.Routing.OnVerlosungChanging((FTeamAnzahl = FGewollteTeamAnzahl)
-    and (FStadionAnzahl = FGewollteStadionAnzahl))) then
+  if not ( Utils.Routing.OnVerlosungChanging((FTeamAnzahl = FGewollteTeamAnzahl)
+    and ( FStadionAnzahl = FGewollteStadionAnzahl)) ) then
     Exit;
 
   // Verlosung starten
-  if not Assigned(FVerlosung) then
+  if not ( Assigned(FVerlosung ) ) then
     FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3,
       StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8,
       StringGrid9, StringGrid10, StringGrid11, StringGrid12]);
@@ -267,7 +266,7 @@ begin
           ((FTeamAnzahl = FGewollteTeamAnzahl) and
           (FStadionAnzahl = FGewollteStadionAnzahl));
 
-        if not(Assigned(FVerlosung)) then
+        if not ( Assigned(FVerlosung) ) then
         begin
           FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2,
             StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7,
@@ -280,7 +279,7 @@ begin
         AllowChange := Utils.Routing.OnSpielplanChanging((FVerlosungFertig));
 
         // Spielplan Klasse erstellen?
-        // if not(Assigned(FSpielplan)) then
+        // if not ( Assigned(FSpielplan) ) then
         // begin
         // FSpielplan := TSpielplanUI.Create();
         // end;
@@ -296,7 +295,7 @@ end;
 
 procedure TMainForm.VerlosungStartenButtonClick(Sender: TObject);
 begin
-  if (not(Assigned(FVerlosung)) or not(FVerlosung.Initialized)) then
+  if ( not(Assigned(FVerlosung)) or not(FVerlosung.Initialized) ) then
     FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3,
       StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8,
       StringGrid9, StringGrid10, StringGrid11, StringGrid12]);

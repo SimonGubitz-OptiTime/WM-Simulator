@@ -1,9 +1,9 @@
-﻿unit Utils.CSV;
+﻿unit clrUtils.CSV;
 
 interface
 
 uses
-  Utils.RTTI,
+  clrUtils.RTTI,
   System.RTTI,
   System.SysUtils,
   System.Generics.Collections,
@@ -33,60 +33,60 @@ implementation
 
 function SerializeCSV(CSVArray: TList<String>): String;
 var
-  i: Integer;
+  Ndx: Integer;
 begin
 
   Result := '';
 
-  if CSVArray.Count = 0 then
+  if ( CSVArray.Count = 0 ) then
     raise Exception.Create
       ('Utils.CSV.pas Error: Tried to call function SerializeCSV with empty Array');
 
   // Einer weniger, um nicht am ende ein alleiniges ';' stehen zu haben
-  for i := 0 to CSVArray.Count - 1 do
+  for Ndx := 0 to CSVArray.Count - 1 do
   begin
-    if i > 0 then
+    if ( Ndx > 0 ) then
       Result := Result + delimiter;
 
-    Result := Result + CSVArray[i];
+    Result := Result + CSVArray[Ndx];
   end;
 
 end;
 
 function DeserializeCSV(CSVString: String): TList<String>;
 var
-  i: Integer;
+  Ndx: Integer;
   TempString: String;
 begin
 
   TempString := '';
   Result := TList<String>.Create;
 
-  for i := 1 to Length(CSVString) do
+  for Ndx := 1 to Length(CSVString) do
   begin
 
-    if CSVString[i] = delimiter then
+    if ( CSVString[Ndx] = delimiter ) then
     begin
       Result.Add(TempString);
       TempString := '';
     end
     else
-      TempString := TempString + CSVString[i];
+      TempString := TempString + CSVString[Ndx];
 
   end;
 end;
 
 class function TCSVUtils<T>.SerializeCSV(CSVArray: TList<T>): String;
 var
-  i: Integer;
+  Ndx: Integer;
 begin
   Result := GetCSVHeaderAsString() + sLineBreak;
-  for i := 0 to CSVArray.Count - 1 do
+  for Ndx := 0 to CSVArray.Count - 1 do
   begin
-    if i > 0 then
+    if ( Ndx > 0 ) then
       Result := Result + sLineBreak;
 
-    Result := Result + SerializeRowCSV(CSVArray[i]);
+    Result := Result + SerializeRowCSV(CSVArray[Ndx]);
   end;
 end;
 
@@ -94,7 +94,7 @@ class function TCSVUtils<T>.DeserializeCSV(CSVString: String): TList<T>;
 var
   TempRowArray: TList<String>;
   TempRow: String;
-  i: Integer;
+  Ndx: Integer;
 begin
 
   TempRow := '';
@@ -102,27 +102,27 @@ begin
   TempRowArray := TList<String>.Create;
 
   try
-    if Copy(CSVString[High(CSVString)], High(CSVString) - 1, High(CSVString)) <> sLineBreak
-    then
+    if ( Copy(CSVString[High(CSVString)], High(CSVString) - 1, High(CSVString)) <> sLineBreak ) then
+    begin
       CSVString := CSVString + sLineBreak;
+    end;
 
     // Bei jedem sLineBreak eine neue Zeile initialisieren
-    for i := 1 to Length(CSVString) do
+    for Ndx := 1 to Length(CSVString) do
     begin
-      if ((Length(CSVString) - i >= 1) and (CSVString[i] = #13) and
-        (CSVString[i + 1] = #10)) then
+      if ( (Length(CSVString) - Ndx >= 1) and ( CSVString[Ndx] = #13) and (CSVString[Ndx + 1] = #10) ) then
       // #13#10 <- 2 Bytes on windows sLineBreak
       begin
         TempRowArray.Add(TempRow);
         TempRow := '';
       end
       else
-        TempRow := TempRow + CSVString[i];
+        TempRow := TempRow + CSVString[Ndx];
     end;
 
-    for i := 0 to TempRowArray.Count - 1 do
+    for Ndx := 0 to TempRowArray.Count - 1 do
     begin
-      Result.Add(DeserializeRowCSV(TempRowArray[i]));
+      Result.Add(DeserializeRowCSV(TempRowArray[Ndx]));
     end;
   finally
     TempRowArray.Free;
@@ -134,7 +134,7 @@ var
   RttiContext: TRttiContext;
   RttiType: TRttiType;
   RttiFields: TObjectList<TRttiField>;
-  i: Integer;
+  Ndx: Integer;
 begin
 
   RttiContext := TRttiContext.Create;
@@ -146,12 +146,12 @@ begin
       RttiType := RttiContext.GetType(TypeInfo(T));
       RttiFields.AddRange(RttiType.GetFields);
 
-      for i := 0 to RttiFields.Count - 1 do
+      for Ndx := 0 to RttiFields.Count - 1 do
       begin
-        if i > 0 then
+        if ( Ndx > 0 ) then
           Result := Result + delimiter;
 
-        Result := Result + Utils.RTTI.TRttiUtils<T>.TToStr(@Row, RttiFields[i]);
+        Result := Result + clrUtils.RTTI.TRttiUtils<T>.TToStr(@Row, RttiFields[Ndx]);
 
       end;
     finally
@@ -168,7 +168,7 @@ var
   RttiContext: TRttiContext;
   RttiType: TRttiType;
   RttiFields: TObjectList<TRttiField>;
-  i: Integer;
+  Ndx: Integer;
 begin
 
   Result := TList<String>.Create;
@@ -180,9 +180,9 @@ begin
     try
       RttiFields.AddRange(RttiType.GetFields);
 
-      for i := 0 to RttiFields.Count - 1 do
+      for Ndx := 0 to RttiFields.Count - 1 do
       begin
-        Result.Add(Utils.RTTI.TRttiUtils<T>.TToStr(@Row, RttiFields[i]));
+        Result.Add(clrUtils.RTTI.TRttiUtils<T>.TToStr(@Row, RttiFields[Ndx]));
       end;
     finally
       // RttiFields.Free;
@@ -202,26 +202,26 @@ var
   TempValue: TValue;
   TempField: String;
   TempRes: T;
-  i, j: Integer;
+  Ndx, j: Integer;
 begin
   TempFieldArray := TList<String>.Create;
 
   try
 
     // To read in the last value too
-    if CSVString[High(CSVString)] <> delimiter then
+    if ( CSVString[High(CSVString)] <> delimiter ) then
       CSVString := CSVString + delimiter;
 
     // Den String mit "delimiter" in Chunks trennen
-    for i := 1 to Length(CSVString) do
+    for Ndx := 1 to Length(CSVString) do
     begin
-      if (CSVString[i] = delimiter) then
+      if ( CSVString[Ndx] = delimiter ) then
       begin
         TempFieldArray.Add(TempField);
         TempField := ''; // reset
       end
       else
-        TempField := TempField + CSVString[i]; // Buchstaben hinzufügen
+        TempField := TempField + CSVString[Ndx]; // Buchstaben hinzufügen
     end;
 
     // Für jedes Feld in TempFieldArray den Wert in das richtige Feld von TempRes schreiben
@@ -234,14 +234,14 @@ begin
       try
         RttiFields.AddRange(RttiType.GetFields);
 
-        if RttiFields.Count <> TempFieldArray.Count then
+        if ( RttiFields.Count <> TempFieldArray.Count ) then
           raise Exception.Create
             ('Utils.CSV.pas Error: Deserializing CSV with custom type, not enough information for type conversion.');
 
         for j := 0 to RttiFields.Count - 1 do // columns / fields
         begin
           // convert string to x
-          TempValue := Utils.RTTI.TRttiUtils<T>.StrToT(RttiFields[j],
+          TempValue := clrUtils.RTTI.TRttiUtils<T>.StrToT(RttiFields[j],
             TempFieldArray[j]);
           RttiFields[j].SetValue(@TempRes, TempValue);
         end;
@@ -264,7 +264,7 @@ var
   RttiContext: TRttiContext;
   RttiType: TRttiType;
   RttiFields: TObjectList<TRttiField>;
-  i: Integer;
+  Ndx: Integer;
 begin
 
   Result := TList<String>.Create;
@@ -278,9 +278,9 @@ begin
 
     try
       RttiFields.AddRange(RttiType.GetFields);
-      for i := 0 to RttiFields.Count - 1 do
+      for Ndx := 0 to RttiFields.Count - 1 do
       begin
-        Result.Add(RttiFields[i].Name);
+        Result.Add(RttiFields[Ndx].Name);
       end;
     finally
       // RttiFields.Free;
@@ -296,7 +296,7 @@ var
   RttiContext: TRttiContext;
   RttiType: TRttiType;
   RttiFields: TObjectList<TRttiField>;
-  i: Integer;
+  Ndx: Integer;
 begin
   RttiContext := TRttiContext.Create;
 
@@ -309,12 +309,12 @@ begin
       RttiFields.AddRange(RttiType.GetFields);
 
       Result := '';
-      for i := 0 to RttiFields.Count - 1 do
+      for Ndx := 0 to RttiFields.Count - 1 do
       begin
-        if i > 0 then
+        if ( Ndx > 0 ) then
           Result := Result + delimiter;
 
-        Result := Result + RttiFields[i].Name;
+        Result := Result + RttiFields[Ndx].Name;
       end;
     finally
       // RttiFields.Free;

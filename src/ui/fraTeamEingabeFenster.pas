@@ -1,4 +1,4 @@
-﻿unit TeamEingabeFenster;
+﻿unit fraTeamEingabeFenster;
 
 interface
 
@@ -14,6 +14,17 @@ uses
 
 type
   TTeamEingabeFenster = class(TForm)
+  private
+  var
+    SpielerListe: TList<String>;
+
+  var
+    FDatabase: TDB<TTeam>;
+
+  const
+    FTableName: ShortString = 'Teams';
+
+  public
     Label1: TLabel;
     NameLabel: TLabel;
     NameEingabeFeld: TEdit;
@@ -35,7 +46,7 @@ type
     SpielerListeEingabeButton: TButton;
     SpielerListeEntfernenButton: TButton;
 
-    constructor Create(var database: TDB<TTeam>); reintroduce;
+    constructor Create(var ADatabase: TDB<TTeam>); reintroduce;
 
     procedure BestaetigenButtonClick(Sender: TObject);
     procedure FIFACodeEingabeFeldChange(Sender: TObject);
@@ -46,27 +57,17 @@ type
       Shift: TShiftState);
     procedure SpielerListeEntfernenButtonClick(Sender: TObject);
     class function GetTableName: ShortString;
-
-  private
-  var
-    SpielerListe: TList<String>;
-
-  var
-    FDatabase: TDB<TTeam>;
-
-  const
-    FTableName: ShortString = 'Teams';
   end;
 
 implementation
 
 {$R *.dfm}
 
-constructor TTeamEingabeFenster.Create(var database: TDB<TTeam>);
+constructor TTeamEingabeFenster.Create(var ADatabase: TDB<TTeam>);
 begin
 
-  FDatabase := database;
-  if not(FDatabase.Initialized) then
+  FDatabase := ADatabase;
+  if not ( FDatabase.Initialized ) then
   begin
     FDatabase := TDB<TTeam>.Create(FTableName);
   end;
@@ -114,7 +115,7 @@ end;
 procedure TTeamEingabeFenster.EingabeDerListeEntfernen;
 begin
   // Wenn das Eingabefeld für Spieler leer ist, wird der letzte Spieler Entfernt, sonst der
-  if (SpielerListeEingabeFeld.Text = '') then
+  if ( SpielerListeEingabeFeld.Text = '' ) then
   begin
     SpielerListe.Delete(SpielerListe.Count - 1);
   end
@@ -144,12 +145,12 @@ procedure TTeamEingabeFenster.SpielerListeEingabeFeldKeyDown(Sender: TObject;
 begin
   // https://adrenalinebot.com/en/api/usefull/delphi-keycodes
   // Wenn Enter gedrückt wird
-  if (Key = 13) then
+  if ( Key = 13 ) then
   begin
     EingabeDerListeHinzufuegen;
   end
   // Wenn ENTF gedrückt wird
-  else if (Key = 46) then
+  else if ( Key = 46 ) then
   begin
     EingabeDerListeEntfernen;
   end;
@@ -168,28 +169,28 @@ var
 begin
 
   // Gültigkeitsprüfung der Eingaben
-  if (NameEingabeFeld.Text = '') or (FIFACodeEingabeFeld.Text = '') or
+  if ( NameEingabeFeld.Text = '') or (FIFACodeEingabeFeld.Text = '') or
     (TeamVerbandEingabeBox.Text = '') or (TeamRankingEingabeBox.Text = '') or
     (HistorischeSiegeEingabeFeld.Text = '') or
-    (HeimstadionEingabeFeld.Text = '') or (SpielerListe.Count = 0) then
+    (HeimstadionEingabeFeld.Text = '') or (SpielerListe.Count = 0 ) then
   begin
     ShowMessage('Bitte füllen Sie alle Felder aus.');
     Exit;
   end;
 
-  if not(Length(FIFACodeEingabeFeld.Text) = 3) then
+  if not ( Length(FIFACodeEingabeFeld.Text) = 3 ) then
   begin
     ShowMessage('FIFACode muss 3 Zeichen lang sein.');
     Exit;
   end;
 
-  if not(TryStrToInt(HistorischeSiegeEingabeFeld.Text, placeholder)) then
+  if not ( TryStrToInt(HistorischeSiegeEingabeFeld.Text, placeholder) ) then
   begin
     ShowMessage('Bitte tragen sie eine gültige Zahl ein.');
     Exit;
   end;
 
-  if not(SpielerListe.Count = 11) then
+  if not ( SpielerListe.Count = 11 ) then
   begin
     ShowMessage('Bitte tragen Sie genau 11 Spieler ein.');
     Exit;
@@ -225,7 +226,7 @@ end;
 procedure TTeamEingabeFenster.FIFACodeEingabeFeldChange(Sender: TObject);
 begin
   // constrain the input to 3 characters
-  if Length(FIFACodeEingabeFeld.Text) > 3 then
+  if ( Length(FIFACodeEingabeFeld.Text) > 3 ) then
   begin
     FIFACodeEingabeFeld.Text := Copy(FIFACodeEingabeFeld.Text, 0, 2);
   end;

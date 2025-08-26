@@ -139,28 +139,25 @@
             <Form>Form1</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="ui\TeamEingabeFenster.pas">
+        <DCCReference Include="ui\fraTeamEingabeFenster.pas">
             <Form>Form2</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="ui\StadionEingabeFenster.pas">
+        <DCCReference Include="ui\fraStadionEingabeFenster.pas">
             <Form>Form3</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="ui\verlosung\verlosung.pas"/>
-        <DCCReference Include="ui\animations\animation.pas"/>
-        <DCCReference Include="db\db.pas"/>
-        <DCCReference Include="types\types.pas"/>
-        <DCCReference Include="utils\CSV\Utils.RTTI.pas"/>
-        <DCCReference Include="utils\CSV\Utils.CSV.pas"/>
-        <DCCReference Include="utils\db\Utils.DB.pas"/>
-        <DCCReference Include="utils\routing\Utils.Routing.pas"/>
-        <DCCReference Include="utils\user_input\Utils.UserInput.pas"/>
-        <DCCReference Include="utils\arrays\Utils.FixedArrays.pas"/>
-        <DCCReference Include="utils\arrays\Utils.ShuffleArray.pas"/>
-        <DCCReference Include="utils\table_formating\Utils.TableFormating.pas"/>
-        <DCCReference Include="utils\string_formating\Utils.StringFormating.pas"/>
-        <DCCReference Include="utils\arrays\Utils.FilterArray.pas"/>
+        <DCCReference Include="ui\verlosung\clrVerlosung.pas"/>
+        <DCCReference Include="ui\animations\clrAnimation.pas"/>
+        <DCCReference Include="db\clrDB.pas"/>
+        <DCCReference Include="types\damTypes.pas"/>
+        <DCCReference Include="utils\CSV\clrUtils.RTTI.pas"/>
+        <DCCReference Include="utils\CSV\clrUtils.CSV.pas"/>
+        <DCCReference Include="utils\db\clrUtils.DB.pas"/>
+        <DCCReference Include="utils\routing\clrUtils.Routing.pas"/>
+        <DCCReference Include="utils\arrays\clrUtils.ShuffleArray.pas"/>
+        <DCCReference Include="utils\table_formating\clrUtils.TableFormating.pas"/>
+        <DCCReference Include="utils\string_formating\clrUtils.StringFormating.pas"/>
+        <DCCReference Include="utils\arrays\clrUtils.FilterArray.pas"/>
+        <DCCReference Include="utils\arrays\clrUtils.FixedArrays.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

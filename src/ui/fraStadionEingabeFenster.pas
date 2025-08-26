@@ -1,4 +1,4 @@
-﻿unit StadionEingabeFenster;
+﻿unit fraStadionEingabeFenster;
 
 interface
 
@@ -11,6 +11,16 @@ uses
 
 type
   TStadionEingabeFenster = class(TForm)
+  private
+
+    var
+      FDatabase: TDB<TStadion>;
+
+    // ShortString, weil sonst der Compiler wegen des gemanageten Strings meckert
+    const
+      FTableName: ShortString = 'Stadien';
+  public
+
     StadionUeberschrift: TLabel;
     NameLabel: TLabel;
     NameEingabeFeld: TEdit;
@@ -20,28 +30,22 @@ type
     ZuschauerKapazitaetEingabeFeld: TEdit;
     BestaetigenButton: TButton;
 
-    constructor Create(var database: TDB<TStadion>); reintroduce;
+    constructor Create(var ADatabase: TDB<TStadion>); reintroduce;
 
     procedure BestaetigenButtonClick(Sender: TObject);
     class function GetTableName: ShortString;
 
-  private
-
-  var
-    FDatabase: TDB<TStadion>;
-
-  const
-    FTableName: ShortString = 'Stadien';
-  end;
+  
+end;
 
 implementation
 
 {$R *.dfm}
 
-constructor TStadionEingabeFenster.Create(var database: TDB<TStadion>);
+constructor TStadionEingabeFenster.Create(var ADatabase: TDB<TStadion>);
 begin
-  FDatabase := database;
-  if not(FDatabase.Initialized) then
+  FDatabase := ADatabase;
+  if not ( FDatabase.Initialized ) then
   begin
     FDatabase := TDB<TStadion>.Create(FTableName);
   end;
@@ -56,27 +60,27 @@ var
 begin
 
   // Gültigkeitsprüfung der Nutzereingabe
-  if (NameEingabeFeld.Text = '') or (OrtEingabeFeld.Text = '') or
-    (ZuschauerKapazitaetEingabeFeld.Text = '') then
+  if ( NameEingabeFeld.Text = '') or (OrtEingabeFeld.Text = '') or
+    (ZuschauerKapazitaetEingabeFeld.Text = '' ) then
   begin
     ShowMessage('Bitte füllen Sie alle Felder aus.');
     Exit;
   end;
 
-  if not(TryStrToInt(ZuschauerKapazitaetEingabeFeld.Text, placeholder)) then
+  if not ( TryStrToInt(ZuschauerKapazitaetEingabeFeld.Text, placeholder) ) then
   begin
     ShowMessage('Bitte tragen sie eine gültige Zahl ein.');
     Exit;
   end;
 
-  if (StrToInt(ZuschauerKapazitaetEingabeFeld.Text) < 0) then
+  if ( StrToInt(ZuschauerKapazitaetEingabeFeld.Text) < 0 ) then
   begin
     ShowMessage
       ('Diese Zahl ist zu klein - bitte tragen sie eine gültige Zahl ein.');
     Exit;
   end;
 
-  // if (StrToInt(ZuschauerkapazitaetEingabeFeld.Text) > High(UInt32)) then
+  // if ( StrToInt(ZuschauerkapazitaetEingabeFeld.Text) > High(UInt32) ) then
   // begin
   // ShowMessage('Diese Zahl ist zu groß - bitte tragen sie eine gültige Zahl ein.');
   // Exit;

@@ -1,4 +1,4 @@
-﻿unit Animation;
+﻿unit clrAnimation;
 
 interface
 
@@ -8,22 +8,11 @@ uses
 
 // Optional count for when used in a indexed loop
 type
-  TAnimationCallback = procedure(Count: Integer = -1; SecondCount: Integer = -1;
-    ThirdCount: Integer = -1) of object;
+  TAnimationCallback = procedure(ACount: Integer = -1; ASecondCount: Integer = -1;
+    AThirdCount: Integer = -1) of object;
 
 type
   TAnimations = class
-  public
-
-    constructor Create(var timer: TTimer; AObject: TControl; MoveToTop: Integer;
-      MoveToLeft: Integer; ATime: Integer;
-      ADestroyObjectOnFinish: Boolean = true);
-
-    procedure MoveObject(callbackFn: TAnimationCallback; Count: Integer = -1;
-      SecondCount: Integer = -1; ThirdCount: Integer = -1);
-
-    destructor Free;
-
   private
     FTimer: TTimer;
     FTimerAmount: Integer;
@@ -40,18 +29,28 @@ type
     FCallbackCount: Integer;
     FCallbackSecondCount: Integer;
     FCallbackThirdCount: Integer;
+  public
+
+    constructor Create(var ATimer: TTimer; AObject: TControl; AMoveToTop: Integer;
+      AMoveToLeft: Integer; ATime: Integer;
+      ADestroyObjectOnFinish: Boolean = true);
+
+    procedure MoveObject(ACallbackFn: TAnimationCallback; ACount: Integer = -1;
+      ASecondCount: Integer = -1; AThirdCount: Integer = -1);
+
+    destructor Free;
 
   const
     FTimerInterval: Byte = 10;
 
-    procedure MoveObjectTick(Sender: TObject);
+    procedure MoveObjectTick(ASender: TObject);
 
   end;
 
 implementation
 
-constructor TAnimations.Create(var timer: TTimer; AObject: TControl;
-  MoveToTop: Integer; MoveToLeft: Integer; ATime: Integer;
+constructor TAnimations.Create(var ATimer: TTimer; AObject: TControl;
+  AMoveToTop: Integer; AMoveToLeft: Integer; ATime: Integer;
   ADestroyObjectOnFinish: Boolean = true);
 begin
 
@@ -62,28 +61,28 @@ begin
   FObject := AObject;
   // ShowMessage('after');
 
-  FTimer := timer;
+  FTimer := ATimer;
   FTimer.Interval := FTimerInterval;
   FTimer.OnTimer := MoveObjectTick;
   FTimerAmount := 0;
 
   FStartTop := AObject.Top;
   FStartLeft := AObject.Left;
-  FWayTop := MoveToTop - AObject.Top;
-  FWayLeft := MoveToLeft - AObject.Left;
+  FWayTop := AMoveToTop - AObject.Top;
+  FWayLeft := AMoveToLeft - AObject.Left;
 
   FTimerDuration := ATime;
 
 end;
 
-procedure TAnimations.MoveObject(callbackFn: TAnimationCallback;
-  Count: Integer = -1; SecondCount: Integer = -1; ThirdCount: Integer = -1);
+procedure TAnimations.MoveObject(ACallbackFn: TAnimationCallback;
+  ACount: Integer = -1; ASecondCount: Integer = -1; AThirdCount: Integer = -1);
 begin
 
-  FCallbackFn := callbackFn;
-  FCallbackCount := Count;
-  FCallbackSecondCount := SecondCount;
-  FCallbackThirdCount := ThirdCount;
+  FCallbackFn := AcallbackFn;
+  FCallbackCount := ACount;
+  FCallbackSecondCount := ASecondCount;
+  FCallbackThirdCount := AThirdCount;
 
   FTimer.Enabled := true;
 
@@ -100,13 +99,13 @@ begin
 
 end;
 
-procedure TAnimations.MoveObjectTick(Sender: TObject);
+procedure TAnimations.MoveObjectTick(ASender: TObject);
 var
   progress: Double;
 begin
 
   FTimerAmount := FTimerAmount + FTimerInterval;
-  if FTimerAmount >= FTimerDuration then
+  if ( FTimerAmount >= FTimerDuration ) then
   begin
     // Timer stoppen
     FTimer.Enabled := false;
@@ -120,13 +119,13 @@ begin
     FCallbackFn(FCallbackCount, FCallbackSecondCount, FCallbackThirdCount);
 
     // Wenn das Objekt zerstört werden soll, dann hier aufräumen
-    if FDestroyObject then
+    if ( FDestroyObject ) then
       FObject.Free;
 
     Exit;
   end;
 
-  if not(FObject is TControl) then
+  if not ( FObject is TControl ) then
     raise Exception.Create
       ('TAnimations.MoveObjectTick Error: Sender is not a TControl.');
 
@@ -143,7 +142,7 @@ begin
   FTimer.Enabled := false;
   FTimer.Free;
 
-  if FDestroyObject then
+  if ( FDestroyObject ) then
     FObject.Free;
 end;
 

@@ -1,15 +1,23 @@
-﻿unit Verlosung;
+﻿unit clrVerlosung;
 
 interface
 
 uses
-  db,
-  types,
-  Animation,
-  Utils.ShuffleArray,
-  Utils.FilterArray,
-  System.Classes, System.Generics.Collections, System.Math, System.SysUtils,
-  Vcl.Controls, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Forms, Vcl.Grids, Vcl.StdCtrls;
+  System.Classes,
+  System.Generics.Collections,
+  System.Math,
+  System.SysUtils,
+  Vcl.Controls,
+  Vcl.Dialogs,
+  Vcl.ExtCtrls,
+  Vcl.Forms,
+  Vcl.Grids,
+  Vcl.StdCtrls,
+  clrDB,
+  damTypes,
+  clrAnimation,
+  clrUtils.ShuffleArray,
+  clrUtils.FilterArray;
 
 type
   TVerlosungUI = class
@@ -42,7 +50,7 @@ constructor TVerlosungUI.Create(Grids: array of TStringGrid);
 var
   i, j: Integer;
 begin
-  if Length(Grids) <> 12 then
+  if ( Length(Grids) <> 12 ) then
     raise Exception.Create
       ('TVerlosungUI.Create Error: There must be exactly 12 Grids.');
 
@@ -78,7 +86,7 @@ var
   AnimationList: TObjectList<TAnimations>;
 begin
 
-  if not FInitialized then
+  if not ( FInitialized ) then
   begin
     raise Exception.Create
       ('TVerlosungUI.VerlosungStarten Error: The UI is not initialized.');
@@ -88,12 +96,12 @@ begin
     AnimationList := TObjectList<TAnimations>.Create;
     FTeams := ATeamDB.GetStructuredTableFromCSV();
 
-    if ((FTeams.Count mod 4) <> 0) then
+    if ( (FTeams.Count mod 4) <> 0 ) then
     begin
       raise Exception.Create
         ('TVerlosungUI.VerlosungStarten Error: The number of FTeams must be divisible by 4.');
     end;
-    if TeamIndex >= FTeams.Count then
+    if ( TeamIndex >= FTeams.Count ) then
     begin
       TeamIndex := 0;
     end;
@@ -105,18 +113,18 @@ begin
 
       // type TConditionFunction = reference to function(Param: T): Boolean; // Fehler - T nicht deklariert
       // type TConditionFunction<T> = reference to function(Param: T): Boolean; // Fehler
-      {Utils.FilterArray.TFilterArrayUtils<TTeam>.Filter(FTeams,
+      clrUtils.FilterArray.TFilterArrayUtils<TTeam>.Filter2(FTeams,
         function(Param: TTeam): Boolean
         begin
           Result := Param.TeamRanking = TTeamRanking.SehrStark;
         end
-      );}
+      );
 
 
       // TODO: in Utils.FilterArray die kommentare ändern
       // type TCondition = reference to function(index: Integer): Boolean; // Fehler
 
-      {Utils.FilterArray.TFilterArrayUtils<TTeam>.Filter(FTeams,
+      {clrUtils.FilterArray.TFilterArrayUtils<TTeam>.Filter(FTeams,
         function(index: Integer): Boolean
         begin
           Result := FTeams[index].TeamRanking = TTeamRanking.SehrStark;
@@ -127,7 +135,7 @@ begin
       // Funktioniert 1. Overload
       var list := TList<Integer>.Create;
       list.AddRange([0, 3, 5, 6, 9, 10]);
-      var filtered_res: TList<Integer> := Utils.FilterArray.TFilterArrayUtils<Integer>.Filter(list, 3); // ValueToSearch: T overload
+      var filtered_res: TList<Integer> := clrUtils.FilterArray.TFilterArrayUtils<Integer>.Filter1(list, 3); // ValueToSearch: T overload
       ShowMessage(IntToStr(filtered_res[0])); // Gibt sowieso nur ein Ergebnis
 
       list.Free;
@@ -142,7 +150,7 @@ begin
       for grid := 0 to FGrids.Count - 1 do
       begin
 
-        if (TeamIndex >= FTeams.Count) then
+        if ( TeamIndex >= FTeams.Count ) then
           break;
 
         with FGrids[grid] do
@@ -193,7 +201,7 @@ procedure TVerlosungUI.AnimationCallbackFn(Count: Integer = -1;
 SecondCount: Integer = -1; ThirdCount: Integer = -1);
 begin
 
-  if ((Count = -1) or (SecondCount = -1)) then
+  if ( (Count = -1) or (SecondCount = -1) ) then
     raise Exception.Create('Fehlermeldung');
 
   // ShowMessage('Team: ' + FTeams[ThirdCount].Name);

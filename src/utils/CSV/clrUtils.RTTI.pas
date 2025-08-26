@@ -1,4 +1,4 @@
-﻿unit Utils.RTTI;
+﻿unit clrUtils.RTTI;
 
 interface
 
@@ -9,13 +9,14 @@ uses
 
 type
   TRttiUtils<T> = record
+  private const
+    ArrayDelimiter: Char = ',';
+
+  public
     class function StrToT(ToConvert: TRttiField; ConvertValue: String)
       : TValue; static;
     class function TToStr(TempRes: Pointer; ConvertField: TRttiField)
       : String; static;
-
-  private const
-    ArrayDelimiter: Char = ',';
   end;
 
 const
@@ -28,7 +29,7 @@ class function TRttiUtils<T>.StrToT(ToConvert: TRttiField;
   ConvertValue: String): TValue;
 var
   EnumType: TRttiEnumerationType;
-  i: Integer;
+  Ndx: Integer;
   Digits: String;
   StrArray: TArray<TValue>;
   StrArrayIndex: Integer;
@@ -61,8 +62,8 @@ begin
         StrArrayIndex := 0;
 
         // input: [ d, d, d, d, d, d ]
-        if ((ConvertValue[Low(ConvertValue)] <> '[') or
-          (ConvertValue[High(ConvertValue)] <> ']')) then
+        if ( (ConvertValue[Low(ConvertValue)] <> '[') or
+          (ConvertValue[High(ConvertValue)] <> ']') ) then
           raise Exception.Create
             ('Utils.RTTI.pas Error: Invalid Array Structure: ' +
             ConvertValue + '.');
@@ -70,13 +71,13 @@ begin
         ConvertValue := Copy(ConvertValue, 2, Length(ConvertValue) - 2);
         ConvertValue := ConvertValue + ArrayDelimiter;
 
-        for i := Low(ConvertValue) to High(ConvertValue) do
+        for Ndx := Low(ConvertValue) to High(ConvertValue) do
         begin
 
-          if ConvertValue[i] = ArrayDelimiter then
+          if ( ConvertValue[Ndx] = ArrayDelimiter ) then
           begin
             // wenn es doch mehr als DEFAULT_PRE_ALLOC gibt, aufstocken
-            if StrArrayIndex = Length(StrArray) - 1 then
+            if ( StrArrayIndex = Length(StrArray) - 1 ) then
               SetLength(StrArray, Length(StrArray) + 1);
 
             StrArray[StrArrayIndex] := TValue.From<String>(Trim(Digits));
@@ -85,12 +86,12 @@ begin
           end
           else
           begin
-            Digits := Digits + ConvertValue[i];
+            Digits := Digits + ConvertValue[Ndx];
           end;
         end;
 
         // wieder einschränken
-        if Length(StrArray) - 1 <> StrArrayIndex then
+        if ( Length(StrArray) - 1 <> StrArrayIndex ) then
           SetLength(StrArray, StrArrayIndex + 1);
 
         ArrayType := TRttiDynamicArrayType(ToConvert.FieldType);
@@ -106,22 +107,22 @@ class function TRttiUtils<T>.TToStr(TempRes: Pointer;
   ConvertField: TRttiField): String;
 var
   tempField: TValue;
-  i: Integer;
+  Ndx: Integer;
 begin
 
   tempField := ConvertField.GetValue(TempRes);
 
-  if (tempField.IsArray) then
+  if ( tempField.IsArray ) then
   begin
     Result := '[';
     var
     l := tempField.GetArrayLength();
-    for i := 0 to tempField.GetArrayLength() - 1 do
+    for Ndx := 0 to tempField.GetArrayLength() - 1 do
     begin
-      if i > 0 then
+      if ( Ndx > 0 ) then
         Result := Result + ArrayDelimiter;
 
-      Result := Result + tempField.GetArrayElement(i).ToString();
+      Result := Result + tempField.GetArrayElement(Ndx).ToString();
     end;
     Result := Result + ']';
   end

@@ -1,4 +1,4 @@
-unit Utils.StringFormating;
+unit clrUtils.StringFormating;
 
 interface
 
@@ -11,24 +11,23 @@ implementation
 
 function FormatSpielerListe(AList: TList<String>): String;
 var
-  i: Integer;
-  s: String;
+  Ndx: Integer;
 begin
 
-  s := '0' + IntToStr(AList.Count);
-  if (AList.Count >= 10) then
-    s := IntToStr(AList.Count);
+  Result := '0' + IntToStr(AList.Count);
+  if ( AList.Count >= 10 ) then
+    Result := IntToStr(AList.Count);
 
-  Result := s + ' [ ';
+  Result := Result + ' [ ';
 
-  for i := 0 to AList.Count - 1 do
+  for Ndx := 0 to AList.Count - 1 do
   begin
-    if i > 0 then
+    if ( Ndx > 0 ) then
     begin
       Result := Result + ', ';
     end;
 
-    Result := Result + AList[i];
+    Result := Result + AList[Ndx];
   end;
 
   Result := Result + ' ]';
