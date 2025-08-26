@@ -18,15 +18,6 @@ uses
 
 type
   TStadionEingabeFenster = class(TForm)
-  private
-
-    var
-      FDatabase: TDB<TStadion>;
-
-    // ShortString, weil sonst der Compiler wegen des gemanageten Strings meckert
-    const
-      FTableName: ShortString = 'Stadien';
-  public
 
     StadionUeberschrift: TLabel;
     NameLabel: TLabel;
@@ -42,6 +33,14 @@ type
     procedure BestaetigenButtonClick(Sender: TObject);
     class function GetTableName: ShortString;
 
+  private
+
+    var
+      FDatabase: TDB<TStadion>;
+
+    // ShortString, weil sonst der Compiler wegen des gemanageten Strings meckert
+    const
+      FTableName: ShortString = 'Stadien';
   
 end;
 
@@ -82,15 +81,14 @@ begin
 
   if ( StrToInt(ZuschauerKapazitaetEingabeFeld.Text) < 0 ) then
   begin
-    ShowMessage
-      ('Diese Zahl ist zu klein - bitte tragen sie eine gültige Zahl ein.');
+    ShowMessage('Diese Zahl ist zu klein - bitte tragen sie eine gültige Zahl ein.');
     Exit;
   end;
 
   // if ( StrToInt(ZuschauerkapazitaetEingabeFeld.Text) > High(UInt32) ) then
   // begin
-  // ShowMessage('Diese Zahl ist zu groß - bitte tragen sie eine gültige Zahl ein.');
-  // Exit;
+  //  ShowMessage('Diese Zahl ist zu groß - bitte tragen sie eine gültige Zahl ein.');
+  //  Exit;
   // end;
 
   Stadion := Default (TStadion);

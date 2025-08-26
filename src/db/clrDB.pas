@@ -20,8 +20,8 @@ type
     FFileName: String;
     FFileDirectory: String;
 
-    class var CachedCSV: TList<T>;
-    class var CachedUnstructuredCSV: TObjectList<TList<String>>;
+    var FCachedCSV: TList<T>;
+    var FCachedUnstructuredCSV: TObjectList<TList<String>>;
 
     procedure CallDBUpdateEventListeners();
     procedure AddCSVTableToDB(CSVObject: T);
@@ -33,7 +33,7 @@ type
 
     // function    GetRowFromCSV(RowID: Integer): T;
     // procedure   SetRowInCSV(RowID: Integer; Line: Integer);
-    procedure AddRowToCSV(ARowValues: T);
+    procedure AddRowToCSV(ARowValues: T; SizeCheck: Boolean = true);
 
     function GetStructuredTableFromCSV(): TList<T>;
     // procedure   SetStructuredTableInCSV(CSVArray: TObjectList<T>);
@@ -42,7 +42,7 @@ type
 
     // Event listener JS equivalent
     // adding function pointers to be called when the CSV table changes
-    procedure AddDBUpdateEventListener(CallbackFunction: TDBUpdateEvent);
+    procedure AddDBUpdateEventListener(ACallbackFunction: TDBUpdateEvent);
 
     destructor Destroy;
 
@@ -55,6 +55,11 @@ begin
   FInitialized := false;
   FTableName := ATableName;
 
+  // reset all cache
+  FCachedCSV := TList<T>.Create;
+  FCachedUnstructuredCSV := TObjectList < TList < String >>.Create;
+
+  // Dateien
   FFileName := clrUtils.DB.GetTablesFilePath(FTableName);
   FFileDirectory := clrUtils.DB.GetTablesDirPath();
   if not ( TDirectory.Exists(FFileDirectory) ) then
@@ -67,14 +72,20 @@ begin
     TFile.Create(FFileName).Free; // Schnell erstellen und wieder schließen
   end;
 
-  FFS := TFileStream.Create(FFileName, fmOpenReadWrite or fmShareDenyWrite);
+  FFS := TFileStream.Create(FFileName, fmOpenReadWrite or fmShareDenyNone); // or fmShareDenyWrite
   FDBUpdateEventListeners := TList<TDBUpdateEvent>.Create();
 
-  // reset all cache
-  CachedCSV := TList<T>.Create;
-  CachedUnstructuredCSV := TObjectList < TList < String >>.Create;
-
+  // Um als Ziel anzugeben, ob die Datei sicher geöffnet und beschrieben werden kann
   FInitialized := true;
+
+
+  if ( FFS.Size <> 0 ) then
+  begin
+    // Write cache
+    FCachedCSV              := GetStructuredTableFromCSV();
+    FCachedUnstructuredCSV  := GetUnstructuredTableFromCSV();
+  end;
+
 end;
 
 // procedure TDB<T>.SetRowInCSV(ARowID: Integer; ALine: Integer);
@@ -91,13 +102,16 @@ end;
 // CallDBUpdateEventListeners();
 // end;
 
-procedure TDB<T>.AddRowToCSV(ARowValues: T);
+procedure TDB<T>.AddRowToCSV(ARowValues: T; SizeCheck: Boolean = true);
 var
   SW: TStreamWriter;
   WriterString: String;
 begin
 
-  if not ( FileExists(FFileName) ) then
+  if ( not(FileExists(FFileName))
+       or ( SizeCheck
+            and (FFS.size = 0))
+  ) then
   begin
     AddCSVTableToDB(ARowValues);
     Exit;
@@ -105,24 +119,21 @@ begin
   else
   begin
 
-    if not ( FInitialized  ) then
-      raise Exception.Create
-        ('db.pas Error: TDB is not initialized. Please add to the database first.');
-
     SW := TStreamWriter.Create(FFS);
 
     try
       SW.BaseStream.Position := FFS.size;
       { if SW.Encoding = TEncoding.UTF16 then
-        SW.BaseStream.Position := FFS.size / 2; } // 2 byte pro character
+      begin
+        SW.BaseStream.Position := FFS.size / 2; // 2 byte pro character
+      end; }
 
       WriterString := clrUtils.CSV.TCSVUtils<T>.SerializeRowCSV(ARowValues);
       SW.WriteLine(WriterString);
 
       // Append to cache as well
-      CachedCSV.Add(ARowValues);
-      CachedUnstructuredCSV.Add(clrUtils.CSV.TCSVUtils<T>.ParseRowCSVToArray
-        (ARowValues));
+      FCachedCSV.Add(ARowValues);
+      FCachedUnstructuredCSV.Add(clrUtils.CSV.TCSVUtils<T>.ParseRowCSVToArray(ARowValues));
 
     finally
       SW.Free;
@@ -147,14 +158,15 @@ var
 begin
 
   if not ( FInitialized  ) then
-    raise Exception.Create
-      ('db.pas Error: TDB is not initialized. Please add to the database first.');
+  begin
+    raise Exception.Create('db.pas Error: TDB is not initialized. Please add to the database first.');
+  end;
 
   Result := TList<T>.Create;
 
-  if ( Assigned(CachedCSV)) and ( CachedCSV.Count > 0 ) then
+  if ( Assigned(FCachedCSV)) and ( FCachedCSV.Count > 0 ) then
   begin
-    Result := CachedCSV;
+    Result := FCachedCSV;
     Exit;
   end
   else
@@ -189,13 +201,13 @@ var
 begin
 
   if not ( FInitialized ) then
-    raise Exception.Create
-      ('db.pas Error: TDB is not initialized. Please add to the database first.');
-
-  if ( Assigned(CachedUnstructuredCSV)) and ( CachedUnstructuredCSV.Count > 0)
-  then
   begin
-    Result := CachedUnstructuredCSV;
+    raise Exception.Create('db.pas Error: TDB is not initialized. Please add to the database first.');
+  end;
+
+  if ( Assigned(FCachedUnstructuredCSV)) and ( FCachedUnstructuredCSV.Count > 0) then
+  begin
+    Result := FCachedUnstructuredCSV;
     Exit;
   end
   else
@@ -222,44 +234,36 @@ var
   SW: TStreamWriter;
 begin
 
-  SW := nil;
+  SW := TStreamWriter.Create(FFS);
 
-  if ( FileExists(FFileName) ) then
-  begin
+
+  try
+    FFS.Position := 0;
+
+
+    SW.WriteLine(clrUtils.CSV.TCSVUtils<T>.GetCSVHeaderAsString);
+    SW.WriteLine(clrUtils.CSV.TCSVUtils<T>.SerializeRowCSV(CSVObject));
+
+    // Append to cache as well
+    FCachedUnstructuredCSV.Add(clrUtils.CSV.TCSVUtils<T>.ParseRowCSVToArray(CSVObject));
+    FCachedCSV.Add(CSVObject);
+
     FInitialized := true;
-    AddRowToCSV(CSVObject);
-  end
-  else
-  begin
-    try
-      FFS.Position := 0;
-      SW := TStreamWriter.Create(FFS);
 
-      SW.WriteLine(clrUtils.CSV.TCSVUtils<T>.GetCSVHeaderAsString);
-      SW.WriteLine(clrUtils.CSV.TCSVUtils<T>.SerializeRowCSV(CSVObject));
-
-      // Append to cache as well
-      CachedUnstructuredCSV.Add(clrUtils.CSV.TCSVUtils<T>.ParseRowCSVToArray
-        (CSVObject));
-      CachedCSV.Add(CSVObject);
-
-      FInitialized := true;
-
-    finally
-      SW.Free;
-    end;
+  finally
+    SW.Free;
   end;
 
   // Call the event listeners
   CallDBUpdateEventListeners();
 end;
 
-procedure TDB<T>.AddDBUpdateEventListener(CallbackFunction: TDBUpdateEvent);
+procedure TDB<T>.AddDBUpdateEventListener(ACallbackFunction: TDBUpdateEvent);
 begin
 
   // Add "CallbackFunction" to a list of event listeners
   // This will be called whenever the CSV table changes
-  FDBUpdateEventListeners.Add(CallbackFunction);
+  FDBUpdateEventListeners.Add(ACallbackFunction);
 
   // ShowMessage('DB Update Event Listener added: ' + IntToStr(FDBUpdateEventListeners.Count) + ' listeners.');
 end;
@@ -285,6 +289,8 @@ begin
 end;
 
 destructor TDB<T>.Destroy;
+var
+  UnstructuredCacheItem: TList<String>;
 begin
   // Close the file stream
   FFS.Free;
@@ -294,8 +300,9 @@ begin
   FDBUpdateEventListeners.Clear;
 
   // Clear the cached data
-  CachedCSV.Free;
-  CachedUnstructuredCSV.Free;
+  FCachedCSV.Free;
+  FCachedUnstructuredCSV.Free;
+
 
   // Call the inherited destructor
   inherited Destroy;

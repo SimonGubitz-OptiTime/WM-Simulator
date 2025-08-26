@@ -36,17 +36,16 @@ begin
   // JS equivalent to block default
 
   // Gültigkeitsüberprüfung
- { if not ( ACondition ) then
-   begin
-       ShowMessage
-             ('Es gibt unvollständige oder falsche Eingaben. Du musst zurück und alles richtig ausfüllen.');
-                 Exit;
-                   end
-                     else
-                       begin
-                           // Der Nutzer darf weiter
-                               // MainForm.PageControl.ActivePageIndex := 1;
-                                 end;}
+  {if not ( ACondition ) then
+  begin
+    ShowMessage('Es gibt unvollständige oder falsche Eingaben. Du musst zurück und alles richtig ausfüllen.');
+    Exit;
+  end
+  else
+  begin
+    // Der Nutzer darf weiter
+    // MainForm.PageControl.ActivePageIndex := 1;
+  end;}
 end;
 
 function OnSpielplanChanging(ACondtion: Boolean): Boolean;
@@ -56,16 +55,15 @@ begin
 
   // Gültigkeitsüberprüfung
   {if not ( ACondition ) then
-    begin
-        ShowMessage
-              ('Es gibt unvollständige oder falsche Eingaben. Du musst zurück und alles richtig ausfüllen.');
-                  Exit;
-                    end
-                      else
-                        begin
-                            // Der Nutzer darf weiter
-                                // MainForm.PageControl.ActivePageIndex := 2;
-                                  end;}
+  begin
+    ShowMessage('Es gibt unvollständige oder falsche Eingaben. Du musst zurück und alles richtig ausfüllen.');
+    Exit;
+  end
+  else
+  begin
+    // Der Nutzer darf weiter
+    // MainForm.PageControl.ActivePageIndex := 2;
+  end;}
 end;
 
 function OnSpielChanging(ACondtion: Boolean): Boolean;

@@ -64,9 +64,9 @@ begin
         // input: [ d, d, d, d, d, d ]
         if ( (ConvertValue[Low(ConvertValue)] <> '[') or
           (ConvertValue[High(ConvertValue)] <> ']') ) then
-          raise Exception.Create
-            ('Utils.RTTI.pas Error: Invalid Array Structure: ' +
-            ConvertValue + '.');
+        begin
+          raise Exception.Create('Utils.RTTI.pas Error: Invalid Array Structure: ' + ConvertValue + '.');
+        end;
 
         ConvertValue := Copy(ConvertValue, 2, Length(ConvertValue) - 2);
         ConvertValue := ConvertValue + ArrayDelimiter;
@@ -78,7 +78,9 @@ begin
           begin
             // wenn es doch mehr als DEFAULT_PRE_ALLOC gibt, aufstocken
             if ( StrArrayIndex = Length(StrArray) - 1 ) then
+            begin
               SetLength(StrArray, Length(StrArray) + 1);
+            end;
 
             StrArray[StrArrayIndex] := TValue.From<String>(Trim(Digits));
             Inc(StrArrayIndex);
@@ -92,7 +94,9 @@ begin
 
         // wieder einschränken
         if ( Length(StrArray) - 1 <> StrArrayIndex ) then
+        begin
           SetLength(StrArray, StrArrayIndex + 1);
+        end;
 
         ArrayType := TRttiDynamicArrayType(ToConvert.FieldType);
         Result := TValue.FromArray(ArrayType.Handle, StrArray);
@@ -120,7 +124,9 @@ begin
     for Ndx := 0 to tempField.GetArrayLength() - 1 do
     begin
       if ( Ndx > 0 ) then
+      begin
         Result := Result + ArrayDelimiter;
+      end;
 
       Result := Result + tempField.GetArrayElement(Ndx).ToString();
     end;

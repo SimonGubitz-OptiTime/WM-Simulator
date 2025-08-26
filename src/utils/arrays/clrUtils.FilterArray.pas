@@ -26,7 +26,6 @@ implementation
 // O(n)
 class function TFilterArrayUtils<T>.Filter1(AArrayToFilter: TList<T>; AValueToFind: T): TList<T>;
 var
-  i: Integer;
   Item: T;
 begin
 
@@ -39,7 +38,7 @@ begin
     if ( Item = AValueToFind ) then
     begin
       // Hinzufügen
-      Result.Add(AArrayToFilter[i]);
+      Result.Add(Item);
     end;
   end;
 end;

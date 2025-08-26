@@ -16,7 +16,9 @@ begin
 
   Result := '0' + IntToStr(AList.Count);
   if ( AList.Count >= 10 ) then
+  begin
     Result := IntToStr(AList.Count);
+  end;
 
   Result := Result + ' [ ';
 

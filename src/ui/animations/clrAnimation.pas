@@ -120,14 +120,17 @@ begin
 
     // Wenn das Objekt zerstört werden soll, dann hier aufräumen
     if ( FDestroyObject ) then
+    begin
       FObject.Free;
+    end;
 
     Exit;
   end;
 
   if not ( FObject is TControl ) then
-    raise Exception.Create
-      ('TAnimations.MoveObjectTick Error: Sender is not a TControl.');
+  begin
+    raise Exception.Create('TAnimations.MoveObjectTick Error: Sender is not a TControl.');
+  end;
 
   // change the top and left vals
   // jeweils vom Startpunkt ausgehend, ein x-tel des zu gehenden Wegs beschreiten, wobei das x-tel durch die Zeit erkl�rt wird
@@ -143,7 +146,9 @@ begin
   FTimer.Free;
 
   if ( FDestroyObject ) then
+  begin
     FObject.Free;
+  end;
 end;
 
 end.

@@ -231,16 +231,17 @@ begin
   // Gültigkeitsprüfung
   if not ( clrUtils.Routing.OnVerlosungChanging((FTeamAnzahl = FGewollteTeamAnzahl)
     and ( FStadionAnzahl = FGewollteStadionAnzahl)) ) then
+  begin
     Exit;
+  end;
 
   // Verlosung starten
   if not ( Assigned(FVerlosung ) ) then
-    FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3,
-      StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8,
-      StringGrid9, StringGrid10, StringGrid11, StringGrid12]);
+  begin
+    FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12]);
+  end;
 
-  FVerlosungFertig := FVerlosung.VerlosungStarten(FTeamDB, Timer1,
-    VerlosungSheet);
+  FVerlosungFertig := FVerlosung.VerlosungStarten(FTeamDB, Timer1, VerlosungSheet);
 end;
 
 procedure TMainForm.ZumSpielplanButtonClick(Sender: TObject);
@@ -296,10 +297,10 @@ end;
 procedure TMainForm.VerlosungStartenButtonClick(Sender: TObject);
 begin
   if ( not(Assigned(FVerlosung)) or not(FVerlosung.Initialized) ) then
-    FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3,
-      StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8,
-      StringGrid9, StringGrid10, StringGrid11, StringGrid12]);
-
+  begin
+    FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12]);
+  end;
+  
   FVerlosung.VerlosungStarten(FTeamDB, Timer1, VerlosungSheet);
 end;
 

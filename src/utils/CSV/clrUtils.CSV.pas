@@ -39,14 +39,17 @@ begin
   Result := '';
 
   if ( CSVArray.Count = 0 ) then
-    raise Exception.Create
-      ('Utils.CSV.pas Error: Tried to call function SerializeCSV with empty Array');
+  begin
+    raise Exception.Create('Utils.CSV.pas Error: Tried to call function SerializeCSV with empty Array');
+  end;
 
   // Einer weniger, um nicht am ende ein alleiniges ';' stehen zu haben
   for Ndx := 0 to CSVArray.Count - 1 do
   begin
     if ( Ndx > 0 ) then
+    begin
       Result := Result + delimiter;
+    end;
 
     Result := Result + CSVArray[Ndx];
   end;
@@ -84,7 +87,9 @@ begin
   for Ndx := 0 to CSVArray.Count - 1 do
   begin
     if ( Ndx > 0 ) then
+    begin
       Result := Result + sLineBreak;
+    end;
 
     Result := Result + SerializeRowCSV(CSVArray[Ndx]);
   end;
@@ -110,8 +115,7 @@ begin
     // Bei jedem sLineBreak eine neue Zeile initialisieren
     for Ndx := 1 to Length(CSVString) do
     begin
-      if ( (Length(CSVString) - Ndx >= 1) and ( CSVString[Ndx] = #13) and (CSVString[Ndx + 1] = #10) ) then
-      // #13#10 <- 2 Bytes on windows sLineBreak
+      if ( (Length(CSVString) - Ndx >= 1) and ( CSVString[Ndx] = #13) and (CSVString[Ndx + 1] = #10) ) then // #13#10 <- 2 Bytes on windows sLineBreak
       begin
         TempRowArray.Add(TempRow);
         TempRow := '';
@@ -149,7 +153,9 @@ begin
       for Ndx := 0 to RttiFields.Count - 1 do
       begin
         if ( Ndx > 0 ) then
+        begin
           Result := Result + delimiter;
+        end;
 
         Result := Result + clrUtils.RTTI.TRttiUtils<T>.TToStr(@Row, RttiFields[Ndx]);
 
@@ -210,7 +216,9 @@ begin
 
     // To read in the last value too
     if ( CSVString[High(CSVString)] <> delimiter ) then
+    begin
       CSVString := CSVString + delimiter;
+    end;
 
     // Den String mit "delimiter" in Chunks trennen
     for Ndx := 1 to Length(CSVString) do
@@ -235,8 +243,9 @@ begin
         RttiFields.AddRange(RttiType.GetFields);
 
         if ( RttiFields.Count <> TempFieldArray.Count ) then
-          raise Exception.Create
-            ('Utils.CSV.pas Error: Deserializing CSV with custom type, not enough information for type conversion.');
+        begin
+          raise Exception.Create('Utils.CSV.pas Error: Deserializing CSV with custom type, not enough information for type conversion.');
+        end;
 
         for j := 0 to RttiFields.Count - 1 do // columns / fields
         begin
@@ -312,7 +321,9 @@ begin
       for Ndx := 0 to RttiFields.Count - 1 do
       begin
         if ( Ndx > 0 ) then
+        begin
           Result := Result + delimiter;
+        end;
 
         Result := Result + RttiFields[Ndx].Name;
       end;

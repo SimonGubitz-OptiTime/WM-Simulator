@@ -22,7 +22,9 @@ begin
   for i := ArrayToSearch.Count - 1 downto 0 do
   begin
     if TEqualityComparer<T>.Default.Equals(ArrayToSearch[i], Default (T) ) then
+    begin
       Result := i - 1;
+    end;
   end;
 end;
 

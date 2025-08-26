@@ -24,17 +24,6 @@ uses
 
 type
   TTeamEingabeFenster = class(TForm)
-  private
-    var
-      SpielerListe: TList<String>;
-
-    var
-      FDatabase: TDB<TTeam>;
-
-    const
-      FTableName: ShortString = 'Teams';
-
-  public
     Label1: TLabel;
     NameLabel: TLabel;
     NameEingabeFeld: TEdit;
@@ -67,6 +56,16 @@ type
       Shift: TShiftState);
     procedure SpielerListeEntfernenButtonClick(Sender: TObject);
     class function GetTableName: ShortString;
+
+  private
+    var
+      SpielerListe: TList<String>;
+
+    var
+      FDatabase: TDB<TTeam>;
+
+    const
+      FTableName: ShortString = 'Teams';
   end;
 
 implementation
@@ -106,7 +105,9 @@ end;
 procedure TTeamEingabeFenster.EingabeDerListeHinzufuegen;
 begin
   if SpielerListeEingabeFeld.Text = '' then
+  begin
     Exit;
+  end;
 
   // Der Liste hinzufügen
   SpielerListe.Add(SpielerListeEingabeFeld.Text);

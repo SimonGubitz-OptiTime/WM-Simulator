@@ -51,8 +51,9 @@ var
   i, j: Integer;
 begin
   if ( Length(Grids) <> 12 ) then
-    raise Exception.Create
-      ('TVerlosungUI.Create Error: There must be exactly 12 Grids.');
+  begin
+    raise Exception.Create('TVerlosungUI.Create Error: There must be exactly 12 Grids.');
+  end;
 
   FGrids := TObjectList<TStringGrid>.Create;
 
@@ -206,7 +207,9 @@ SecondCount: Integer = -1; ThirdCount: Integer = -1);
 begin
 
   if ( (Count = -1) or (SecondCount = -1) ) then
+  begin
     raise Exception.Create('Fehlermeldung');
+  end;
 
   // ShowMessage('Team: ' + FTeams[ThirdCount].Name);
 
