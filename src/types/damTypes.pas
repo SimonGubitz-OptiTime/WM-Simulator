@@ -22,6 +22,7 @@ end;
 
 type TTeam = record
 public
+  ID: Byte; // max 255
   Name: String;
   FIFACode: string; // 3 Zeichen lang
   TeamVerband: TTeamVerband;

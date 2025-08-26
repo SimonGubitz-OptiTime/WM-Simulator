@@ -81,10 +81,12 @@ end;
 function TVerlosungUI.VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer;
   AOwner: TControl): Boolean;
 var
-  grid, forRow: Integer;
+  Grid: TStringGrid;
   TempLabel: TStaticText;
-  TeamIndex: Integer;
+  ShuffledTeamsItem: TTeam;
+  ColNdx, GridNdx, TeamNdx, Ndx: Integer;
   AnimationList: TObjectList<TAnimations>;
+  SehrStarkeTeams, StarkeTeams, MittelStarkeTeams, SchwacheTeams: TList<TTeam>;
 begin
 
   if not ( FInitialized ) then
@@ -102,92 +104,123 @@ begin
       raise Exception.Create
         ('TVerlosungUI.VerlosungStarten Error: The number of FTeams must be divisible by 4.');
     end;
-    if ( TeamIndex >= FTeams.Count ) then
+    if ( TeamNdx >= FTeams.Count ) then
     begin
-      TeamIndex := 0;
+      TeamNdx := 0;
     end;
+
+
+    SehrStarkeTeams   := TList<TTeam>.Create;
+    StarkeTeams       := TList<TTeam>.Create;
+    MittelStarkeTeams := TList<TTeam>.Create;
+    SchwacheTeams     := TList<TTeam>.Create;
 
     try
 
       // Nur die sehr starken Teams nehmen
-
-
-      // type TConditionFunction = reference to function(Param: T): Boolean; // Fehler - T nicht deklariert
-      // type TConditionFunction<T> = reference to function(Param: T): Boolean; // Fehler
-       {
-      clrUtils.FilterArray.TFilterArrayUtils<TTeam>.Filter2(FTeams,
+      SehrStarkeTeams := clrUtils.FilterArray.TFilterArrayUtils.Filter2<TTeam>(FTeams,
         function(Param: TTeam): Boolean
         begin
           Result := Param.TeamRanking = TTeamRanking.SehrStark;
         end
       );
-      //}
-
-
-      // TODO: in Utils.FilterArray die kommentare ändern
-      // type TCondition = reference to function(index: Integer): Boolean; // Fehler
-
-      {clrUtils.FilterArray.TFilterArrayUtils<TTeam>.Filter(FTeams,
-        function(index: Integer): Boolean
+      
+      // Nur die starken Teams nehmen
+      StarkeTeams := clrUtils.FilterArray.TFilterArrayUtils.Filter2<TTeam>(FTeams,
+        function(Param: TTeam): Boolean
         begin
-          Result := FTeams[index].TeamRanking = TTeamRanking.SehrStark;
+          Result := Param.TeamRanking = TTeamRanking.Stark;
         end
-      );}
+      );
+      
+      // Nur die mittel starken Teams nehmen
+      MittelStarkeTeams := clrUtils.FilterArray.TFilterArrayUtils.Filter2<TTeam>(FTeams,
+        function(Param: TTeam): Boolean
+        begin
+          Result := Param.TeamRanking = TTeamRanking.MittelStark;
+        end
+      );
+
+      // Nur die schwachen Teams nehmen
+      SchwacheTeams := clrUtils.FilterArray.TFilterArrayUtils.Filter2<TTeam>(FTeams,
+        function(Param: TTeam): Boolean
+        begin
+          Result := Param.TeamRanking = TTeamRanking.Schwach;
+        end
+      );
 
 
-      // Funktioniert 1. Overload
-      var list := TList<Integer>.Create;
-      list.AddRange([0, 3, 5, 6, 9, 10]);
-      var filtered_res: TList<Integer> := clrUtils.FilterArray.TFilterArrayUtils<Integer>.Filter1(list, 3); // ValueToSearch: T overload
-      ShowMessage(IntToStr(filtered_res[0])); // Gibt sowieso nur ein Ergebnis
+      if ( (SehrStarkeTeams.Count <> StarkeTeams.Count)
+          or (StarkeTeams.Count <> MittelStarkeTeams.Count)
+          or (MittelStarkeTeams.Count <> SchwacheTeams.Count)
+      ) then
+      begin
+        ShowMessage('Die Anzahl der Teams in den Lostöpfen ist nicht gleich.');
+        Exit;
+      end;
 
-      list.Free;
+
+      clrUtils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(SehrStarkeTeams);
+      clrUtils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(StarkeTeams);
+      clrUtils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(MittelStarkeTeams);
+      clrUtils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(SchwacheTeams);
 
 
-      // Utils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(FTeams);
+      FTeams.Clear;
 
+      for Ndx := 0 to SehrStarkeTeams.Count - 1 do
+      begin
+        // Jedes Sehr starke Team wird mit den anderen Stärken in eine Gruppe gepackt
+        FTeams.AddRange([ SehrStarkeTeams[Ndx], StarkeTeams[Ndx], MittelStarkeTeams[Ndx], SchwacheTeams[Ndx] ]);
+      end;
 
 
       // Für alle Grids je 4 Teams eintragen
-      TeamIndex := 0;
-      for grid := 0 to FGrids.Count - 1 do
+      TeamNdx := 0;
+      GridNdx := 0;
+      for Grid in FGrids do
       begin
 
-        if ( TeamIndex >= FTeams.Count ) then
+        if ( TeamNdx >= FTeams.Count ) then
         begin
           break;
         end;
 
-        with FGrids[grid] do
+        with Grid do
         begin
 
-          for forRow := 0 to 3 do
+          for ColNdx := 0 to 3 do
           begin
 
             // hier die Animation
             TempLabel := TStaticText.Create(nil);
 
             TempLabel.Parent := AOwner as TWinControl;
-            TempLabel.Caption := FTeams[TeamIndex].Name;
+            TempLabel.Caption := FTeams[TeamNdx].Name;
             TempLabel.Top := Round((AOwner.Height / 2) - (Height / 2));
             // Middle
             TempLabel.Left := Round((AOwner.Width / 2) - (Width / 2)); // Middle
 
             var
-            MoveTop := FGrids[grid].Top + Round(TempLabel.Height / 2) +
-              (forRow * FRowSize[grid]);
+            MoveTop := Grid.Top + Round(TempLabel.Height / 2) +
+              (ColNdx * FRowSize[GridNdx]);
 
             AnimationList.Add(TAnimations.Create(ATimer, TControl(TempLabel),
-              MoveTop, FGrids[grid].Left + 15, 150)); // .6 sek
-            AnimationList.Last.MoveObject(AnimationCallbackFn, forRow, grid,
-              TeamIndex);
+              MoveTop, Grid.Left + 15, 150)); // .6 sek
+            AnimationList.Last.MoveObject(AnimationCallbackFn, ColNdx, GridNdx,
+              TeamNdx);
 
-            Inc(TeamIndex);
+            Inc(TeamNdx);
           end;
         end;
+        Inc(GridNdx);
       end;
     finally
       AnimationList.Free;
+      SehrStarkeTeams.Free;
+      StarkeTeams.Free;
+      MittelStarkeTeams.Free;
+      SchwacheTeams.Free;
     end;
 
     Result := true;
@@ -201,9 +234,8 @@ begin
   end;
 end;
 
-// cols               // grids                   // teams
-procedure TVerlosungUI.AnimationCallbackFn(Count: Integer = -1;
-SecondCount: Integer = -1; ThirdCount: Integer = -1);
+                                        // cols               // grids                   // teams
+procedure TVerlosungUI.AnimationCallbackFn(Count: Integer = -1; SecondCount: Integer = -1; ThirdCount: Integer = -1);
 begin
 
   if ( (Count = -1) or (SecondCount = -1) ) then

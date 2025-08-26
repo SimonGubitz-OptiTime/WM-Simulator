@@ -7,24 +7,24 @@ uses
   System.Generics.Defaults,
   System.Generics.Collections;
 
-// type TConditionFunction = reference to function(Param: T): Boolean; // Fehler - "T" nicht deklariert
-// type TConditionFunction = reference to function(index: Integer): Boolean; // Fehler
+
 type TConditionFunction<T> = reference to function(Param: T): Boolean; // Fehler
 
-type TFilterArrayUtils<T> = class
+type TFilterArrayUtils = class
 public
-  // Sucht nach Instanzen des Objekts, welche den gleichen Wert wie "ValueToFind" haben, und fügt sie dem Result an.
-  class function Filter1(AArrayToFilter: TList<T>; AValueToFind: T): TList<T>;
+  /// Sucht nach Instanzen des Objekts, welche den gleichen Wert wie "ValueToFind" haben, und fügt sie dem Result an.
+  class function Filter1<T>(AArrayToFilter: TList<T>; AValueToFind: T): TList<T>;
 
-  // Sucht nach Instanzen des Objekts, welche der Condition Funktion zustimmen
-  class function Filter2(AArrayToFilter: TList<T>; ACondition: TConditionFunction<T>): TList<T>;
-  //  class function Filter(ArrayToFilter: TList<T>; Condition: TConditionFunction): TList<T>; overload; static;
+  /// <summary>
+  /// Sucht nach Instanzen des Objekts, welche der Condition Funktion zustimmen
+  /// </summary>
+  class function Filter2<T>(AArrayToFilter: TList<T>; ACondition: TConditionFunction<T>): TList<T>;
 end;
 
 implementation
 
 // O(n)
-class function TFilterArrayUtils<T>.Filter1(AArrayToFilter: TList<T>; AValueToFind: T): TList<T>;
+class function TFilterArrayUtils.Filter1<T>(AArrayToFilter: TList<T>; AValueToFind: T): TList<T>;
 var
   Item: T;
 begin
@@ -43,7 +43,7 @@ begin
   end;
 end;
 
- class function TFilterArrayUtils<T>.Filter2(AArrayToFilter: TList<T>; ACondition: TConditionFunction<T>): TList<T>;
+class function TFilterArrayUtils.Filter2<T>(AArrayToFilter: TList<T>; ACondition: TConditionFunction<T>): TList<T>;
 //class function TFilterArrayUtils<T>.Filter(ArrayToFilter: TList<T>; Condition: TConditionFunction): TList<T>;
 var
   i: Integer;

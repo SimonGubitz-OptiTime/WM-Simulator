@@ -76,8 +76,8 @@ begin
 
 
   // reset all cache
-//  FCachedCSV := TList<T>.Create;
-//  FCachedUnstructuredCSV := TObjectList<TList<String>>.Create(true);
+  FCachedCSV := TList<T>.Create;
+  FCachedUnstructuredCSV := TObjectList<TList<String>>.Create(true);
 
   if ( FFS.Size <> 0 ) then
   begin
@@ -120,6 +120,8 @@ begin
   begin
 
     SW := TStreamWriter.Create(FFS);
+    FCachedCSV.Clear;
+    FCachedUnstructuredCSV.Clear;
 
     try
       SW.BaseStream.Position := FFS.size;
@@ -198,6 +200,7 @@ function TDB<T>.GetUnstructuredTableFromCSV(): TObjectList<TList<String>>;
 var
   SR: TStreamReader;
   Temp: TList<String>;
+  Line: String;
 begin
 
   if not ( FInitialized ) then
@@ -219,9 +222,12 @@ begin
 
     try
       FFS.Position := 0;
+      FCachedUnstructuredCSV.Clear;
       while not(SR.EndOfStream) do
       begin
-        Temp := clrUtils.CSV.DeserializeCSV(SR.ReadLine());
+        Line := SR.ReadLine();
+        Temp := clrUtils.CSV.DeserializeCSV(Line);
+        FCachedUnstructuredCSV.Add(Temp);
         Result.Add(Temp);
       end;
     finally
@@ -294,11 +300,7 @@ begin
 
   // Clear the cached data
   FCachedCSV.Free;
-  for var Item in FCachedUnstructuredCSV do
-  begin
-    Item.Free;
-  end;
-  FCachedUnstructuredCSV.Free;
+//  FCachedUnstructuredCSV.Free;
 
   // Free the list of event listeners
   FDBUpdateEventListeners.Free;

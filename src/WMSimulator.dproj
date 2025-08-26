@@ -111,6 +111,8 @@
         <DCC_DcuOutput>..\bin\units\$(Platform)\$(Config)</DCC_DcuOutput>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
+        <DCC_Optimize>true</DCC_Optimize>
+        <DCC_UseMSBuildExternally>true</DCC_UseMSBuildExternally>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
