@@ -11,7 +11,7 @@ uses
   System.RTTI, Vcl.Dialogs;
 
 type
-  TDB<T: record > = class
+  TDB<T: record> = class
   private
     FFS: TFileStream;
     FDBUpdateEventListeners: TList<TDBUpdateEvent>;
@@ -55,10 +55,6 @@ begin
   FInitialized := false;
   FTableName := ATableName;
 
-  // reset all cache
-  FCachedCSV := TList<T>.Create;
-  FCachedUnstructuredCSV := TObjectList < TList < String >>.Create;
-
   // Dateien
   FFileName := clrUtils.DB.GetTablesFilePath(FTableName);
   FFileDirectory := clrUtils.DB.GetTablesDirPath();
@@ -78,6 +74,10 @@ begin
   // Um als Ziel anzugeben, ob die Datei sicher geöffnet und beschrieben werden kann
   FInitialized := true;
 
+
+  // reset all cache
+//  FCachedCSV := TList<T>.Create;
+//  FCachedUnstructuredCSV := TObjectList<TList<String>>.Create(true);
 
   if ( FFS.Size <> 0 ) then
   begin
@@ -157,7 +157,7 @@ var
   Line: String;
 begin
 
-  if not ( FInitialized  ) then
+  if not ( FInitialized ) then
   begin
     raise Exception.Create('db.pas Error: TDB is not initialized. Please add to the database first.');
   end;
@@ -166,7 +166,7 @@ begin
 
   if ( Assigned(FCachedCSV)) and ( FCachedCSV.Count > 0 ) then
   begin
-    Result := FCachedCSV;
+    Result.AddRange(FCachedCSV);
     Exit;
   end
   else
@@ -205,14 +205,15 @@ begin
     raise Exception.Create('db.pas Error: TDB is not initialized. Please add to the database first.');
   end;
 
+  Result := TObjectList<TList<String>>.Create;
+
   if ( Assigned(FCachedUnstructuredCSV)) and ( FCachedUnstructuredCSV.Count > 0) then
   begin
-    Result := FCachedUnstructuredCSV;
+    Result.AddRange(FCachedUnstructuredCSV);
     Exit;
   end
   else
   begin
-    Result := TObjectList < TList < String >>.Create;
 
     SR := TStreamReader.Create(FFS);
 
@@ -270,16 +271,16 @@ end;
 
 procedure TDB<T>.CallDBUpdateEventListeners();
 var
-  idx: Integer;
+  Ndx: Integer;
 begin
-  for idx := 0 to FDBUpdateEventListeners.Count - 1 do
+  for Ndx := 0 to FDBUpdateEventListeners.Count - 1 do
   begin
     try
-      FDBUpdateEventListeners[idx]();
+      FDBUpdateEventListeners[Ndx]();
     except
       on E: Exception do
       begin
-        ShowMessage('Error in DB Update Event Listener: ' + E.Message);
+        ShowMessage('Error in DB Update Event Listener' + IntToStr(Ndx) + ': ' + E.Message);
         // ErrorLogger.Log('Error in DB Update Event Listener: ' + E.Message);
         continue; // Continue with the next listener
       end;
@@ -289,20 +290,21 @@ begin
 end;
 
 destructor TDB<T>.Destroy;
-var
-  UnstructuredCacheItem: TList<String>;
 begin
-  // Close the file stream
-  FFS.Free;
-
-  // Free the list of event listeners
-  FDBUpdateEventListeners.Free;
-  FDBUpdateEventListeners.Clear;
 
   // Clear the cached data
   FCachedCSV.Free;
+  for var Item in FCachedUnstructuredCSV do
+  begin
+    Item.Free;
+  end;
   FCachedUnstructuredCSV.Free;
 
+  // Free the list of event listeners
+  FDBUpdateEventListeners.Free;
+
+  // Close the file stream
+  FFS.Free;
 
   // Call the inherited destructor
   inherited Destroy;

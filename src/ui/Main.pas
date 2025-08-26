@@ -308,6 +308,7 @@ procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   // Aufräumen
   StadionEingabe.Free;
+  TeamEingabe.Free;
 
   FVerlosung.Free;
   FStadionDB.Destroy;

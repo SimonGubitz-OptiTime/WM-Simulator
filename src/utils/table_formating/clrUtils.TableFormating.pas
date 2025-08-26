@@ -37,18 +37,18 @@ end;
 function TabelleZeichnen(var AGrid: TStringGrid;
   ARows: TObjectList < TList < String >> ): String;
 var
-  Ndx, j: Integer;
+  NdxRows, NdxCols: Integer;
 begin
   AGrid.RowCount := ARows.Count;
   AGrid.ColCount := ARows[0].Count;
 
-  for Ndx := 0 to ARows.Count - 1 do
+  for NdxRows := 0 to ARows.Count - 1 do
   begin
-    AGrid.Cells[0, Ndx + 1] := IntToStr(Ndx + 1);
-    for j := 0 to ARows[Ndx].Count - 1 do
+    AGrid.Cells[0, NdxRows + 1] := IntToStr(NdxRows + 1);
+    for NdxCols := 0 to ARows[NdxRows].Count - 1 do
     begin
-      SetColumnFullWidth(AGrid, j);
-      AGrid.Cells[j + 1, Ndx] := ARows[Ndx][j];
+      SetColumnFullWidth(AGrid, NdxCols);
+      AGrid.Cells[NdxCols + 1, NdxRows] := ARows[NdxRows][NdxCols];
     end;
   end;
 end;
