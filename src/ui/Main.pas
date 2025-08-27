@@ -3,18 +3,31 @@
 interface
 
 uses
+  System.Classes,
+  System.Generics.Collections,
+  System.ImageList,
+  System.SysUtils,
+  System.Variants,
+  Vcl.ComCtrls,
+  Vcl.Controls,
+  Vcl.Dialogs,
+  Vcl.ExtCtrls,
+  Vcl.Forms,
+  Vcl.Graphics,
+  Vcl.ImgList,
+  Vcl.Grids,
+  Vcl.StdCtrls,
+  Winapi.Messages,
+  Winapi.Windows,
   clrDB,
   damTypes,
+  clrState,
   clrVerlosung,
+  clrGruppenphase,
   fraTeamEingabeFenster,
   fraStadionEingabeFenster,
   clrUtils.Routing,
-  clrUtils.TableFormating,
-  System.Classes, System.Generics.Collections, System.SysUtils, System.Variants,
-  Vcl.ComCtrls, Vcl.Controls, Vcl.Dialogs, Vcl.Forms, Vcl.Graphics,
-  Vcl.StdCtrls,
-  Vcl.ImgList, Vcl.Grids, Vcl.ExtCtrls,
-  Winapi.Windows, Winapi.Messages, System.ImageList;
+  clrUtils.TableFormating;
 
 type
   TMainForm = class(TForm)
@@ -22,19 +35,17 @@ type
     UeberschriftStammdaten: TLabel;
     TeamHinzufuegenButton: TButton;
     StadionHinzufuegenButton: TButton;
-    StammdatenSheet: TTabSheet;
+    Stammdaten: TTabSheet;
     VerlosungSheet: TTabSheet;
-    SpielplanSheet: TTabSheet;
+    GruppenphaseSheet: TTabSheet;
     SpielSheet: TTabSheet;
 
     SymbolImageList: TImageList;
-    TeamEingabe: TTeamEingabeFenster;
-    StadionEingabe: TStadionEingabeFenster;
     StadienStringGrid: TStringGrid;
     TeamsStringGrid: TStringGrid;
     UeberschriftVerlosung: TLabel;
-    UeberschriftSpielplan: TLabel;
-    ZumSpielplanButton: TButton;
+    UeberschriftGruppenphase: TLabel;
+    ZurGruppenphaseButton: TButton;
     ZurVerlosungButton: TButton;
     ZumSpielButton: TButton;
     StadionAnzahlLabel: TLabel;
@@ -57,18 +68,24 @@ type
     StringGrid12: TStringGrid;
     VerlosungStartenButton: TButton;
     Timer1: TTimer;
+    GruppenphaseStartenButton: TButton;
 
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure GruppenphaseStartenButtonClick(Sender: TObject);
     procedure PageControlChanging(Sender: TObject; var AllowChange: Boolean);
     procedure TeamHinzufuegenButtonClick(Sender: TObject);
     procedure StadionHinzufuegenButtonClick(Sender: TObject);
     procedure VerlosungStartenButtonClick(Sender: TObject);
     procedure ZumSpielButtonClick(Sender: TObject);
-    procedure ZumSpielplanButtonClick(Sender: TObject);
+    procedure ZurGruppenphaseButtonClick(Sender: TObject);
     procedure ZurVerlosungButtonClick(Sender: TObject);
 
   private
+
+    TeamEingabe: TTeamEingabeFenster;
+    StadionEingabe: TStadionEingabeFenster;
+
     FTeamDB: TDB<TTeam>;
     FStadionDB: TDB<TStadion>;
 
@@ -76,11 +93,11 @@ type
     FStadionAnzahl: Integer;
 
     FVerlosung: TVerlosungUI;
-    // FSpielplan: TSpielplanUI;
+    FGruppenphase: TGruppenphaseUI;
     // FSpiel: TSpielUI;
 
     FVerlosungFertig: Boolean;
-    FSpielplanFertig: Boolean;
+    FGruppenphaseFertig: Boolean;
 
     FState: TWMState;
 
@@ -205,7 +222,7 @@ begin
   FState := TWMState.Create;
 
   FVerlosung := nil;
-  // FGruppenphase := nil;
+  FGruppenphase := nil;
   // FSpiel := nil;
 
   TeamGewollteAnzahlLabel.Caption := IntToStr(FGewollteTeamAnzahl);
@@ -219,14 +236,14 @@ begin
   begin
     TeamDBUpdate;
   end;
-  FTeamDB.AddDBUpdateEventListener(TeamDBUpdate);
+//  FTeamDB.AddDBUpdateEventListener(TeamDBUpdate);
 
   // Stadien laden
   if ( FStadionDB.Initialized ) then
   begin
     StadionDBUpdate;
   end;
-  FStadionDB.AddDBUpdateEventListener(StadionDBUpdate);
+  FStadionDB.AddDBUpdateEventListener(StadionDBUpdate); // fehler hier?
 
 end;
 
@@ -240,17 +257,22 @@ begin
   end;
 
   // Verlosung starten
-  if not ( Assigned(FVerlosung ) ) then
+  if not ( Assigned(FVerlosung) ) then
   begin
-    FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12]);
+    FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12], FState);
   end;
 
   FVerlosungFertig := FVerlosung.VerlosungStarten(FTeamDB, Timer1, VerlosungSheet);
 end;
 
-procedure TMainForm.ZumSpielplanButtonClick(Sender: TObject);
+procedure TMainForm.ZurGruppenphaseButtonClick(Sender: TObject);
 begin
   // Gültigkeitsprüfung
+  if not ( clrUtils.Routing.OnGruppenphaseChanging((FTeamAnzahl = FGewollteTeamAnzahl)
+    and ( FStadionAnzahl = FGewollteStadionAnzahl)) ) then
+  begin
+    Exit;
+  end;
 end;
 
 procedure TMainForm.ZumSpielButtonClick(Sender: TObject);
@@ -273,15 +295,12 @@ begin
 
         if not ( Assigned(FVerlosung) ) then
         begin
-          FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2,
-            StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7,
-            StringGrid8, StringGrid9, StringGrid10, StringGrid11,
-            StringGrid12]);
+          FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12], FState);
         end;
       end;
     2:
       begin
-        AllowChange := clrUtils.Routing.OnSpielplanChanging((FVerlosungFertig));
+        AllowChange := clrUtils.Routing.OnGruppenphaseChanging((FVerlosungFertig));
 
         // Spielplan Klasse erstellen?
         // if not ( Assigned(FSpielplan) ) then
@@ -291,7 +310,7 @@ begin
       end;
     3:
       begin
-        AllowChange := clrUtils.Routing.OnSpielChanging((FSpielplanFertig));
+        AllowChange := clrUtils.Routing.OnSpielChanging((FGruppenphaseFertig));
       end;
   end;
 
@@ -302,10 +321,27 @@ procedure TMainForm.VerlosungStartenButtonClick(Sender: TObject);
 begin
   if ( not(Assigned(FVerlosung)) or not(FVerlosung.Initialized) ) then
   begin
-    FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12]);
+    FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12], FState);
   end;
   
-  FVerlosung.VerlosungStarten(FTeamDB, Timer1, VerlosungSheet);
+  FVerlosungFertig := FVerlosung.VerlosungStarten(FTeamDB, Timer1, VerlosungSheet);
+
+  // Wenn es genügend Gruppen gibt
+  if ( FState.GetGroups.Count = 12 ) then
+  begin
+    ZurGruppenphaseButton.Enabled := true;
+  end;
+end;
+
+procedure TMainForm.GruppenphaseStartenButtonClick(Sender: TObject);
+begin
+  if ( not(Assigned(FGruppenphase)) ) then
+  begin
+    FGruppenphase := TGruppenphaseUI.Create(FState);
+  end;
+
+  FGruppenphase.GruppenphaseStarten;
+
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
@@ -314,7 +350,10 @@ begin
   StadionEingabe.Free;
   TeamEingabe.Free;
 
-  FVerlosung.Free;
+
+  FState.Destroy;
+
+  FVerlosung.Destroy;
   FStadionDB.Destroy;
   FTeamDB.Destroy;
 end;

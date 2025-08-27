@@ -7,7 +7,7 @@ uses
 
 function OnStammdatenChanging(ACondtion: Boolean): Boolean;
 function OnVerlosungChanging(ACondtion: Boolean): Boolean;
-function OnSpielplanChanging(ACondtion: Boolean): Boolean;
+function OnGruppenphaseChanging(ACondtion: Boolean): Boolean;
 function OnSpielChanging(ACondtion: Boolean): Boolean;
 
 implementation
@@ -48,7 +48,7 @@ begin
   end;}
 end;
 
-function OnSpielplanChanging(ACondtion: Boolean): Boolean;
+function OnGruppenphaseChanging(ACondtion: Boolean): Boolean;
 begin
 
   // JS equivalent to block default

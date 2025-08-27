@@ -1,12 +1,14 @@
-unit clrGruppenphase;
+﻿unit clrGruppenphase;
 
 interface
 
 uses
-  damTypes;
+  System.Generics.Collections,
+  damTypes,
+  clrState;
 
 
-type TGruppenphase = class
+type TGruppenphaseUI = class
   private
 
     FGameDict: TDictionary<Byte, Byte>;
@@ -21,27 +23,31 @@ type TGruppenphase = class
   public
     constructor Create(AState: TWMState);
 
-    procedure GruppenPhaseStarten();
+    procedure GruppenphaseStarten();
+
+    destructor Destroy;
 
 end;
 
 
 implementation
 
-constructor TGruppenphase.Create(AState: TWMState);
+constructor TGruppenphaseUI.Create(AState: TWMState);
 begin
   FState := AState;
   FGameDict := TDictionary<Byte, Byte>.Create;
 end;
 
-destructor TGruppenphase.Destroy;
+destructor TGruppenphaseUI.Destroy;
 begin
   // Nicht FState freigeben, wird durch MainForm verwaltet
   FGameDict.Free;
+
+  inherited Destroy;
 end;
 
 
-procedure CreateUniqueMatches(AGroup: TGruppe);
+procedure TGruppenphaseUI.CreateUniqueMatches(AGroup: TGruppe);
 var
   Team: TTeam;
   Team2: TTeam;
@@ -56,8 +62,8 @@ begin
     begin
 
       // wenn es den Wert bereits als Schlüssels gibt
-      if ( FGameDict.ContainsKey(Team.ID)
-        or Team.Equals(Team2)
+      if ( (FGameDict.ContainsKey(Team.ID))
+        or (Team.ID = Team2.ID)
       ) then
       begin
         continue;
@@ -70,5 +76,15 @@ begin
   end;
 end;
 
+procedure TGruppenphaseUI.GruppenphaseStarten();
+var
+  CurrentGroup: TGruppe;
+begin
+
+  for CurrentGroup in FState.Groups do
+  begin
+    CreateUniqueMatches(CurrentGroup);
+  end;
+end;
 
 end.

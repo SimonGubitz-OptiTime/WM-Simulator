@@ -15,14 +15,16 @@ uses
   Vcl.StdCtrls,
   clrDB,
   damTypes,
+  clrState,
   clrAnimation,
   clrUtils.ShuffleArray,
   clrUtils.FilterArray;
 
-type
-  TVerlosungUI = class
+type TVerlosungUI = class
   private
     FGrids: TObjectList<TStringGrid>;
+
+    FState: TWMState;
 
     FInitialized: Boolean;
     FTeams: TList<TTeam>; // for the AnimationCallback
@@ -49,14 +51,14 @@ var
   i, j: Integer;
 begin
 
+  FTeams := nil;
   FState := AState;
+  FGrids := TObjectList<TStringGrid>.Create;
 
   if ( Length(AGrids) <> 12 ) then
   begin
     raise Exception.Create('TVerlosungUI.Create Error: There must be exactly 12 Grids.');
   end;
-
-  FGrids := TObjectList<TStringGrid>.Create;
 
   for i := 0 to 11 do
   begin
@@ -82,6 +84,7 @@ end;
 function TVerlosungUI.VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer;  AOwner: TControl): Boolean;
 var
   Grid: TStringGrid;
+  TempList: TList<TTeam>;
   TempLabel: TStaticText;
   ShuffledTeamsItem: TTeam;
   ColNdx, GridNdx, TeamNdx, Ndx: Integer;
@@ -108,6 +111,7 @@ begin
     begin
       TeamNdx := 0;
     end;
+
 
 
     SehrStarkeTeams   := TList<TTeam>.Create;
@@ -175,12 +179,14 @@ begin
         // Allein für die Darstellung
         FTeams.AddRange([ SehrStarkeTeams[Ndx], StarkeTeams[Ndx], MittelStarkeTeams[Ndx], SchwacheTeams[Ndx] ]);
 
+        TempList := TGruppe.Create;
+
+        TempList.AddRange([ SehrStarkeTeams[Ndx], StarkeTeams[Ndx], MittelStarkeTeams[Ndx], SchwacheTeams[Ndx] ]);
+
         // und für die zentrale Lagerung
-        FState.AddGroup(
-          TGruppe.Create.Add([ SehrStarkeTeams[Ndx], StarkeTeams[Ndx], MittelStarkeTeams[Ndx], SchwacheTeams[Ndx] ])
-        );
+        FState.AddGroup(TempList); // hier
       end;
- 
+
 
       // Für alle Grids je 4 Teams eintragen
       TeamNdx := 0;
@@ -297,7 +303,13 @@ end;
 destructor TVerlosungUI.Destroy;
 begin
   FGrids.Free;
-  FTeams.Free;
+
+  if ( (Assigned(FTeams))
+    and (FTeams <> nil)
+  ) then
+  begin
+    FTeams.Free;
+  end;
 
   inherited Destroy;
 end;

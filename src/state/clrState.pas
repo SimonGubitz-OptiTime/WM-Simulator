@@ -1,4 +1,4 @@
-unit clrState;
+﻿unit clrState;
 
 interface
 
@@ -14,10 +14,10 @@ uses
 
 type TWMState = class(TInterfacedObject, IState)
   private
-    property Teams: TList<TTeam> read GetTeams write SetTeams;
-    property Stadien: TList<TStadion> read GetStadien write SetStadien;
-    property Groups: TList<TGruppe> read GetGroups write SetGroups;
-    property TeamStandings: TDictionary<Byte, TTeamStand> read GetTeamStanding write SetTeamStanding;
+    FTeams: TList<TTeam>;
+    FStadien: TList<TStadion>;
+    FGroups: TList<TGruppe>;
+    FTeamStandings: TDictionary<Byte, TTeamStand>;
   public
     constructor Create;
 
@@ -31,10 +31,15 @@ type TWMState = class(TInterfacedObject, IState)
     procedure AddGroup(const AGroup: TGruppe);
     procedure SetGroups(const AGroups: TList<TGruppe>);
 
-    function GetTeamStanding(AID: Byte): TTeamStand;
-    procedure SetTeamStanding(AID: Byte; const ANewStanding: TTeamStand);
+    function GetTeamStanding: TDictionary<Byte, TTeamStand>;
+    procedure SetTeamStanding(const ATeamStanding: TDictionary<Byte, TTeamStand>);
 
     destructor Destroy;
+  published
+    property Teams: TList<TTeam> read GetTeams write SetTeams;
+    property Stadien: TList<TStadion> read GetStadien write SetStadien;
+    property Groups: TList<TGruppe> read GetGroups write SetGroups;
+    property TeamStandings: TDictionary<Byte, TTeamStand> read GetTeamStanding write SetTeamStanding;
 end;
 
 
@@ -42,59 +47,65 @@ implementation
 
 constructor TWMState.Create;
 begin
-  FTeams.Create;
-  FTeamStände.Create;
+  FTeams := TList<TTeam>.Create;
+  FStadien := TList<TStadion>.Create;
+  FGroups := TList<TGruppe>.Create;
+  FTeamStandings := TDictionary<Byte, TTeamStand>.Create;
+
 end;
 
 destructor TWMState.Destroy;
 begin
   FTeams.Free;
-  FTeamStände.Free;
+  FStadien.Free;
+  FGroups.Free;
+
+  inherited Destroy;
 end;
 
-function GetTeams: TList<TTeam>;
+function TWMState.GetTeams: TList<TTeam>;
 begin
   Result := FTeams;
 end;
 
-procedure SetTeams(const ATeams: TList<TTeam>);
+procedure TWMState.SetTeams(const ATeams: TList<TTeam>);
 begin
   FTeams := ATeams;
 end;
 
-function GetStadien: TList<TStadion>;
+function TWMState.GetStadien: TList<TStadion>;
 begin
   Result := FStadien;
 end;
 
-procedure SetStadien(const AStadien: TList<TStadion>);
+procedure TWMState.SetStadien(const AStadien: TList<TStadion>);
 begin
   FStadien := AStadien;
 end;
 
-function GetGroups: TList<TGruppe>;
+function TWMState.GetGroups: TList<TGruppe>;
 begin
   Result := FGroups;
 end;
 
-procedure AddGroup(const AGroup: TGruppe);
+procedure TWMState.AddGroup(const AGroup: TGruppe);
 begin
   FGroups.Add(AGroup);
 end;
 
-procedure SetGroups(const AGroups: TList<TGruppe>);
+procedure TWMState.SetGroups(const AGroups: TList<TGruppe>);
 begin
   FGroups := AGroups;
 end;
 
-function GetTeamStanding(AID: Byte): TTeamStand;
+function TWMState.GetTeamStanding: TDictionary<Byte, TTeamStand>;
 begin
-  Result := FTeamStanding;
+  Result := FTeamStandings;
 end;
 
-procedure SetTeamStanding(AID: Byte; const ANewStanding: TTeamStand);
+procedure TWMState.SetTeamStanding(const ATeamStanding: TDictionary<Byte, TTeamStand>);
 begin
-  FTeamStanding := ATeamStanding;
+  FTeamStandings := ATeamStanding;
 end;
 
 end.

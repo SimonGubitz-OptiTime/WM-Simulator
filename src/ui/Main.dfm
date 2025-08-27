@@ -19,11 +19,11 @@ object MainForm: TMainForm
     Top = 0
     Width = 1105
     Height = 713
-    ActivePage = StammdatenSheet
+    ActivePage = GruppenphaseSheet
     TabOrder = 0
     OnChanging = PageControlChanging
-    object StammdatenSheet: TTabSheet
-      Caption = 'StammdatenSheet'
+    object Stammdaten: TTabSheet
+      Caption = 'Stammdaten'
       object UeberschriftStammdaten: TLabel
         Left = 3
         Top = 3
@@ -116,7 +116,6 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object TeamHinzufuegenButton: TButton
-      object TeamHinzufuegenButton: TButton
         Left = 3
         Top = 54
         Width = 146
@@ -128,7 +127,7 @@ object MainForm: TMainForm
         OnClick = TeamHinzufuegenButtonClick
       end
       object StadionHinzufuegenButton: TButton
-        Left = 143
+        Left = 552
         Top = 54
         Width = 146
         Height = 25
@@ -152,8 +151,8 @@ object MainForm: TMainForm
         TabOrder = 2
       end
       object TeamsStringGrid: TStringGrid
-        Left = 3
-        Top = 104
+        Left = 4
+        Top = 106
         Width = 542
         Height = 513
         TabOrder = 3
@@ -185,15 +184,15 @@ object MainForm: TMainForm
         Font.Style = []
         ParentFont = False
       end
-      object ZumSpielplanButton: TButton
-        Left = 1019
+      object ZurGruppenphaseButton: TButton
+        Left = 1000
         Top = 3
-        Width = 75
+        Width = 94
         Height = 25
-        Caption = 'Spielplan'
+        Caption = 'Gruppenphase'
         Enabled = False
         TabOrder = 0
-        OnClick = ZumSpielplanButtonClick
+        OnClick = ZurGruppenphaseButtonClick
       end
       object StringGrid1: TStringGrid
         Left = 3
@@ -339,8 +338,8 @@ object MainForm: TMainForm
         TabOrder = 13
       end
     end
-    object SpielplanSheet: TTabSheet
-      Caption = 'SpielplanSheet'
+    object GruppenphaseSheet: TTabSheet
+      Caption = 'Gruppenphase'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -12
@@ -348,12 +347,12 @@ object MainForm: TMainForm
       Font.Style = []
       ImageIndex = 2
       ParentFont = False
-      object UeberschriftSpielplan: TLabel
+      object UeberschriftGruppenphase: TLabel
         Left = 3
         Top = 3
-        Width = 137
+        Width = 225
         Height = 40
-        Caption = 'Spielplan'
+        Caption = 'Gruppenphase'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -35
@@ -370,6 +369,15 @@ object MainForm: TMainForm
         Enabled = False
         TabOrder = 0
         OnClick = ZumSpielButtonClick
+      end
+      object GruppenphaseStartenButton: TButton
+        Left = 471
+        Top = 329
+        Width = 154
+        Height = 25
+        Caption = 'Gruppenphase starten'
+        TabOrder = 1
+        OnClick = GruppenphaseStartenButtonClick
       end
     end
     object SpielSheet: TTabSheet

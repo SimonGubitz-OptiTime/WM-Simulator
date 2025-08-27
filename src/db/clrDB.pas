@@ -22,8 +22,8 @@ type
     FFileName: String;
     FFileDirectory: String;
 
-    class var CachedCSV: TList<T>;
-    class var CachedUnstructuredCSV: TObjectList<TList<String>>;
+    FCachedCSV: TList<T>;
+    FCachedUnstructuredCSV: TObjectList<TList<String>>;
 
     procedure CallDBUpdateEventListeners();
     procedure AddCSVTableToDB(CSVObject: T);
@@ -71,22 +71,18 @@ begin
   end;
 
   FFS := TFileStream.Create(FFileName, fmOpenReadWrite or fmShareDenyNone); // or fmShareDenyWrite
+
   FDBUpdateEventListeners := TList<TDBUpdateEvent>.Create();
 
   // Um als Ziel anzugeben, ob die Datei sicher geöffnet und beschrieben werden kann
   FInitialized := true;
 
-
-  // reset all cache
-  FCachedCSV := TList<T>.Create;
-  FCachedUnstructuredCSV := TObjectList<TList<String>>.Create(true);
-
-  if ( FFS.Size <> 0 ) then
+  {if ( FFS.Size <> 0 ) then
   begin
     // Write cache
     FCachedCSV              := GetStructuredTableFromCSV();
     FCachedUnstructuredCSV  := GetUnstructuredTableFromCSV();
-  end;
+  end;}
 
 end;
 
@@ -224,12 +220,12 @@ begin
 
     try
       FFS.Position := 0;
-      FCachedUnstructuredCSV.Clear;
+      //FCachedUnstructuredCSV.Clear; // fehler hier
       while not(SR.EndOfStream) do
       begin
         Line := SR.ReadLine();
         Temp := clrUtils.CSV.DeserializeCSV(Line);
-        FCachedUnstructuredCSV.Add(Temp);
+        //FCachedUnstructuredCSV.Add(Temp); // fehler hier
         Result.Add(Temp);
       end;
     finally
@@ -300,6 +296,9 @@ end;
 destructor TDB<T>.Destroy;
 begin
 
+  // Clear the filestream
+  FFS.Free;
+
   // Clear the cached data
   FCachedCSV.Free;
 //  FCachedUnstructuredCSV.Free;
@@ -308,8 +307,8 @@ begin
   FDBUpdateEventListeners.Free;
 
   // Clear the cached data
-  CachedCSV.Free;
-  CachedUnstructuredCSV.Free;
+  FCachedCSV.Free;
+//  FCachedUnstructuredCSV.Free;
 
   // Call the inherited destructor
   inherited Destroy;

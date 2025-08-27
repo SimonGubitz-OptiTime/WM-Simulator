@@ -2,6 +2,10 @@
 
 interface
 
+uses
+  System.Generics.Collections;
+
+
 type
   TDBUpdateEvent = procedure of object;
 
@@ -20,22 +24,19 @@ type TStadion = record
   // " - für die Simulation wenn >90% Kapazität, +5% Siegchancen wenn Heimstadion
 end;
 
-{$RTTI INHERIT [vcPublic]}
+//{$RTTI EXPLICIT Fields([vcPublished])}
 type TTeam = record
 public
-  ID: Byte; // max 255
   Name: String;
   FIFACode: string; // 3 Zeichen lang
   TeamVerband: TTeamVerband;
   HistorischeWMSiege: Byte;
   HeimstadionName: String; // in der Simulation vielleicht +5% Siegchancen
   Flagge: Byte; // als index für eine TImageList
-  SpielerListe: array of String;
-  // ↑ Nur Namen, muss um Simplizität in der Rtti array bleiben, kein TList<string>
+  SpielerListe: array of String; // ← Nur Namen, muss um Simplizität in der Rtti array bleiben, kein TList<string>
   TeamRanking: TTeamRanking;
 
-// private sind für RTTI unsichtbar
-private
+  // ↓ sind für RTTI unsichtbar
   ID: Byte;
 end;
 
@@ -59,9 +60,7 @@ type TTeamStand = record
   Niederlagen: Byte;
 end;
 
-type TGruppe = record
-  Teams: TList<TTeam>;
-end;
+type TGruppe = TList<TTeam>;
 
 type IState = interface
   ['{af30318b-f132-4cec-be9e-38e05ad71f14}']
@@ -76,8 +75,8 @@ type IState = interface
     procedure AddGroup(const AGroup: TGruppe);
     procedure SetGroups(const AGroups: TList<TGruppe>);
 
-    function GetTeamStanding(AID: Byte): TTeamStand;
-    procedure SetTeamStanding(AID: Byte; const ANewStanding: TTeamStand);
+    function GetTeamStanding: TDictionary<Byte, TTeamStand>;
+    procedure SetTeamStanding(const ANewStanding: TDictionary<Byte, TTeamStand>);
 
     property Teams: TList<TTeam> read GetTeams write SetTeams;
     property Stadien: TList<TStadion> read GetStadien write SetStadien;

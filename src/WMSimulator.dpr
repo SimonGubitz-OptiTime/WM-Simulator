@@ -17,7 +17,9 @@ uses
   clrUtils.TableFormating in 'utils\table_formating\clrUtils.TableFormating.pas',
   clrUtils.StringFormating in 'utils\string_formating\clrUtils.StringFormating.pas',
   clrUtils.FilterArray in 'utils\arrays\clrUtils.FilterArray.pas',
-  clrUtils.FixedArrays in 'utils\arrays\clrUtils.FixedArrays.pas';
+  clrUtils.FixedArrays in 'utils\arrays\clrUtils.FixedArrays.pas',
+  clrState in 'state\clrState.pas',
+  clrGruppenphase in 'ui\gruppenphase\clrGruppenphase.pas';
 
 {$R *.res}
 
