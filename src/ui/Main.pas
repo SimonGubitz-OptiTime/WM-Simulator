@@ -29,8 +29,7 @@ uses
   clrUtils.Routing,
   clrUtils.TableFormating;
 
-type
-  TMainForm = class(TForm)
+type  TMainForm = class(TForm)
     PageControl: TPageControl;
     UeberschriftStammdaten: TLabel;
     TeamHinzufuegenButton: TButton;
@@ -111,7 +110,8 @@ type
     procedure StadionTabelleZeichnen(ARows: TObjectList<TList<String>>);
   public
     { Public-Deklarationen }
-  end;
+end;
+
 
 var
   MainForm: TMainForm;
@@ -119,6 +119,52 @@ var
 implementation
 
 {$R *.dfm}
+
+procedure TMainForm.FormCreate(Sender: TObject);
+begin
+
+  // Globaler State, wodrin alle Teams, Gruppen und Auskommen nach und nach gespeichert werden
+  FState := TWMState.Create;
+
+  FVerlosung := nil;
+  FGruppenphase := nil;
+  // FSpiel := nil;
+
+  TeamGewollteAnzahlLabel.Caption := IntToStr(FGewollteTeamAnzahl);
+  StadionGewollteAnzahlLabel.Caption := IntToStr(FGewollteStadionAnzahl);
+
+  FTeamDB := TDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
+  FStadionDB := TDB<TStadion>.Create(TStadionEingabeFenster.GetTableName);
+
+  // Teams laden
+  if ( FTeamDB.Initialized ) then
+  begin
+    TeamDBUpdate;
+  end;
+  FTeamDB.AddDBUpdateEventListener(TeamDBUpdate);
+
+  // Stadien laden
+  if ( FStadionDB.Initialized ) then
+  begin
+    StadionDBUpdate;
+  end;
+  FStadionDB.AddDBUpdateEventListener(StadionDBUpdate); // fehler hier?
+
+end;
+
+procedure TMainForm.FormDestroy(Sender: TObject);
+begin
+  // Aufräumen
+  StadionEingabe.Free;
+  TeamEingabe.Free;
+
+
+  FState.Destroy;
+
+  FVerlosung.Destroy;
+  FStadionDB.Destroy;
+  FTeamDB.Destroy;
+end;
 
 procedure TMainForm.TeamDBUpdate;
 var
@@ -216,34 +262,29 @@ begin
   StadionEingabe.Show; // ShowModal;
 end;
 
-procedure TMainForm.FormCreate(Sender: TObject);
+procedure TMainForm.VerlosungStartenButtonClick(Sender: TObject);
 begin
-
-  FState := TWMState.Create;
-
-  FVerlosung := nil;
-  FGruppenphase := nil;
-  // FSpiel := nil;
-
-  TeamGewollteAnzahlLabel.Caption := IntToStr(FGewollteTeamAnzahl);
-  StadionGewollteAnzahlLabel.Caption := IntToStr(FGewollteStadionAnzahl);
-
-  FTeamDB := TDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
-  FStadionDB := TDB<TStadion>.Create(TStadionEingabeFenster.GetTableName);
-
-  // Teams laden
-  if ( FTeamDB.Initialized ) then
+  if ( not(Assigned(FVerlosung)) or not(FVerlosung.Initialized) ) then
   begin
-    TeamDBUpdate;
+    FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12], FState);
   end;
-//  FTeamDB.AddDBUpdateEventListener(TeamDBUpdate);
+  FVerlosungFertig := FVerlosung.VerlosungStarten(FTeamDB, Timer1, VerlosungSheet);
 
-  // Stadien laden
-  if ( FStadionDB.Initialized ) then
+  // Wenn es genügend Gruppen gibt
+  if ( FState.GetGroups.Count = 12 ) then
   begin
-    StadionDBUpdate;
+    ZurGruppenphaseButton.Enabled := true;
   end;
-  FStadionDB.AddDBUpdateEventListener(StadionDBUpdate); // fehler hier?
+end;
+
+procedure TMainForm.GruppenphaseStartenButtonClick(Sender: TObject);
+begin
+  if ( not(Assigned(FGruppenphase)) ) then
+  begin
+    FGruppenphase := TGruppenphaseUI.Create(FState);
+  end;
+
+  FGruppenphase.GruppenphaseStarten;
 
 end;
 
@@ -315,47 +356,6 @@ begin
   end;
 
   AllowChange := True;
-end;
-
-procedure TMainForm.VerlosungStartenButtonClick(Sender: TObject);
-begin
-  if ( not(Assigned(FVerlosung)) or not(FVerlosung.Initialized) ) then
-  begin
-    FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12], FState);
-  end;
-  
-  FVerlosungFertig := FVerlosung.VerlosungStarten(FTeamDB, Timer1, VerlosungSheet);
-
-  // Wenn es genügend Gruppen gibt
-  if ( FState.GetGroups.Count = 12 ) then
-  begin
-    ZurGruppenphaseButton.Enabled := true;
-  end;
-end;
-
-procedure TMainForm.GruppenphaseStartenButtonClick(Sender: TObject);
-begin
-  if ( not(Assigned(FGruppenphase)) ) then
-  begin
-    FGruppenphase := TGruppenphaseUI.Create(FState);
-  end;
-
-  FGruppenphase.GruppenphaseStarten;
-
-end;
-
-procedure TMainForm.FormDestroy(Sender: TObject);
-begin
-  // Aufräumen
-  StadionEingabe.Free;
-  TeamEingabe.Free;
-
-
-  FState.Destroy;
-
-  FVerlosung.Destroy;
-  FStadionDB.Destroy;
-  FTeamDB.Destroy;
 end;
 
 end.

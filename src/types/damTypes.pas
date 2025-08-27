@@ -75,7 +75,7 @@ type IState = interface
     procedure AddGroup(const AGroup: TGruppe);
     procedure SetGroups(const AGroups: TList<TGruppe>);
 
-    function GetTeamStanding: TDictionary<Byte, TTeamStand>;
+    function GetTeamStanding: TTeamStand>;
     procedure SetTeamStanding(const ANewStanding: TDictionary<Byte, TTeamStand>);
 
     property Teams: TList<TTeam> read GetTeams write SetTeams;

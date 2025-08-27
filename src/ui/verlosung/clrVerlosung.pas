@@ -27,7 +27,7 @@ type TVerlosungUI = class
     FState: TWMState;
 
     FInitialized: Boolean;
-    FTeams: TList<TTeam>; // for the AnimationCallback
+    FUITeams: TList<TTeam>; // ist eine reine Kopie, welche verändert wird, um visuelle Veränderung zu erstellen
 
     // array due to multiple Grids → meistens nur 12 Grids
     FColSize: array [0 .. 11] of Integer;
@@ -51,7 +51,7 @@ var
   i, j: Integer;
 begin
 
-  FTeams := nil;
+  FUITeams := nil;
   FState := AState;
   FGrids := TObjectList<TStringGrid>.Create;
 
@@ -81,6 +81,20 @@ begin
 
 end;
 
+destructor TVerlosungUI.Destroy;
+begin
+  FGrids.Free;
+
+  if ( (Assigned(FUITeams))
+    and (FUITeams <> nil)
+  ) then
+  begin
+    FUITeams.Free;
+  end;
+
+  inherited Destroy;
+end;
+
 function TVerlosungUI.VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer;  AOwner: TControl): Boolean;
 var
   Grid: TStringGrid;
@@ -92,27 +106,17 @@ var
   SehrStarkeTeams, StarkeTeams, MittelStarkeTeams, SchwacheTeams: TList<TTeam>;
 begin
 
-  if not ( FInitialized ) then
-  begin
-    raise Exception.Create
-      ('TVerlosungUI.VerlosungStarten Error: The UI is not initialized.');
-  end;
-
   try
     AnimationList := TObjectList<TAnimations>.Create;
-    FTeams := ATeamDB.GetStructuredTableFromCSV();
 
-    if ( (FTeams.Count mod 4) <> 0 ) then
+    // `GetStructuredTableFromCSV` erstellt für jeden Aufruf ein komplett neues Element/Objekt
+    FState.SetTeams(ATeamDB.GetStructuredTableFromCSV());
+    FUITeams := ATeamDB.GetStructuredTableFromCSV();
+
+    if ( (FUITeams.Count mod 4) <> 0 ) then
     begin
-      raise Exception.Create
-        ('TVerlosungUI.VerlosungStarten Error: The number of FTeams must be divisible by 4.');
+      raise Exception.Create('TVerlosungUI.VerlosungStarten Error: The number of FUITeams must be divisible by 4.');
     end;
-    if ( TeamNdx >= FTeams.Count ) then
-    begin
-      TeamNdx := 0;
-    end;
-
-
 
     SehrStarkeTeams   := TList<TTeam>.Create;
     StarkeTeams       := TList<TTeam>.Create;
@@ -122,7 +126,7 @@ begin
     try
 
       // Nur die sehr starken Teams nehmen
-      SehrStarkeTeams := clrUtils.FilterArray.TFilterArrayUtils.Filter2<TTeam>(FTeams,
+      SehrStarkeTeams := clrUtils.FilterArray.TFilterArrayUtils.Filter2<TTeam>(FUITeams,
         function(Param: TTeam): Boolean
         begin
           Result := Param.TeamRanking = TTeamRanking.SehrStark;
@@ -130,7 +134,7 @@ begin
       );
 
       // Nur die starken Teams nehmen
-      StarkeTeams := clrUtils.FilterArray.TFilterArrayUtils.Filter2<TTeam>(FTeams,
+      StarkeTeams := clrUtils.FilterArray.TFilterArrayUtils.Filter2<TTeam>(FUITeams,
         function(Param: TTeam): Boolean
         begin
           Result := Param.TeamRanking = TTeamRanking.Stark;
@@ -138,7 +142,7 @@ begin
       );
 
       // Nur die mittel starken Teams nehmen
-      MittelStarkeTeams := clrUtils.FilterArray.TFilterArrayUtils.Filter2<TTeam>(FTeams,
+      MittelStarkeTeams := clrUtils.FilterArray.TFilterArrayUtils.Filter2<TTeam>(FUITeams,
         function(Param: TTeam): Boolean
         begin
           Result := Param.TeamRanking = TTeamRanking.MittelStark;
@@ -146,7 +150,7 @@ begin
       );
 
       // Nur die schwachen Teams nehmen
-      SchwacheTeams := clrUtils.FilterArray.TFilterArrayUtils.Filter2<TTeam>(FTeams,
+      SchwacheTeams := clrUtils.FilterArray.TFilterArrayUtils.Filter2<TTeam>(FUITeams,
         function(Param: TTeam): Boolean
         begin
           Result := Param.TeamRanking = TTeamRanking.Schwach;
@@ -170,14 +174,14 @@ begin
       clrUtils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(SchwacheTeams);
 
 
-      FTeams.Clear;
+      FUITeams.Clear;
 
       for Ndx := 0 to SehrStarkeTeams.Count - 1 do
       begin
         // Jedes Sehr starke Team wird mit den anderen Stärken in eine Gruppe gepackt
 
         // Allein für die Darstellung
-        FTeams.AddRange([ SehrStarkeTeams[Ndx], StarkeTeams[Ndx], MittelStarkeTeams[Ndx], SchwacheTeams[Ndx] ]);
+        FUITeams.AddRange([ SehrStarkeTeams[Ndx], StarkeTeams[Ndx], MittelStarkeTeams[Ndx], SchwacheTeams[Ndx] ]);
 
         TempList := TGruppe.Create;
 
@@ -194,7 +198,7 @@ begin
       for Grid in FGrids do
       begin
 
-        if ( TeamNdx >= FTeams.Count ) then
+        if ( TeamNdx >= FUITeams.Count ) then
         begin
           break;
         end;
@@ -209,7 +213,7 @@ begin
             TempLabel := TStaticText.Create(nil);
 
             TempLabel.Parent := AOwner as TWinControl;
-            TempLabel.Caption := FTeams[TeamNdx].Name;
+            TempLabel.Caption := FUITeams[TeamNdx].Name;
             TempLabel.Top := Round((AOwner.Height / 2) - (Height / 2));
             // Middle
             TempLabel.Left := Round((AOwner.Width / 2) - (Width / 2)); // Middle
@@ -218,10 +222,8 @@ begin
             MoveTop := Grid.Top + Round(TempLabel.Height / 2) +
               (ColNdx * FRowSize[GridNdx]);
 
-            AnimationList.Add(TAnimations.Create(ATimer, TControl(TempLabel),
-              MoveTop, Grid.Left + 15, 150)); // .6 sek
-            AnimationList.Last.MoveObject(AnimationCallbackFn, ColNdx, GridNdx,
-              TeamNdx);
+            AnimationList.Add(TAnimations.Create(ATimer, TControl(TempLabel), MoveTop, Grid.Left + 15, 150)); // .150 sek
+            AnimationList.Last.MoveObject(AnimationCallbackFn, ColNdx, GridNdx, TeamNdx);
 
             Inc(TeamNdx);
           end;
@@ -230,6 +232,7 @@ begin
       end;
     finally
       AnimationList.Free;
+
       SehrStarkeTeams.Free;
       StarkeTeams.Free;
       MittelStarkeTeams.Free;
@@ -247,23 +250,15 @@ begin
   end;
 end;
 
-                                        // cols               // grids                   // teams
 procedure TVerlosungUI.AnimationCallbackFn(Count: Integer = -1; SecondCount: Integer = -1; ThirdCount: Integer = -1);
 begin
-
-  if ( (Count = -1) or (SecondCount = -1) ) then
-  begin
-    raise Exception.Create('Fehlermeldung');
-  end;
-
-  // ShowMessage('Team: ' + FTeams[ThirdCount].Name);
 
   try
     with FGrids[SecondCount] do
     begin
       // Hier können weitere Aktionen nach der Animation erfolgen, z.B.:
-      Cells[0, Count] := FTeams[ThirdCount].Name;
-      case FTeams[ThirdCount].TeamRanking of
+      Cells[0, Count] := FUITeams[ThirdCount].Name;
+      case FUITeams[ThirdCount].TeamRanking of
         TTeamRanking.SehrStark:
           Cells[1, Count] := 'Sehr Stark';
         TTeamRanking.Stark:
@@ -274,9 +269,9 @@ begin
           Cells[1, Count] := 'Schwach Stark';
       end;
 
-      Cells[2, Count] := IntToStr(FTeams[ThirdCount].HistorischeWMSiege);
+      Cells[2, Count] := IntToStr(FUITeams[ThirdCount].HistorischeWMSiege);
 
-      case FTeams[ThirdCount].TeamVerband of
+      case FUITeams[ThirdCount].TeamVerband of
         TTeamVerband.AFC:
           Cells[3, Count] := 'AFC';
         TTeamVerband.CAF:
@@ -298,20 +293,6 @@ begin
       ShowMessage('ThirdCount: ' + IntToStr(ThirdCount));
     end;
   end;
-end;
-
-destructor TVerlosungUI.Destroy;
-begin
-  FGrids.Free;
-
-  if ( (Assigned(FTeams))
-    and (FTeams <> nil)
-  ) then
-  begin
-    FTeams.Free;
-  end;
-
-  inherited Destroy;
 end;
 
 end.
