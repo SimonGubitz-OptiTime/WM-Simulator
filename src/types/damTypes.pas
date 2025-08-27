@@ -65,23 +65,25 @@ end;
 
 type IWMState = interface
   ['{00000115-0000-0000-C000-000000000049}']
-  private
-    Teams: array [0 .. 47] of TTeam; // 48 Teams in 2026
-    Stadien: array [0 .. 15] of TStadion; // 16 Stadien in 2026
-    FTeams: TList<TTeam>;
-    FTeamStände: TDictionary<Byte, TTeamStand>;
-  public
-    constructor Create;
+
+    function GetTeams: TList<TTeam>;
+    procedure SetTeams(const ATeams: TList<TTeam>);
+
+    function GetStadien: TList<TStadion>;
+    procedure SetStadien(const AStadien: TList<TStadion>);
+
+    function GetGroups: TList<TGruppe>;
+    procedure SetGroups(const AGroups: TList<TGruppe>);
 
     function GetTeamStanding(AID: Byte): TTeamStand;
-    procedure SetTeamStanding(AID: Byte; ANewStanding: TTeamStand);
+    procedure SetTeamStanding(AID: Byte; const ANewStanding: TTeamStand);
 
-    function GetGruppe(): TGruppe;
-    procedure AddGruppe(AGroup: TGruppe); overload;
-    procedure AddGruppe(AGroup: TList<TTeam>); overload;
-
-    destructor Destroy;
+    property Teams: TList<TTeam> read GetTeams write SetTeams;
+    property Stadien: TList<TStadion> read GetStadien write SetStadien;
+    property Groups: TList<TGruppe> read GetGroups write SetGroups;
+    property TeamStandings[AID: Byte]: TTeamStand read GetTeamStanding write SetTeamStanding;
 end;
+
 
 implementation
 
