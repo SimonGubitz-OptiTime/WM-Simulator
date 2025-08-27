@@ -87,9 +87,9 @@ type
     FGewollteStadionAnzahl: Integer = 16;
 
     procedure TeamDBUpdate;
-    procedure TeamTabelleZeichnen(ARows: TObjectList < TList < String >> );
+    procedure TeamTabelleZeichnen(ARows: TObjectList<TList<String>>);
     procedure StadionDBUpdate;
-    procedure StadionTabelleZeichnen(ARows: TObjectList < TList < String >> );
+    procedure StadionTabelleZeichnen(ARows: TObjectList<TList<String>>);
   public
     { Public-Deklarationen }
   end;
@@ -134,7 +134,7 @@ begin
   Rows.Free;
 end;
 
-procedure TMainForm.TeamTabelleZeichnen(ARows: TObjectList < TList < String >> );
+procedure TMainForm.TeamTabelleZeichnen(ARows: TObjectList<TList<String>>);
 begin
   if ( ARows.Count <> 0 ) then
   begin
@@ -176,7 +176,7 @@ begin
   Rows.Free;
 end;
 
-procedure TMainForm.StadionTabelleZeichnen(ARows: TObjectList < TList < String >> );
+procedure TMainForm.StadionTabelleZeichnen(ARows: TObjectList<TList<String>>);
 begin
   if ARows.Count <> 0 then
   begin
