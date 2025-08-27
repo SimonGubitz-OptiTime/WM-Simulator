@@ -116,6 +116,7 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object TeamHinzufuegenButton: TButton
+      object TeamHinzufuegenButton: TButton
         Left = 3
         Top = 54
         Width = 146
@@ -127,7 +128,7 @@ object MainForm: TMainForm
         OnClick = TeamHinzufuegenButtonClick
       end
       object StadionHinzufuegenButton: TButton
-        Left = 552
+        Left = 143
         Top = 54
         Width = 146
         Height = 25

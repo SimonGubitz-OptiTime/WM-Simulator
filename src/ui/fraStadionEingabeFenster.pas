@@ -41,7 +41,6 @@ type
     // ShortString, weil sonst der Compiler wegen des gemanageten Strings meckert
     const
       FTableName: ShortString = 'Stadien';
-  
 end;
 
 implementation

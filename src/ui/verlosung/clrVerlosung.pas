@@ -27,30 +27,31 @@ type
     FInitialized: Boolean;
     FTeams: TList<TTeam>; // for the AnimationCallback
 
-    // array due to multiple Grids
+    // array due to multiple Grids → meistens nur 12 Grids
     FColSize: array [0 .. 11] of Integer;
     FRowSize: array [0 .. 11] of Integer;
 
-    procedure AnimationCallbackFn(Count: Integer = -1;
-      SecondCount: Integer = -1; ThirdCount: Integer = -1);
+    procedure AnimationCallbackFn(Count: Integer = -1; SecondCount: Integer = -1; ThirdCount: Integer = -1);
 
   public
     property Initialized: Boolean read FInitialized;
-    constructor Create(Grids: array of TStringGrid);
+    constructor Create(AGrids: array of TStringGrid; AState: TWMState);
 
-    function VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer;
-      AOwner: TControl): Boolean;
+    function VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer; AOwner: TControl): Boolean;
 
     destructor Destroy; override;
   end;
 
 implementation
 
-constructor TVerlosungUI.Create(Grids: array of TStringGrid);
+constructor TVerlosungUI.Create(AGrids: array of TStringGrid; AState: TWMState);
 var
   i, j: Integer;
 begin
-  if ( Length(Grids) <> 12 ) then
+
+  FState := AState;
+
+  if ( Length(AGrids) <> 12 ) then
   begin
     raise Exception.Create('TVerlosungUI.Create Error: There must be exactly 12 Grids.');
   end;
@@ -60,26 +61,25 @@ begin
   for i := 0 to 11 do
   begin
 
-    FColSize[i] := Floor(Grids[i].Width / Grids[i].ColCount) - 2;
-    FRowSize[i] := Floor(Grids[i].Height / Grids[i].RowCount) - 2;
+    FColSize[i] := Floor(AGrids[i].Width / AGrids[i].ColCount) - 2;
+    FRowSize[i] := Floor(AGrids[i].Height / AGrids[i].RowCount) - 2;
 
-    for j := 0 to Grids[i].ColCount - 1 do
+    for j := 0 to AGrids[i].ColCount - 1 do
     begin
-      Grids[i].ColWidths[j] := FColSize[i];
+      AGrids[i].ColWidths[j] := FColSize[i];
     end;
-    for j := 0 to Grids[i].RowCount - 1 do
+    for j := 0 to AGrids[i].RowCount - 1 do
     begin
-      Grids[i].RowHeights[j] := FRowSize[i];
+      AGrids[i].RowHeights[j] := FRowSize[i];
     end;
-    FGrids.Add(Grids[i]);
+    FGrids.Add(AGrids[i]);
   end;
 
   FInitialized := true;
 
 end;
 
-function TVerlosungUI.VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer;
-  AOwner: TControl): Boolean;
+function TVerlosungUI.VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer;  AOwner: TControl): Boolean;
 var
   Grid: TStringGrid;
   TempLabel: TStaticText;
@@ -124,7 +124,7 @@ begin
           Result := Param.TeamRanking = TTeamRanking.SehrStark;
         end
       );
-      
+
       // Nur die starken Teams nehmen
       StarkeTeams := clrUtils.FilterArray.TFilterArrayUtils.Filter2<TTeam>(FTeams,
         function(Param: TTeam): Boolean
@@ -132,7 +132,7 @@ begin
           Result := Param.TeamRanking = TTeamRanking.Stark;
         end
       );
-      
+
       // Nur die mittel starken Teams nehmen
       MittelStarkeTeams := clrUtils.FilterArray.TFilterArrayUtils.Filter2<TTeam>(FTeams,
         function(Param: TTeam): Boolean
@@ -171,9 +171,16 @@ begin
       for Ndx := 0 to SehrStarkeTeams.Count - 1 do
       begin
         // Jedes Sehr starke Team wird mit den anderen Stärken in eine Gruppe gepackt
-        FTeams.AddRange([ SehrStarkeTeams[Ndx], StarkeTeams[Ndx], MittelStarkeTeams[Ndx], SchwacheTeams[Ndx] ]);
-      end;
 
+        // Allein für die Darstellung
+        FTeams.AddRange([ SehrStarkeTeams[Ndx], StarkeTeams[Ndx], MittelStarkeTeams[Ndx], SchwacheTeams[Ndx] ]);
+
+        // und für die zentrale Lagerung
+        FState.AddGroup(
+          TGruppe.Create.Add([ SehrStarkeTeams[Ndx], StarkeTeams[Ndx], MittelStarkeTeams[Ndx], SchwacheTeams[Ndx] ])
+        );
+      end;
+ 
 
       // Für alle Grids je 4 Teams eintragen
       TeamNdx := 0;

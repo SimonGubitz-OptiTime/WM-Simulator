@@ -82,6 +82,8 @@ type
     FVerlosungFertig: Boolean;
     FSpielplanFertig: Boolean;
 
+    FState: TWMState;
+
   const
     FGewollteTeamAnzahl: Integer = 48;
     FGewollteStadionAnzahl: Integer = 16;
@@ -200,8 +202,10 @@ end;
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
 
+  FState := TWMState.Create;
+
   FVerlosung := nil;
-  // FSpielplan := nil;
+  // FGruppenphase := nil;
   // FSpiel := nil;
 
   TeamGewollteAnzahlLabel.Caption := IntToStr(FGewollteTeamAnzahl);

@@ -12,19 +12,27 @@ uses
   clrDB;
 
 
-type TState = class(TInterfacedObject, IWMState)
+type TWMState = class(TInterfacedObject, IState)
   private
-    FTeams: TList<TTeam>;
-    FTeamStände: TDictionary<Byte, TTeamStand>;
+    property Teams: TList<TTeam> read GetTeams write SetTeams;
+    property Stadien: TList<TStadion> read GetStadien write SetStadien;
+    property Groups: TList<TGruppe> read GetGroups write SetGroups;
+    property TeamStandings: TDictionary<Byte, TTeamStand> read GetTeamStanding write SetTeamStanding;
   public
     constructor Create;
 
-    function GetTeamStanding(AID: Byte): TTeamStand;
-    procedure SetTeamStanding(AID: Byte; ANewStanding: TTeamStand);
+    function GetTeams: TList<TTeam>;
+    procedure SetTeams(const ATeams: TList<TTeam>);
 
-    function GetGruppe(): TGruppe;
-    procedure AddGruppe(AGroup: TGruppe); overload;
-    procedure AddGruppe(AGroup: TList<TTeam>); overload;
+    function GetStadien: TList<TStadion>;
+    procedure SetStadien(const AStadien: TList<TStadion>);
+
+    function GetGroups: TList<TGruppe>;
+    procedure AddGroup(const AGroup: TGruppe);
+    procedure SetGroups(const AGroups: TList<TGruppe>);
+
+    function GetTeamStanding(AID: Byte): TTeamStand;
+    procedure SetTeamStanding(AID: Byte; const ANewStanding: TTeamStand);
 
     destructor Destroy;
 end;
@@ -32,53 +40,61 @@ end;
 
 implementation
 
-constructor TState.Create;
+constructor TWMState.Create;
 begin
   FTeams.Create;
   FTeamStände.Create;
 end;
 
-destructor TState.Destroy;
+destructor TWMState.Destroy;
 begin
   FTeams.Free;
   FTeamStände.Free;
 end;
 
+function GetTeams: TList<TTeam>;
+begin
+  Result := FTeams;
+end;
+
+procedure SetTeams(const ATeams: TList<TTeam>);
+begin
+  FTeams := ATeams;
+end;
+
+function GetStadien: TList<TStadion>;
+begin
+  Result := FStadien;
+end;
+
+procedure SetStadien(const AStadien: TList<TStadion>);
+begin
+  FStadien := AStadien;
+end;
+
+function GetGroups: TList<TGruppe>;
+begin
+  Result := FGroups;
+end;
+
+procedure AddGroup(const AGroup: TGruppe);
+begin
+  FGroups.Add(AGroup);
+end;
+
+procedure SetGroups(const AGroups: TList<TGruppe>);
+begin
+  FGroups := AGroups;
+end;
+
 function GetTeamStanding(AID: Byte): TTeamStand;
-var
-  HasValue: Boolean;
-  TeamValue: TTeamStand;
 begin
-
-  HasValue := FTeamStände.TryGetValue(AID, TeamValue);
-
-  if ( HasValue ) then
-  begin
-    Result := TeamValue;
-  end
-  else
-  begin
-    Result := Default(TTeamStand);
-  end;
-
+  Result := FTeamStanding;
 end;
 
-procedure SetTeamStanding(AID: Byte; ANewStanding: TTemastand);
-var
-  HasValue: Boolean;
+procedure SetTeamStanding(AID: Byte; const ANewStanding: TTeamStand);
 begin
-
-  HasValue := FTeamStände.ContainsKey(AID);
-
-  if ( not(HasValue) ) then
-  begin
-    Exit;
-  end;
-
-
-  FTeamStände.AddOrSetValue(AID, ANewStanding);
-
+  FTeamStanding := ATeamStanding;
 end;
-
 
 end.
