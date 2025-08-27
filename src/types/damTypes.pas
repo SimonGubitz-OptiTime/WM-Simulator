@@ -20,6 +20,7 @@ type TStadion = record
   // " - für die Simulation wenn >90% Kapazität, +5% Siegchancen wenn Heimstadion
 end;
 
+{$RTTI INHERIT [vcPublic]}
 type TTeam = record
 public
   Name: String;
@@ -31,13 +32,10 @@ public
   SpielerListe: array of String;
   // ↑ Nur Namen, muss um Simplizität in der Rtti array bleiben, kein TList<string>
   TeamRanking: TTeamRanking;
+
+// private sind für RTTI unsichtbar
 private
-  ToreGeschossen: Byte;
-  ToreKassiert: Byte;
-  Siege: Byte;
-  Unentschieden: Byte;
-  Niederlagen: Byte;
- 
+  ID: Byte;
 end;
 
 type TSpiel = record
@@ -51,9 +49,37 @@ type TSpiel = record
   Stadion: TStadion;
 end;
 
-type TWMState = class
-  Teams: array [0 .. 47] of TTeam; // 48 Teams in 2026
-  Stadien: array [0 .. 15] of TStadion; // 16 Stadien in 2026
+type TTeamStand = record
+  Punkte: Byte;
+  ToreGeschossen: Byte;
+  ToreKassiert: Byte;
+  Siege: Byte;
+  Unentschieden: Byte;
+  Niederlagen: Byte;
+end;
+
+type TGruppe = record
+  Teams: TList<TTeam>;
+end;
+
+type IWMState = interface
+  ['{00000115-0000-0000-C000-000000000049}']
+  private
+    Teams: array [0 .. 47] of TTeam; // 48 Teams in 2026
+    Stadien: array [0 .. 15] of TStadion; // 16 Stadien in 2026
+    FTeams: TList<TTeam>;
+    FTeamStände: TDictionary<Byte, TTeamStand>;
+  public
+    constructor Create;
+
+    function GetTeamStanding(AID: Byte): TTeamStand;
+    procedure SetTeamStanding(AID: Byte; ANewStanding: TTeamStand);
+
+    function GetGruppe(): TGruppe;
+    procedure AddGruppe(AGroup: TGruppe); overload;
+    procedure AddGruppe(AGroup: TList<TTeam>); overload;
+
+    destructor Destroy;
 end;
 
 implementation
