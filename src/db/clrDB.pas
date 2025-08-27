@@ -16,12 +16,14 @@ type
     FFS: TFileStream;
     FDBUpdateEventListeners: TList<TDBUpdateEvent>;
     FTableName: String;
+
+    /// Gibt an, ob die Datei bereit ist geöffnet und beschrieben zu werden
     FInitialized: Boolean;
     FFileName: String;
     FFileDirectory: String;
 
-    var FCachedCSV: TList<T>;
-    var FCachedUnstructuredCSV: TObjectList<TList<String>>;
+    class var CachedCSV: TList<T>;
+    class var CachedUnstructuredCSV: TObjectList<TList<String>>;
 
     procedure CallDBUpdateEventListeners();
     procedure AddCSVTableToDB(CSVObject: T);
@@ -305,8 +307,9 @@ begin
   // Free the list of event listeners
   FDBUpdateEventListeners.Free;
 
-  // Close the file stream
-  FFS.Free;
+  // Clear the cached data
+  CachedCSV.Free;
+  CachedUnstructuredCSV.Free;
 
   // Call the inherited destructor
   inherited Destroy;

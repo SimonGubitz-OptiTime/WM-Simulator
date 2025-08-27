@@ -63,8 +63,8 @@ type TGruppe = record
   Teams: TList<TTeam>;
 end;
 
-type IWMState = interface
-  ['{00000115-0000-0000-C000-000000000049}']
+type IState = interface
+  ['{af30318b-f132-4cec-be9e-38e05ad71f14}']
 
     function GetTeams: TList<TTeam>;
     procedure SetTeams(const ATeams: TList<TTeam>);
@@ -73,6 +73,7 @@ type IWMState = interface
     procedure SetStadien(const AStadien: TList<TStadion>);
 
     function GetGroups: TList<TGruppe>;
+    procedure AddGroup(const AGroup: TGruppe);
     procedure SetGroups(const AGroups: TList<TGruppe>);
 
     function GetTeamStanding(AID: Byte): TTeamStand;
@@ -81,7 +82,7 @@ type IWMState = interface
     property Teams: TList<TTeam> read GetTeams write SetTeams;
     property Stadien: TList<TStadion> read GetStadien write SetStadien;
     property Groups: TList<TGruppe> read GetGroups write SetGroups;
-    property TeamStandings[AID: Byte]: TTeamStand read GetTeamStanding write SetTeamStanding;
+    property TeamStandings: TDictionary<Byte, TTeamStand> read GetTeamStanding write SetTeamStanding;
 end;
 
 
