@@ -220,12 +220,12 @@ begin
 
     try
       FFS.Position := 0;
-      //FCachedUnstructuredCSV.Clear; // fehler hier
+      // FCachedUnstructuredCSV.Clear; // fehler hier
       while not(SR.EndOfStream) do
       begin
         Line := SR.ReadLine();
         Temp := clrUtils.CSV.DeserializeCSV(Line);
-        //FCachedUnstructuredCSV.Add(Temp); // fehler hier
+        // FCachedUnstructuredCSV.Add(Temp); // fehler hier
         Result.Add(Temp);
       end;
     finally
@@ -301,14 +301,14 @@ begin
 
   // Clear the cached data
   FCachedCSV.Free;
-//  FCachedUnstructuredCSV.Free;
+  // FCachedUnstructuredCSV.Free;
 
   // Free the list of event listeners
   FDBUpdateEventListeners.Free;
 
   // Clear the cached data
   FCachedCSV.Free;
-//  FCachedUnstructuredCSV.Free;
+  // FCachedUnstructuredCSV.Free;
 
   // Call the inherited destructor
   inherited Destroy;

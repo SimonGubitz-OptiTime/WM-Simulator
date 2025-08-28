@@ -144,7 +144,7 @@ begin
   RttiContext := TRttiContext.Create;
 
   try
-    RttiFields := TObjectList<TRttiField>.Create;
+    RttiFields := TObjectList<TRttiField>.Create(true);
 
     try
       RttiType := RttiContext.GetType(TypeInfo(T));
@@ -161,7 +161,7 @@ begin
 
       end;
     finally
-      // RttiFields.Free;
+      RttiFields.Free;
     end;
   finally
     RttiContext.Free;
@@ -182,7 +182,7 @@ begin
 
   try
     RttiType := RttiContext.GetType(TypeInfo(T));
-    RttiFields := TObjectList<TRttiField>.Create;
+    RttiFields := TObjectList<TRttiField>.Create(true);
     try
       RttiFields.AddRange(RttiType.GetFields);
 
@@ -191,7 +191,7 @@ begin
         Result.Add(clrUtils.RTTI.TRttiUtils<T>.TToStr(@Row, RttiFields[Ndx]));
       end;
     finally
-      // RttiFields.Free;
+      RttiFields.Free;
     end;
   finally
     RttiContext.Free;
