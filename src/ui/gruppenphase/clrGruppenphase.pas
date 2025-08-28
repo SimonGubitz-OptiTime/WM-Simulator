@@ -77,7 +77,7 @@ begin
     end;
   end;
 
-  // FGameDict
+  // FGameDict.ToArray
 
 end;
 
