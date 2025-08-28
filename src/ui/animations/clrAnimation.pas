@@ -31,12 +31,10 @@ type
     FCallbackThirdCount: Integer;
   public
 
-    constructor Create(var ATimer: TTimer; AObject: TControl; AMoveToTop: Integer;
-      AMoveToLeft: Integer; ATime: Integer;
-      ADestroyObjectOnFinish: Boolean = true);
+    constructor Create(var ATimer: TTimer; AObject: TControl; ATime: Integer; ADestroyObjectOnFinish: Boolean = true);
 
-    procedure MoveObject(ACallbackFn: TAnimationCallback; ACount: Integer = -1;
-      ASecondCount: Integer = -1; AThirdCount: Integer = -1);
+    procedure MoveObject(ACallbackFn: TAnimationCallback; AMoveToTop: Integer; AMoveToLeft: Integer; ACount: Integer = -1; ASecondCount: Integer = -1; AThirdCount: Integer = -1);
+    procedure TypewriterEffect(AText: String);
 
     destructor Free;
 
@@ -49,9 +47,7 @@ type
 
 implementation
 
-constructor TAnimations.Create(var ATimer: TTimer; AObject: TControl;
-  AMoveToTop: Integer; AMoveToLeft: Integer; ATime: Integer;
-  ADestroyObjectOnFinish: Boolean = true);
+constructor TAnimations.Create(var ATimer: TTimer; AObject: TControl; ATime: Integer; ADestroyObjectOnFinish: Boolean = true);
 begin
 
   FDestroyObject := ADestroyObjectOnFinish;
@@ -66,18 +62,30 @@ begin
   FTimer.OnTimer := MoveObjectTick;
   FTimerAmount := 0;
 
-  FStartTop := AObject.Top;
-  FStartLeft := AObject.Left;
-  FWayTop := AMoveToTop - AObject.Top;
-  FWayLeft := AMoveToLeft - AObject.Left;
-
   FTimerDuration := ATime;
 
 end;
 
+destructor TAnimations.Free;
+begin
+  FTimer.Enabled := false;
+  FTimer.Free;
+
+  if ( FDestroyObject ) then
+  begin
+    FObject.Free;
+  end;
+end;
+
 procedure TAnimations.MoveObject(ACallbackFn: TAnimationCallback;
+  AMoveToTop: Integer; AMoveToLeft: Integer;
   ACount: Integer = -1; ASecondCount: Integer = -1; AThirdCount: Integer = -1);
 begin
+
+  FStartTop := FObject.Top;
+  FStartLeft := FObject.Left;
+  FWayTop := AMoveToTop - FObject.Top;
+  FWayLeft := AMoveToLeft - FObject.Left;
 
   FCallbackFn := AcallbackFn;
   FCallbackCount := ACount;
@@ -127,7 +135,7 @@ begin
     Exit;
   end;
 
-  if not ( FObject is TControl ) then
+  if ( not(FObject is TControl) ) then
   begin
     raise Exception.Create('TAnimations.MoveObjectTick Error: Sender is not a TControl.');
   end;
@@ -140,15 +148,14 @@ begin
 
 end;
 
-destructor TAnimations.Free;
+procedure TAnimations.TypewriterEffect(AText: String);
 begin
-  FTimer.Enabled := false;
-  FTimer.Free;
-
-  if ( FDestroyObject ) then
+  if ( not(FObject is TControl) ) then
   begin
-    FObject.Free;
+    raise Exception.Create('TAnimations.MoveObjectTick Error: Sender is not a TControl.');
   end;
+  
 end;
+
 
 end.

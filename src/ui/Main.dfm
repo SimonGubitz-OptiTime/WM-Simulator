@@ -388,6 +388,20 @@ object MainForm: TMainForm
         Height = 15
         Caption = 'Spiel4Label'
       end
+      object Spiel5Label: TLabel
+        Left = 616
+        Top = 312
+        Width = 66
+        Height = 15
+        Caption = 'Spiel5Label'
+      end
+      object Spiel6Label: TLabel
+        Left = 616
+        Top = 368
+        Width = 66
+        Height = 15
+        Caption = 'Spiel6Label'
+      end
       object ZumSpielButton: TButton
         Left = 1019
         Top = 3
@@ -407,7 +421,7 @@ object MainForm: TMainForm
         TabOrder = 1
         OnClick = GruppenphaseStartenButtonClick
       end
-      object StringGrid13: TStringGrid
+      object GruppenphaseStringGrid: TStringGrid
         Left = 32
         Top = 88
         Width = 385

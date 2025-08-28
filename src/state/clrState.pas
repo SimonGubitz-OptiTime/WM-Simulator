@@ -22,6 +22,7 @@ type TWMState = class(TInterfacedObject, IState)
     constructor Create;
 
     function GetTeams: TList<TTeam>;
+    procedure SetTeam(const ANdx: Integer; const ATeam: TTeam);
     procedure SetTeams(const ATeams: TList<TTeam>);
 
     function GetStadien: TList<TStadion>;
@@ -66,6 +67,16 @@ end;
 function TWMState.GetTeams: TList<TTeam>;
 begin
   Result := FTeams;
+end;
+
+procedure TWMState.SetTeam(const ANdx: Integer; const ATeam: TTeam);
+begin
+  if ( (ANdx < 0) or (ANdx >= FTeams.Count) ) then
+  begin
+    raise Exception.Create('TWMState.SetTeam Error: Index out of bounds.');
+  end;
+
+  FTeams[ANdx] := ATeam;
 end;
 
 procedure TWMState.SetTeams(const ATeams: TList<TTeam>);

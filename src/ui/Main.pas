@@ -68,11 +68,13 @@ type  TMainForm = class(TForm)
     VerlosungStartenButton: TButton;
     Timer1: TTimer;
     GruppenphaseStartenButton: TButton;
-    StringGrid13: TStringGrid;
+    GruppenphaseStringGrid: TStringGrid;
     Spiel1Label: TLabel;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
+    Spiel5Label: TLabel;
+    Spiel6Label: TLabel;
 
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -166,7 +168,9 @@ begin
 
   FState.Destroy;
 
-  FVerlosung.Destroy;
+  FVerlosung.Free;
+  FGruppenphase.Free;
+
   FStadionDB.Destroy;
   FTeamDB.Destroy;
 end;
@@ -286,7 +290,7 @@ procedure TMainForm.GruppenphaseStartenButtonClick(Sender: TObject);
 begin
   if ( not(Assigned(FGruppenphase)) ) then
   begin
-    FGruppenphase := TGruppenphaseUI.Create(FState);
+    FGruppenphase := TGruppenphaseUI.Create(GruppenphaseStringGrid, FState);
   end;
 
   FGruppenphase.GruppenphaseStarten;

@@ -3,16 +3,18 @@ unit clrUtils.TableFormating;
 interface
 
 uses
-  System.Generics.Collections, System.SysUtils,
-  Vcl.Grids;
+  System.SysUtils,
+  System.Generics.Collections,
+  Vcl.Grids,
+  damTypes;
 
-procedure SetColumnFullWidth(var AGrid: TStringGrid; ACol: Integer);
-function TabelleZeichnen(var AGrid: TStringGrid;
-  ARows: TObjectList < TList < String >> ): String;
+procedure SetColumnFullWidth(AGrid: TStringGrid; ACol: Integer);
+procedure TabelleZeichnen(AGrid: TStringGrid; ARows: TObjectList<TList<String>> );
+procedure TeamZeileZeichnen(AGrid: TStringGrid; const ATeam: TTeam; const ARow: Integer);
 
 implementation
 
-procedure SetColumnFullWidth(var AGrid: TStringGrid; ACol: Integer);
+procedure SetColumnFullWidth(AGrid: TStringGrid; ACol: Integer);
 var
   Ndx, StrWidth, ColWidth: Integer;
 begin
@@ -34,8 +36,7 @@ begin
 
 end;
 
-function TabelleZeichnen(var AGrid: TStringGrid;
-  ARows: TObjectList < TList < String >> ): String;
+procedure TabelleZeichnen(AGrid: TStringGrid; ARows: TObjectList<TList<String>>);
 var
   NdxRows, NdxCols: Integer;
 begin
@@ -52,5 +53,42 @@ begin
     end;
   end;
 end;
+
+procedure TeamZeileZeichnen(AGrid: TStringGrid; const ATeam: TTeam; const ARow: Integer);
+begin
+
+  with AGrid do
+  begin
+    Cells[0, ARow] := ATeam.Name;
+    case ATeam.TeamRanking of
+      TTeamRanking.SehrStark:
+        Cells[1, ARow] := 'Sehr Stark';
+      TTeamRanking.Stark:
+        Cells[1, ARow] := 'Stark';
+      TTeamRanking.MittelStark:
+        Cells[1, ARow] := 'Mittel Stark';
+      TTeamRanking.Schwach:
+        Cells[1, ARow] := 'Schwach Stark';
+    end;
+
+    Cells[2, ARow] := IntToStr(ATeam.ID);
+
+    case ATeam.TeamVerband of
+      TTeamVerband.AFC:
+        Cells[3, ARow] := 'AFC';
+      TTeamVerband.CAF:
+        Cells[3, ARow] := 'CAF';
+      TTeamVerband.CONCACAF:
+        Cells[3, ARow] := 'CONCACAF';
+      TTeamVerband.CONMEBOL:
+        Cells[3, ARow] := 'CONMEBOL';
+      TTeamVerband.OFC:
+        Cells[3, ARow] := 'OFC';
+      TTeamVerband.UEFA:
+        Cells[3, ARow] := 'UEFA';
+    end;
+  end;
+end;
+
 
 end.
