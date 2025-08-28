@@ -360,6 +360,34 @@ object MainForm: TMainForm
         Font.Style = []
         ParentFont = False
       end
+      object Spiel1Label: TLabel
+        Left = 616
+        Top = 88
+        Width = 66
+        Height = 15
+        Caption = 'Spiel1Label'
+      end
+      object Label1: TLabel
+        Left = 616
+        Top = 144
+        Width = 66
+        Height = 15
+        Caption = 'Spiel2Label'
+      end
+      object Label2: TLabel
+        Left = 616
+        Top = 200
+        Width = 66
+        Height = 15
+        Caption = 'Spiel3Label'
+      end
+      object Label3: TLabel
+        Left = 616
+        Top = 256
+        Width = 66
+        Height = 15
+        Caption = 'Spiel4Label'
+      end
       object ZumSpielButton: TButton
         Left = 1019
         Top = 3
@@ -372,12 +400,23 @@ object MainForm: TMainForm
       end
       object GruppenphaseStartenButton: TButton
         Left = 471
-        Top = 329
+        Top = 505
         Width = 154
         Height = 25
         Caption = 'Gruppenphase starten'
         TabOrder = 1
         OnClick = GruppenphaseStartenButtonClick
+      end
+      object StringGrid13: TStringGrid
+        Left = 32
+        Top = 88
+        Width = 385
+        Height = 241
+        ColCount = 4
+        FixedCols = 0
+        RowCount = 4
+        FixedRows = 0
+        TabOrder = 2
       end
     end
     object SpielSheet: TTabSheet

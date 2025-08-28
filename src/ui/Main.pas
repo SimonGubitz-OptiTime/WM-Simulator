@@ -68,6 +68,11 @@ type  TMainForm = class(TForm)
     VerlosungStartenButton: TButton;
     Timer1: TTimer;
     GruppenphaseStartenButton: TButton;
+    StringGrid13: TStringGrid;
+    Spiel1Label: TLabel;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
 
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
