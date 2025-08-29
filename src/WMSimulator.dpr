@@ -19,7 +19,8 @@ uses
   clrUtils.FilterArray in 'utils\arrays\clrUtils.FilterArray.pas',
   clrUtils.FixedArrays in 'utils\arrays\clrUtils.FixedArrays.pas',
   clrState in 'state\clrState.pas',
-  clrGruppenphase in 'ui\gruppenphase\clrGruppenphase.pas';
+  clrGruppenphase in 'ui\gruppenphase\clrGruppenphase.pas',
+  clrSimulation in 'simulation\clrSimulation.pas';
 
 {$R *.res}
 

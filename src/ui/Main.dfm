@@ -1,29 +1,40 @@
 object MainForm: TMainForm
-  Left = 429
-  Top = 187
+  Left = 184
+  Top = 145
+  Anchors = []
   Caption = 'WM-Simulator'
-  ClientHeight = 715
-  ClientWidth = 1105
+  ClientHeight = 741
+  ClientWidth = 1294
   Color = clBtnFace
+  Constraints.MinHeight = 500
+  Constraints.MinWidth = 1310
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -12
   Font.Name = 'Arial'
   Font.Style = []
   Position = poDesigned
+  PrintScale = poNone
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  DesignSize = (
+    1294
+    741)
   TextHeight = 15
   object PageControl: TPageControl
     Left = 0
     Top = 0
-    Width = 1105
-    Height = 713
-    ActivePage = GruppenphaseSheet
+    Width = 1297
+    Height = 737
+    ActivePage = SpielSheet
+    Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 0
     OnChanging = PageControlChanging
     object Stammdaten: TTabSheet
       Caption = 'Stammdaten'
+      DesignSize = (
+        1289
+        707)
       object UeberschriftStammdaten: TLabel
         Left = 3
         Top = 3
@@ -38,10 +49,11 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object StadionAnzahlLabel: TLabel
-        Left = 552
+        Left = 691
         Top = 85
         Width = 14
         Height = 15
+        Anchors = [akTop, akRight]
         Caption = '00'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clRed
@@ -51,10 +63,11 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object StadionVergleichsLabel: TLabel
-        Left = 572
+        Left = 711
         Top = 85
         Width = 7
         Height = 15
+        Anchors = [akTop, akRight]
         Caption = '<'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -64,10 +77,11 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object StadionGewollteAnzahlLabel: TLabel
-        Left = 590
+        Left = 732
         Top = 85
         Width = 14
         Height = 15
+        Anchors = [akTop, akRight]
         Caption = '16'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clGreen
@@ -127,10 +141,11 @@ object MainForm: TMainForm
         OnClick = TeamHinzufuegenButtonClick
       end
       object StadionHinzufuegenButton: TButton
-        Left = 552
+        Left = 691
         Top = 54
         Width = 146
         Height = 25
+        Anchors = [akTop, akRight]
         Caption = 'Stadion Hinzuf'#252'gen'
         ImageIndex = 4
         Images = SymbolImageList
@@ -138,10 +153,11 @@ object MainForm: TMainForm
         OnClick = StadionHinzufuegenButtonClick
       end
       object StadienStringGrid: TStringGrid
-        Left = 552
-        Top = 104
-        Width = 542
-        Height = 513
+        Left = 691
+        Top = 106
+        Width = 595
+        Height = 598
+        Anchors = [akTop, akRight, akBottom]
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -12
@@ -151,17 +167,19 @@ object MainForm: TMainForm
         TabOrder = 2
       end
       object TeamsStringGrid: TStringGrid
-        Left = 4
+        Left = 3
         Top = 106
-        Width = 542
-        Height = 513
+        Width = 598
+        Height = 598
+        Anchors = [akLeft, akTop, akBottom]
         TabOrder = 3
       end
       object ZurVerlosungButton: TButton
-        Left = 1019
+        Left = 1211
         Top = 3
         Width = 75
         Height = 25
+        Anchors = [akTop, akRight]
         Caption = 'Verlosen'
         Enabled = False
         TabOrder = 4
@@ -171,6 +189,9 @@ object MainForm: TMainForm
     object VerlosungSheet: TTabSheet
       Caption = 'Verlosung'
       ImageIndex = -1
+      DesignSize = (
+        1289
+        707)
       object UeberschriftVerlosung: TLabel
         Left = 3
         Top = 3
@@ -185,10 +206,11 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object ZurGruppenphaseButton: TButton
-        Left = 1000
+        Left = -11928
         Top = 3
         Width = 94
         Height = 25
+        Anchors = [akTop, akRight]
         Caption = 'Gruppenphase'
         Enabled = False
         TabOrder = 0
@@ -207,7 +229,7 @@ object MainForm: TMainForm
       end
       object StringGrid2: TStringGrid
         Left = 3
-        Top = 180
+        Top = 203
         Width = 320
         Height = 120
         ColCount = 4
@@ -218,7 +240,7 @@ object MainForm: TMainForm
       end
       object StringGrid3: TStringGrid
         Left = 3
-        Top = 306
+        Top = 346
         Width = 320
         Height = 120
         ColCount = 4
@@ -229,7 +251,7 @@ object MainForm: TMainForm
       end
       object StringGrid4: TStringGrid
         Left = 3
-        Top = 432
+        Top = 488
         Width = 320
         Height = 120
         ColCount = 4
@@ -240,7 +262,7 @@ object MainForm: TMainForm
       end
       object StringGrid5: TStringGrid
         Left = 3
-        Top = 558
+        Top = 630
         Width = 320
         Height = 120
         ColCount = 4
@@ -250,10 +272,11 @@ object MainForm: TMainForm
         TabOrder = 6
       end
       object StringGrid6: TStringGrid
-        Left = 774
+        Left = 963
         Top = 54
-        Width = 320
+        Width = 323
         Height = 120
+        Anchors = [akTop, akRight]
         ColCount = 4
         FixedCols = 0
         RowCount = 4
@@ -261,10 +284,11 @@ object MainForm: TMainForm
         TabOrder = 7
       end
       object StringGrid7: TStringGrid
-        Left = 774
-        Top = 180
-        Width = 320
+        Left = 963
+        Top = 203
+        Width = 323
         Height = 120
+        Anchors = [akTop, akRight]
         ColCount = 4
         FixedCols = 0
         RowCount = 4
@@ -272,10 +296,11 @@ object MainForm: TMainForm
         TabOrder = 8
       end
       object StringGrid8: TStringGrid
-        Left = 774
-        Top = 306
-        Width = 320
+        Left = 963
+        Top = 338
+        Width = 323
         Height = 120
+        Anchors = [akTop, akRight]
         ColCount = 4
         FixedCols = 0
         RowCount = 4
@@ -283,10 +308,11 @@ object MainForm: TMainForm
         TabOrder = 9
       end
       object StringGrid9: TStringGrid
-        Left = 774
-        Top = 432
-        Width = 320
+        Left = 963
+        Top = 488
+        Width = 323
         Height = 120
+        Anchors = [akTop, akRight]
         ColCount = 4
         FixedCols = 0
         RowCount = 4
@@ -294,10 +320,11 @@ object MainForm: TMainForm
         TabOrder = 10
       end
       object StringGrid10: TStringGrid
-        Left = 774
-        Top = 558
-        Width = 320
+        Left = 963
+        Top = 630
+        Width = 323
         Height = 120
+        Anchors = [akTop, akRight]
         ColCount = 4
         FixedCols = 0
         RowCount = 4
@@ -305,19 +332,23 @@ object MainForm: TMainForm
         TabOrder = 2
       end
       object VerlosungStartenButton: TButton
-        Left = 511
-        Top = 329
-        Width = 75
-        Height = 25
+        Left = 610
+        Top = 324
+        Width = 70
+        Height = 27
+        Anchors = [akLeft, akRight, akBottom]
         Caption = 'Shuffle'
+        Constraints.MaxWidth = 100
+        Constraints.MinHeight = 27
+        Constraints.MinWidth = 70
         ImageIndex = 1
         Images = SymbolImageList
         TabOrder = 11
         OnClick = VerlosungStartenButtonClick
       end
       object StringGrid11: TStringGrid
-        Left = 388
-        Top = 432
+        Left = 507
+        Top = 488
         Width = 320
         Height = 120
         ColCount = 4
@@ -327,8 +358,8 @@ object MainForm: TMainForm
         TabOrder = 12
       end
       object StringGrid12: TStringGrid
-        Left = 388
-        Top = 558
+        Left = 507
+        Top = 630
         Width = 320
         Height = 120
         ColCount = 4
@@ -347,6 +378,9 @@ object MainForm: TMainForm
       Font.Style = []
       ImageIndex = 2
       ParentFont = False
+      DesignSize = (
+        1289
+        707)
       object UeberschriftGruppenphase: TLabel
         Left = 3
         Top = 3
@@ -361,71 +395,81 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object Spiel1Label: TLabel
-        Left = 616
+        Left = 1050
         Top = 88
         Width = 66
         Height = 15
+        Anchors = [akTop, akRight]
         Caption = 'Spiel1Label'
       end
-      object Label1: TLabel
-        Left = 616
-        Top = 144
+      object Spiel2Label: TLabel
+        Left = 1050
+        Top = 136
         Width = 66
         Height = 15
+        Anchors = [akTop, akRight]
         Caption = 'Spiel2Label'
       end
-      object Label2: TLabel
-        Left = 616
-        Top = 200
+      object Spiel3Label: TLabel
+        Left = 1050
+        Top = 193
         Width = 66
         Height = 15
+        Anchors = [akTop, akRight]
         Caption = 'Spiel3Label'
       end
-      object Label3: TLabel
-        Left = 616
+      object Spiel4Label: TLabel
+        Left = 1050
         Top = 256
         Width = 66
         Height = 15
+        Anchors = [akTop, akRight]
         Caption = 'Spiel4Label'
       end
       object Spiel5Label: TLabel
-        Left = 616
+        Left = 1050
         Top = 312
         Width = 66
         Height = 15
+        Anchors = [akTop, akRight]
         Caption = 'Spiel5Label'
       end
       object Spiel6Label: TLabel
-        Left = 616
+        Left = 1050
         Top = 368
         Width = 66
         Height = 15
+        Anchors = [akTop, akRight]
         Caption = 'Spiel6Label'
       end
       object ZumSpielButton: TButton
-        Left = 1019
+        Left = 1211
         Top = 3
         Width = 75
         Height = 25
+        Anchors = [akTop, akRight]
         Caption = 'Spielen'
         Enabled = False
         TabOrder = 0
         OnClick = ZumSpielButtonClick
       end
       object GruppenphaseStartenButton: TButton
-        Left = 471
-        Top = 505
+        Left = 588
+        Top = 536
         Width = 154
-        Height = 25
+        Height = 27
+        Anchors = [akLeft, akRight, akBottom]
         Caption = 'Gruppenphase starten'
+        Constraints.MinHeight = 27
+        Constraints.MinWidth = 150
         TabOrder = 1
         OnClick = GruppenphaseStartenButtonClick
       end
       object GruppenphaseStringGrid: TStringGrid
         Left = 32
         Top = 88
-        Width = 385
-        Height = 241
+        Width = 320
+        Height = 120
         ColCount = 4
         FixedCols = 0
         RowCount = 4
@@ -436,7 +480,344 @@ object MainForm: TMainForm
     object SpielSheet: TTabSheet
       Caption = 'Spiel'
       ImageIndex = 3
+      object FinaleMatchLabel: TLabel
+        Left = 570
+        Top = 345
+        Width = 161
+        Height = 15
+        Caption = 'XXXXXXXXXXXXXXXXXXXXXXX'
+      end
+      object FinaleLabel: TLabel
+        Left = 570
+        Top = 324
+        Width = 33
+        Height = 15
+        Caption = 'Finale'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Platz3Label: TLabel
+        Left = 570
+        Top = 414
+        Width = 90
+        Height = 15
+        Caption = 'Spiel um Platz 3'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Platz3MatchLabel: TLabel
+        Left = 570
+        Top = 435
+        Width = 170
+        Height = 15
+        Caption = 'XXXXXXXXXXX : XXXXXXXXXXXX'
+      end
+      object Label1: TLabel
+        Left = 601
+        Top = 366
+        Width = 107
+        Height = 15
+        Caption = 'FinaleStadionLabel'
+      end
+      object Label2: TLabel
+        Left = 509
+        Top = 345
+        Width = 55
+        Height = 105
+        Caption = 
+          '          '#9484'----'#13#10'          '#9474#13#10'          '#9474#13#10'-------'#9508#13#10'          '#9474 +
+          #13#10'          '#9474#13#10'          '#9492'----'
+      end
+      object Label3: TLabel
+        Left = 1041
+        Top = 358
+        Width = 170
+        Height = 15
+        Caption = 'XXXXXXXXXXX : XXXXXXXXXXXX'
+      end
+      object Label4: TLabel
+        Left = 804
+        Top = 379
+        Width = 56
+        Height = 15
+        Caption = 'Halbfinale'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label6: TLabel
+        Left = 980
+        Top = 345
+        Width = 55
+        Height = 105
+        Caption = 
+          '          '#9484'----'#13#10'          '#9474#13#10'          '#9474#13#10'-------'#9508#13#10'          '#9474 +
+          #13#10'          '#9474#13#10'          '#9492'----'
+      end
+      object Label7: TLabel
+        Left = 746
+        Top = 345
+        Width = 52
+        Height = 105
+        Caption = '----'#9488#13#10'      |'#13#10'      |'#13#10'     '#9500'-------'#13#10'      |'#13#10'      |'#13#10'----'#9496
+      end
+      object Label8: TLabel
+        Left = 275
+        Top = 345
+        Width = 52
+        Height = 105
+        Caption = '----'#9488#13#10'      |'#13#10'      |'#13#10'     '#9500'-------'#13#10'      |'#13#10'      |'#13#10'----'#9496
+      end
+      object Label5: TLabel
+        Left = 804
+        Top = 400
+        Width = 170
+        Height = 15
+        Caption = 'XXXXXXXXXXX : XXXXXXXXXXXX'
+      end
+      object Label9: TLabel
+        Left = 1041
+        Top = 337
+        Width = 68
+        Height = 15
+        Caption = 'Viertelfinale'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label10: TLabel
+        Left = 601
+        Top = 456
+        Width = 106
+        Height = 15
+        Caption = 'Platz3StadionLabel'
+      end
+      object Label11: TLabel
+        Left = 99
+        Top = 425
+        Width = 68
+        Height = 15
+        Caption = 'Viertelfinale'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label12: TLabel
+        Left = 333
+        Top = 400
+        Width = 170
+        Height = 15
+        Caption = 'XXXXXXXXXXX : XXXXXXXXXXXX'
+      end
+      object Label13: TLabel
+        Left = 333
+        Top = 379
+        Width = 56
+        Height = 15
+        Caption = 'Halbfinale'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label14: TLabel
+        Left = 1041
+        Top = 446
+        Width = 170
+        Height = 15
+        Caption = 'XXXXXXXXXXX : XXXXXXXXXXXX'
+      end
+      object Label15: TLabel
+        Left = 1041
+        Top = 425
+        Width = 68
+        Height = 15
+        Caption = 'Viertelfinale'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label16: TLabel
+        Left = 99
+        Top = 337
+        Width = 68
+        Height = 15
+        Caption = 'Viertelfinale'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label17: TLabel
+        Left = 99
+        Top = 358
+        Width = 170
+        Height = 15
+        Caption = 'XXXXXXXXXXX : XXXXXXXXXXXX'
+      end
+      object Label18: TLabel
+        Left = 99
+        Top = 446
+        Width = 170
+        Height = 15
+        Caption = 'XXXXXXXXXXX : XXXXXXXXXXXX'
+      end
+      object Label19: TLabel
+        Left = 106
+        Top = 467
+        Width = 147
+        Height = 120
+        Caption = 
+          '                       '#9474#13#10'                       '#9474#13#10'            ' +
+          '           '#9474#13#10'                       '#9474#13#10'                       '#9474 +
+          #13#10'                       '#9474#13#10'                       '#9474#13#10#9484'---------' +
+          '------'#9524'---------------'#9488
+      end
+      object Label20: TLabel
+        Left = 219
+        Top = 614
+        Width = 170
+        Height = 15
+        Caption = 'XXXXXXXXXXX : XXXXXXXXXXXX'
+      end
+      object Label21: TLabel
+        Left = 19
+        Top = 614
+        Width = 170
+        Height = 15
+        Caption = 'XXXXXXXXXXX : XXXXXXXXXXXX'
+      end
+      object Label22: TLabel
+        Left = 219
+        Top = 593
+        Width = 67
+        Height = 15
+        Caption = 'Achtelfinale'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label23: TLabel
+        Left = 19
+        Top = 593
+        Width = 67
+        Height = 15
+        Caption = 'Achtelfinale'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label24: TLabel
+        Left = 1050
+        Top = 467
+        Width = 147
+        Height = 120
+        Caption = 
+          '                       '#9474#13#10'                       '#9474#13#10'            ' +
+          '           '#9474#13#10'                       '#9474#13#10'                       '#9474 +
+          #13#10'                       '#9474#13#10'                       '#9474#13#10#9484'---------' +
+          '------'#9524'---------------'#9488
+      end
+      object Label25: TLabel
+        Left = 1137
+        Top = 614
+        Width = 170
+        Height = 15
+        Caption = 'XXXXXXXXXXX : XXXXXXXXXXXX'
+      end
+      object Label26: TLabel
+        Left = 1137
+        Top = 593
+        Width = 67
+        Height = 15
+        Caption = 'Achtelfinale'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label27: TLabel
+        Left = 939
+        Top = 614
+        Width = 170
+        Height = 15
+        Caption = 'XXXXXXXXXXX : XXXXXXXXXXXX'
+      end
+      object Label28: TLabel
+        Left = 939
+        Top = 593
+        Width = 67
+        Height = 15
+        Caption = 'Achtelfinale'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label29: TLabel
+        Left = 1050
+        Top = 211
+        Width = 147
+        Height = 120
+        Caption = 
+          #9492'---------------'#9516'---------------'#9496#13#10'                       '#9474#13#10'   ' +
+          '                    '#9474#13#10'                       '#9474#13#10'               ' +
+          '        '#9474#13#10'                       '#9474#13#10'                       '#9474#13#10' ' +
+          '                      '#9474
+      end
+      object Label30: TLabel
+        Left = 106
+        Top = 211
+        Width = 147
+        Height = 120
+        Caption = 
+          #9492'---------------'#9516'---------------'#9496#13#10'                       '#9474#13#10'   ' +
+          '                    '#9474#13#10'                       '#9474#13#10'               ' +
+          '        '#9474#13#10'                       '#9474#13#10'                       '#9474#13#10' ' +
+          '                      '#9474
+      end
     end
+  end
+  object StatusBar1: TStatusBar
+    Left = 0
+    Top = 722
+    Width = 1294
+    Height = 19
+    Panels = <>
   end
   object SymbolImageList: TImageList
     Left = 384

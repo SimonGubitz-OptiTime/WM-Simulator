@@ -7,9 +7,14 @@ uses
   System.SysUtils,
   System.Math,
   Vcl.Dialogs,
+  Vcl.Graphics,
   Vcl.Grids,
+  Vcl.StdCtrls,
   damTypes,
-  clrState;
+  clrState,
+  clrSimulation,
+  clrUtils.TableFormating,
+  clrUtils.StringFormating;
 
 
 type TGruppenphaseUI = class
@@ -17,16 +22,21 @@ type TGruppenphaseUI = class
 
     FState: TWMState;
     FGrid: TStringGrid;
+    FMatches: TList<TPair<Byte, Byte>>; // eigene TDictionary implementierung, mit mehreren gleichen Keys
+    FLabels: TArray<TLabel>;
 
     /// <summary>
-    /// Algorithmisch Spiele verteilen
+    ///   Algorithmisch Spiele verteilen
     /// </summary>
-    function CreateUniqueMatches(AGroup: TGruppe): TArray<TPair<Byte, TList<Byte>>>;
+    function CreateUniqueMatches(AGroup: TGruppe): TList<TPair<Byte, Byte>>;
+
+
+    procedure CallbackSimulation(Sender: TObject; ANdx: Integer);
 
   public
     constructor Create(AGruppenphaseGrid: TStringGrid; AState: TWMState);
 
-    procedure GruppenphaseStarten();
+    procedure GruppenphaseStarten(ALabels: TArray<TLabel>);
 
     destructor Free;
 
@@ -72,6 +82,7 @@ var
   FGameDict: TDictionary<Byte, TList<Byte>>;
 
   AsArray: TArray<TPair<Byte, TList<Byte>>>;
+  ArrVal: TPair<Byte, Byte>;
   Ndx: Integer;
 begin
 
@@ -109,26 +120,30 @@ begin
   end;
 
   AsArray := FGameDict.ToArray;
+  Result := TList<TPair<Byte, Byte>>.Create;
 
   for Ndx := 0 to Length(AsArray) - 1 do
   begin
     for var Value in AsArray[Ndx].Value do
     begin
       // ShowMessage(Format('Team %d spielt gegen Team %d', [AsArray[Ndx].Key, Value]));
-      Result.Add(TPair<Byte, Byte>.Create(AsArray[Ndx].Key, Value));
-    end;  
+      ArrVal := TPair<Byte, Byte>.Create(AsArray[Ndx].Key, Value);
+      Result.Add(ArrVal); // ungültiger Zugriff
+    end;
   end;
 
   FGameDict.Free;
 
 end;
 
-procedure TGruppenphaseUI.GruppenphaseStarten();
+procedure TGruppenphaseUI.GruppenphaseStarten(ALabels: TArray<TLabel>);
 var
   CurrentGroup: TGruppe;
-  Matches: TArray<TPair<Byte, TList<Byte>>>;
 
+  Ndx: Integer;
 begin
+
+  FLabels := ALabels;
 
   if ( FState.Groups.count = 0 ) then
   begin
@@ -139,14 +154,42 @@ begin
   for CurrentGroup in FState.Groups do
   begin
 
-    Matches := CreateUniqueMatches(CurrentGroup);
+    FMatches := CreateUniqueMatches(CurrentGroup);
 
-    // -
+    for Ndx := 0 to FMatches.Count - 1 do
+    begin
 
+      clrUtils.TableFormating.TeamTabelleZeichnen(FGrid, CurrentGroup);
+
+      ALabels[Ndx].Caption := clrUtils.StringFormating.FormatMatchString(
+        FState.Teams[FMatches[Ndx].Key].Name,
+        FState.Teams[FMatches[Ndx].Value].Name,
+        0,
+        0
+      );
+
+      // Das aktuelle Spiel immer grün markieren
+      ALabels[Ndx].Font.Style := [fsBold];
+      ALabels[Ndx].Font.Color := clGreen;
+
+
+      var Simulation := TSimulation.Create;
+
+      Simulation.SpielSimulieren(CallbackSimulation, Ndx);
+
+      ALabels[Ndx].Font.Style := [];
+      ALabels[Ndx].Font.Color := clWindowText;
+
+    end;
   end;
+end;
 
-
-
+procedure TGruppenphaseUI.CallbackSimulation(Sender: TObject; ANdx: Integer);
+var
+  Team1, Team2: TTeam;
+begin
+  Team1 := FState.Teams[FMatches[ANdx].Key];
+  FLabels[ANdx].Caption := clrUtils.StringFormating.FormatMatchString(Team1.Name, Team2.Name, 0, 0);
 end;
 
 end.

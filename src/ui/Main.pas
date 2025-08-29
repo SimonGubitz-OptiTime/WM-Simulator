@@ -27,7 +27,7 @@ uses
   fraTeamEingabeFenster,
   fraStadionEingabeFenster,
   clrUtils.Routing,
-  clrUtils.TableFormating;
+  clrUtils.TableFormating, Vcl.Outline, Vcl.ToolWin;
 
 type  TMainForm = class(TForm)
     PageControl: TPageControl;
@@ -70,12 +70,46 @@ type  TMainForm = class(TForm)
     GruppenphaseStartenButton: TButton;
     GruppenphaseStringGrid: TStringGrid;
     Spiel1Label: TLabel;
+    Spiel2Label: TLabel;
+    Spiel3Label: TLabel;
+    Spiel4Label: TLabel;
+    Spiel5Label: TLabel;
+    Spiel6Label: TLabel;
+    FinaleMatchLabel: TLabel;
+    FinaleLabel: TLabel;
+    Platz3Label: TLabel;
+    Platz3MatchLabel: TLabel;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
-    Spiel5Label: TLabel;
-    Spiel6Label: TLabel;
-
+    Label4: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
+    Label5: TLabel;
+    Label9: TLabel;
+    Label10: TLabel;
+    Label11: TLabel;
+    Label12: TLabel;
+    Label13: TLabel;
+    Label14: TLabel;
+    Label15: TLabel;
+    Label16: TLabel;
+    Label17: TLabel;
+    Label18: TLabel;
+    Label19: TLabel;
+    Label20: TLabel;
+    Label21: TLabel;
+    Label22: TLabel;
+    Label23: TLabel;
+    Label24: TLabel;
+    Label25: TLabel;
+    Label26: TLabel;
+    Label27: TLabel;
+    Label28: TLabel;
+    Label29: TLabel;
+    Label30: TLabel;
+    StatusBar1: TStatusBar;
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure GruppenphaseStartenButtonClick(Sender: TObject);
@@ -112,7 +146,7 @@ type  TMainForm = class(TForm)
     FGewollteStadionAnzahl: Integer = 16;
 
     procedure TeamDBUpdate;
-    procedure TeamTabelleZeichnen(ARows: TObjectList<TList<String>>);
+    procedure TeamZeileZeichnen(ARows: TObjectList<TList<String>>);
     procedure StadionDBUpdate;
     procedure StadionTabelleZeichnen(ARows: TObjectList<TList<String>>);
   public
@@ -203,16 +237,16 @@ begin
   end;
 
   // Hierdrin wird GetUnstructuredTableFromCSV aufgerufen also vorher GetStructuredTableFromCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
-  TeamTabelleZeichnen(Rows);
+  TeamZeileZeichnen(Rows);
 
   Rows.Free;
 end;
 
-procedure TMainForm.TeamTabelleZeichnen(ARows: TObjectList<TList<String>>);
+procedure TMainForm.TeamZeileZeichnen(ARows: TObjectList<TList<String>>);
 begin
   if ( ARows.Count <> 0 ) then
   begin
-    clrUtils.TableFormating.TabelleZeichnen(TeamsStringGrid, ARows);
+    clrUtils.TableFormating.VolleTabelleZeichnen(TeamsStringGrid, ARows);
   end;
 
 end;
@@ -254,7 +288,7 @@ procedure TMainForm.StadionTabelleZeichnen(ARows: TObjectList<TList<String>>);
 begin
   if ARows.Count <> 0 then
   begin
-    clrUtils.TableFormating.TabelleZeichnen(StadienStringGrid, ARows);
+    clrUtils.TableFormating.VolleTabelleZeichnen(StadienStringGrid, ARows);
   end;
 
 end;
@@ -293,7 +327,7 @@ begin
     FGruppenphase := TGruppenphaseUI.Create(GruppenphaseStringGrid, FState);
   end;
 
-  FGruppenphase.GruppenphaseStarten;
+  FGruppenphase.GruppenphaseStarten([ Spiel1Label, Spiel2Label, Spiel3Label, Spiel4Label, Spiel5Label, Spiel6Label ]);
 
 end;
 

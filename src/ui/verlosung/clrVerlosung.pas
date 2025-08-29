@@ -108,6 +108,12 @@ var
   SehrStarkeTeams, StarkeTeams, MittelStarkeTeams, SchwacheTeams: TList<TTeam>;
 begin
 
+  for Grid in FGrids do
+  begin
+    clrUtils.TableFormating.TabelleLeeren(Grid);
+  end;
+
+
   try
     AnimationList := TObjectList<TAnimations>.Create;
 

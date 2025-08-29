@@ -3,9 +3,11 @@ unit clrUtils.StringFormating;
 interface
 
 uses
-  SysUtils, System.Generics.Collections;
+  System.Generics.Collections,
+  System.SysUtils;
 
 function FormatSpielerListe(AList: TList<String>): String;
+function FormatMatchString(Team1Name: String; Team2Name: String; Team1Score: Integer; Team2Score: Integer): String;
 
 implementation
 
@@ -35,5 +37,11 @@ begin
   Result := Result + ' ]';
 
 end;
+
+function FormatMatchString(Team1Name: String; Team2Name: String; Team1Score: Integer; Team2Score: Integer): String;
+begin
+  Result := Team1Name + ' ' + IntToStr(Team1Score) + ':' + IntToStr(Team2Score) + ' ' + Team2Name;
+end;
+
 
 end.

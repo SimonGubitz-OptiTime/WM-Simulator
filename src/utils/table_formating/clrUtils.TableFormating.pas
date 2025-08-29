@@ -9,8 +9,10 @@ uses
   damTypes;
 
 procedure SetColumnFullWidth(AGrid: TStringGrid; ACol: Integer);
-procedure TabelleZeichnen(AGrid: TStringGrid; ARows: TObjectList<TList<String>> );
+procedure VolleTabelleZeichnen(AGrid: TStringGrid; ARows: TObjectList<TList<String>> );
 procedure TeamZeileZeichnen(AGrid: TStringGrid; const ATeam: TTeam; const ARow: Integer);
+procedure TeamTabelleZeichnen(AGrid: TStringGrid; const AGroup: TGruppe);
+procedure TabelleLeeren(AGrid: TStringGrid);
 
 implementation
 
@@ -18,7 +20,6 @@ procedure SetColumnFullWidth(AGrid: TStringGrid; ACol: Integer);
 var
   Ndx, StrWidth, ColWidth: Integer;
 begin
-  { set the width of the defined column in a string grid to the width of the widest string }
   StrWidth := 0;
   ColWidth := 0;
   for Ndx := 0 To AGrid.RowCount - 1 do
@@ -36,7 +37,7 @@ begin
 
 end;
 
-procedure TabelleZeichnen(AGrid: TStringGrid; ARows: TObjectList<TList<String>>);
+procedure VolleTabelleZeichnen(AGrid: TStringGrid; ARows: TObjectList<TList<String>>);
 var
   NdxRows, NdxCols: Integer;
 begin
@@ -71,7 +72,7 @@ begin
         Cells[1, ARow] := 'Schwach Stark';
     end;
 
-    Cells[2, ARow] := IntToStr(ATeam.ID);
+    Cells[2, ARow] := IntToStr(ATeam.HistorischeWMSiege);
 
     case ATeam.TeamVerband of
       TTeamVerband.AFC:
@@ -90,5 +91,28 @@ begin
   end;
 end;
 
+procedure TeamTabelleZeichnen(AGrid: TStringGrid; const AGroup: TGruppe);
+var
+  Ndx: Integer;
+begin
+  for Ndx := 0 to AGroup.Count - 1 do
+  begin
+    TeamZeileZeichnen(AGrid, AGroup[Ndx], Ndx);
+  end;
+end;
+
+// O(n) n = Anzahl der Zellen
+procedure TabelleLeeren(AGrid: TStringGrid);
+var
+  NdxRows, NdxCols: Integer;
+begin
+  for NdxRows := 0 to AGrid.RowCount - 1 do
+  begin
+    for NdxCols := 0 to AGrid.ColCount - 1 do
+    begin
+      AGrid.Cells[NdxCols, NdxRows] := '';
+    end;
+  end;
+end;
 
 end.

@@ -18,6 +18,10 @@ type TWMState = class(TInterfacedObject, IState)
     FStadien: TList<TStadion>;
     FGroups: TList<TGruppe>;
     FTeamStandings: TDictionary<Byte, TTeamStand>;
+    AchtelFinalisten: TList<TPair<Byte, Byte>>;
+    ViertelFinalisten: TList<TPair<Byte, Byte>>;
+    HablFinalisten: TList<TPair<Byte, Byte>>;
+    Finalisten: TPair<Byte, Byte>;
   public
     constructor Create;
 
