@@ -17,7 +17,7 @@ type TWMState = class(TInterfacedObject, IState)
     FTeams: TList<TTeam>;
     FStadien: TList<TStadion>;
     FGroups: TList<TGruppe>;
-    FTeamStandings: TDictionary<Byte, TTeamStand>;
+    FTeamStandings: TDictionary<Byte, TTeamStatistik>;
     AchtelFinalisten: TList<TPair<Byte, Byte>>;
     ViertelFinalisten: TList<TPair<Byte, Byte>>;
     HablFinalisten: TList<TPair<Byte, Byte>>;
@@ -36,15 +36,15 @@ type TWMState = class(TInterfacedObject, IState)
     procedure AddGroup(const AGroup: TGruppe);
     procedure SetGroups(const AGroups: TList<TGruppe>);
 
-    function GetTeamStanding: TDictionary<Byte, TTeamStand>;
-    procedure SetTeamStanding(const ATeamStanding: TDictionary<Byte, TTeamStand>);
+    function GetTeamStanding: TDictionary<Byte, TTeamStatistik>;
+    procedure SetTeamStanding(const ATeamStanding: TDictionary<Byte, TTeamStatistik>);
 
     destructor Destroy;
   published
     property Teams: TList<TTeam> read GetTeams write SetTeams;
     property Stadien: TList<TStadion> read GetStadien write SetStadien;
     property Groups: TList<TGruppe> read GetGroups write SetGroups;
-    property TeamStandings: TDictionary<Byte, TTeamStand> read GetTeamStanding write SetTeamStanding;
+    property TeamStandings: TDictionary<Byte, TTeamStatistik> read GetTeamStanding write SetTeamStanding;
 end;
 
 
@@ -55,7 +55,7 @@ begin
   FTeams := TList<TTeam>.Create;
   FStadien := TList<TStadion>.Create;
   FGroups := TList<TGruppe>.Create;
-  FTeamStandings := TDictionary<Byte, TTeamStand>.Create;
+  FTeamStandings := TDictionary<Byte, TTeamStatistik>.Create;
 
 end;
 
@@ -113,12 +113,12 @@ begin
   FGroups := AGroups;
 end;
 
-function TWMState.GetTeamStanding: TDictionary<Byte, TTeamStand>;
+function TWMState.GetTeamStanding: TDictionary<Byte, TTeamStatistik>;
 begin
   Result := FTeamStandings;
 end;
 
-procedure TWMState.SetTeamStanding(const ATeamStanding: TDictionary<Byte, TTeamStand>);
+procedure TWMState.SetTeamStanding(const ATeamStanding: TDictionary<Byte, TTeamStatistik>);
 begin
   FTeamStandings := ATeamStanding;
 end;

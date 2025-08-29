@@ -28,13 +28,14 @@ end;
 type TTeam = record
 public
   Name: String;
-  FIFACode: string; // 3 Zeichen lang
+  FIFACode: String; // 3 Zeichen lang
   TeamVerband: TTeamVerband;
   HistorischeWMSiege: Byte;
   HeimstadionName: String; // in der Simulation vielleicht +5% Siegchancen
   Flagge: Byte; // als index für eine TImageList
   SpielerListe: array of String; // ← Nur Namen, muss um Simplizität in der Rtti array bleiben, kein TList<string>
   TeamRanking: TTeamRanking;
+  TTeamStatistik: TTeamStatistik;
 
   // ↓ sind für RTTI unsichtbar
   ID: Byte;
@@ -51,7 +52,7 @@ type TSpiel = record
   Stadion: TStadion;
 end;
 
-type TTeamStand = record
+type TTeamStatistik = record
   Punkte: Byte;
   ToreGeschossen: Byte;
   ToreKassiert: Byte;
@@ -75,13 +76,13 @@ type IState = interface
     procedure AddGroup(const AGroup: TGruppe);
     procedure SetGroups(const AGroups: TList<TGruppe>);
 
-    function GetTeamStanding: TDictionary<Byte, TTeamStand>;
-    procedure SetTeamStanding(const ANewStanding: TDictionary<Byte, TTeamStand>);
+    function GetTeamStanding: TDictionary<Byte, TTeamStatistik>;
+    procedure SetTeamStanding(const ANewStanding: TDictionary<Byte, TTeamStatistik>);
 
     property Teams: TList<TTeam> read GetTeams write SetTeams;
     property Stadien: TList<TStadion> read GetStadien write SetStadien;
     property Groups: TList<TGruppe> read GetGroups write SetGroups;
-    property TeamStandings: TDictionary<Byte, TTeamStand> read GetTeamStanding write SetTeamStanding;
+    property TeamStandings: TDictionary<Byte, TTeamStatistik> read GetTeamStanding write SetTeamStanding;
 end;
 
 
