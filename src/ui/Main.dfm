@@ -3,10 +3,10 @@ object MainForm: TMainForm
   Top = 145
   Anchors = []
   Caption = 'WM-Simulator'
-  ClientHeight = 741
-  ClientWidth = 1294
+  ClientHeight = 801
+  ClientWidth = 1306
   Color = clBtnFace
-  Constraints.MinHeight = 500
+  Constraints.MinHeight = 840
   Constraints.MinWidth = 1310
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,23 +18,23 @@ object MainForm: TMainForm
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   DesignSize = (
-    1294
-    741)
+    1306
+    801)
   TextHeight = 15
   object PageControl: TPageControl
     Left = 0
     Top = 0
-    Width = 1297
-    Height = 737
-    ActivePage = SpielSheet
+    Width = 1309
+    Height = 797
+    ActivePage = VerlosungSheet
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 0
     OnChanging = PageControlChanging
     object Stammdaten: TTabSheet
       Caption = 'Stammdaten'
       DesignSize = (
-        1289
-        707)
+        1301
+        767)
       object UeberschriftStammdaten: TLabel
         Left = 3
         Top = 3
@@ -49,7 +49,7 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object StadionAnzahlLabel: TLabel
-        Left = 691
+        Left = 703
         Top = 85
         Width = 14
         Height = 15
@@ -63,7 +63,7 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object StadionVergleichsLabel: TLabel
-        Left = 711
+        Left = 723
         Top = 85
         Width = 7
         Height = 15
@@ -77,7 +77,7 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object StadionGewollteAnzahlLabel: TLabel
-        Left = 732
+        Left = 744
         Top = 85
         Width = 14
         Height = 15
@@ -141,7 +141,7 @@ object MainForm: TMainForm
         OnClick = TeamHinzufuegenButtonClick
       end
       object StadionHinzufuegenButton: TButton
-        Left = 691
+        Left = 703
         Top = 54
         Width = 146
         Height = 25
@@ -153,10 +153,10 @@ object MainForm: TMainForm
         OnClick = StadionHinzufuegenButtonClick
       end
       object StadienStringGrid: TStringGrid
-        Left = 691
+        Left = 703
         Top = 106
         Width = 595
-        Height = 598
+        Height = 658
         Anchors = [akTop, akRight, akBottom]
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -170,12 +170,12 @@ object MainForm: TMainForm
         Left = 3
         Top = 106
         Width = 598
-        Height = 598
+        Height = 658
         Anchors = [akLeft, akTop, akBottom]
         TabOrder = 3
       end
       object ZurVerlosungButton: TButton
-        Left = 1211
+        Left = 1223
         Top = 3
         Width = 75
         Height = 25
@@ -190,8 +190,8 @@ object MainForm: TMainForm
       Caption = 'Verlosung'
       ImageIndex = -1
       DesignSize = (
-        1289
-        707)
+        1301
+        767)
       object UeberschriftVerlosung: TLabel
         Left = 3
         Top = 3
@@ -206,7 +206,7 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object ZurGruppenphaseButton: TButton
-        Left = -11928
+        Left = -11916
         Top = 3
         Width = 94
         Height = 25
@@ -272,7 +272,7 @@ object MainForm: TMainForm
         TabOrder = 6
       end
       object StringGrid6: TStringGrid
-        Left = 963
+        Left = 975
         Top = 54
         Width = 323
         Height = 120
@@ -284,7 +284,7 @@ object MainForm: TMainForm
         TabOrder = 7
       end
       object StringGrid7: TStringGrid
-        Left = 963
+        Left = 975
         Top = 203
         Width = 323
         Height = 120
@@ -296,7 +296,7 @@ object MainForm: TMainForm
         TabOrder = 8
       end
       object StringGrid8: TStringGrid
-        Left = 963
+        Left = 975
         Top = 338
         Width = 323
         Height = 120
@@ -308,7 +308,7 @@ object MainForm: TMainForm
         TabOrder = 9
       end
       object StringGrid9: TStringGrid
-        Left = 963
+        Left = 975
         Top = 488
         Width = 323
         Height = 120
@@ -320,7 +320,7 @@ object MainForm: TMainForm
         TabOrder = 10
       end
       object StringGrid10: TStringGrid
-        Left = 963
+        Left = 975
         Top = 630
         Width = 323
         Height = 120
@@ -333,8 +333,8 @@ object MainForm: TMainForm
       end
       object VerlosungStartenButton: TButton
         Left = 610
-        Top = 324
-        Width = 70
+        Top = 384
+        Width = 82
         Height = 27
         Anchors = [akLeft, akRight, akBottom]
         Caption = 'Shuffle'
@@ -379,8 +379,8 @@ object MainForm: TMainForm
       ImageIndex = 2
       ParentFont = False
       DesignSize = (
-        1289
-        707)
+        1301
+        767)
       object UeberschriftGruppenphase: TLabel
         Left = 3
         Top = 3
@@ -395,7 +395,7 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object Spiel1Label: TLabel
-        Left = 1050
+        Left = 1062
         Top = 88
         Width = 66
         Height = 15
@@ -403,7 +403,7 @@ object MainForm: TMainForm
         Caption = 'Spiel1Label'
       end
       object Spiel2Label: TLabel
-        Left = 1050
+        Left = 1062
         Top = 136
         Width = 66
         Height = 15
@@ -411,7 +411,7 @@ object MainForm: TMainForm
         Caption = 'Spiel2Label'
       end
       object Spiel3Label: TLabel
-        Left = 1050
+        Left = 1062
         Top = 193
         Width = 66
         Height = 15
@@ -419,7 +419,7 @@ object MainForm: TMainForm
         Caption = 'Spiel3Label'
       end
       object Spiel4Label: TLabel
-        Left = 1050
+        Left = 1062
         Top = 256
         Width = 66
         Height = 15
@@ -427,7 +427,7 @@ object MainForm: TMainForm
         Caption = 'Spiel4Label'
       end
       object Spiel5Label: TLabel
-        Left = 1050
+        Left = 1062
         Top = 312
         Width = 66
         Height = 15
@@ -435,7 +435,7 @@ object MainForm: TMainForm
         Caption = 'Spiel5Label'
       end
       object Spiel6Label: TLabel
-        Left = 1050
+        Left = 1062
         Top = 368
         Width = 66
         Height = 15
@@ -443,7 +443,7 @@ object MainForm: TMainForm
         Caption = 'Spiel6Label'
       end
       object ZumSpielButton: TButton
-        Left = 1211
+        Left = 1223
         Top = 3
         Width = 75
         Height = 25
@@ -455,8 +455,8 @@ object MainForm: TMainForm
       end
       object GruppenphaseStartenButton: TButton
         Left = 588
-        Top = 536
-        Width = 154
+        Top = 596
+        Width = 166
         Height = 27
         Anchors = [akLeft, akRight, akBottom]
         Caption = 'Gruppenphase starten'
@@ -814,8 +814,8 @@ object MainForm: TMainForm
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 722
-    Width = 1294
+    Top = 782
+    Width = 1306
     Height = 19
     Panels = <>
   end

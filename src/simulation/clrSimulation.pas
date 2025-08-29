@@ -6,7 +6,7 @@ uses
   Vcl.ExtCtrls,
   Vcl.Forms;
 
-type TSimulationCallbackFn = procedure(Sender: TObject; ANdx: Integer) of object;
+type TSimulationCallbackFn = procedure(Sender: TObject; ANdx: Integer; ATeam1Tore, ATeam2Tore: Integer) of object;
 
 type TSimulation = class
   private
@@ -15,11 +15,13 @@ type TSimulation = class
 
     FTotalGoals: Integer;
     FNdx: Integer;
+    FCallbackFn: TSimulationCallbackFn;
+    FTeam1Tore, FTeam2Tore: Integer;
 
     procedure TimerEvent(Sender: TObject);
   public
     constructor Create;
-    procedure SpielSimulieren(CallbackFn: TSimulationCallbackFn; ANdx: Integer);
+    procedure SpielSimulieren(ACallbackFn: TSimulationCallbackFn; ANdx: Integer);
     destructor Free;
 end;
 
@@ -31,6 +33,8 @@ implementation
 
 constructor TSimulation.Create;
 begin
+    FTeam1Tore := 0;
+    FTeam2Tore := 0;
     FTimerCount := 0;
     FTimer := TTimer.Create(nil);
     FTimer.Interval := 100; // 100 ms
@@ -38,10 +42,11 @@ begin
     FTotalGoals := Random(7); // 0 bis 6 Tore pro Spiel
 end;
 
-procedure TSimulation.SpielSimulieren(CallbackFn: TSimulationCallbackFn; ANdx: Integer);
+procedure TSimulation.SpielSimulieren(ACallbackFn: TSimulationCallbackFn; ANdx: Integer);
 begin
 
   FNdx := ANdx;
+  FCallbackFn := ACallbackFn;
 
   FTimer.Enabled := True;
   FTimer.OnTimer := TimerEvent;
@@ -59,8 +64,21 @@ begin
   if (FTimerCount >= FTotalGoals) then
   begin
     FTimer.Enabled := False;
-    FCallbackFn(Self, FNdx);
+    
+    FCallbackFn(Self, FNdx, FTeam1Tore, FTeam2Tore);
+
     Exit;
+  end;
+
+  // Random Tore generieren
+  // Hier kann noch eine Logik rein, die die Stärke der Teams berücksichtigt und auch ob es im Heimstadion gespielt wird
+  if ( Random(2) = 0 ) then
+  begin
+    Inc(FTeam1Tore);
+  end
+  else
+  begin
+    Inc(FTeam2Tore);
   end;
 
   Inc(FTimerCount);

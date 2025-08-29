@@ -31,7 +31,7 @@ type TGruppenphaseUI = class
     function CreateUniqueMatches(AGroup: TGruppe): TList<TPair<Byte, Byte>>;
 
 
-    procedure CallbackSimulation(Sender: TObject; ANdx: Integer);
+    procedure CallbackSimulation(Sender: TObject; ANdx: Integer; ATeam1Tore, ATeam2Tore: Integer);
 
   public
     constructor Create(AGruppenphaseGrid: TStringGrid; AState: TWMState);
@@ -181,15 +181,20 @@ begin
       ALabels[Ndx].Font.Color := clWindowText;
 
     end;
+
+    // Das man die Chance hat etwas zu sehen
+    Sleep(5000);
+
   end;
 end;
 
-procedure TGruppenphaseUI.CallbackSimulation(Sender: TObject; ANdx: Integer);
+procedure TGruppenphaseUI.CallbackSimulation(Sender: TObject; ANdx: Integer; ATeam1Tore, ATeam2Tore: Integer);
 var
   Team1, Team2: TTeam;
 begin
   Team1 := FState.Teams[FMatches[ANdx].Key];
-  FLabels[ANdx].Caption := clrUtils.StringFormating.FormatMatchString(Team1.Name, Team2.Name, 0, 0);
+  Team2 := FState.Teams[FMatches[ANdx].Value];
+  FLabels[ANdx].Caption := clrUtils.StringFormating.FormatMatchString(Team1.Name, Team2.Name, ATeam1Tore, ATeam2Tore);
 end;
 
 end.
