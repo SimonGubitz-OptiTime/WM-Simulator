@@ -24,6 +24,15 @@ type TStadion = record
   // " - für die Simulation wenn >90% Kapazität, +5% Siegchancen wenn Heimstadion
 end;
 
+type TTeamStatistik = record
+  Punkte: Byte;
+  ToreGeschossen: Byte;
+  ToreKassiert: Byte;
+  Siege: Byte;
+  Unentschieden: Byte;
+  Niederlagen: Byte;
+end;
+
 //{$RTTI EXPLICIT Fields([vcPublished])}
 type TTeam = record
 public
@@ -50,15 +59,6 @@ type TSpiel = record
   AustragunsDatum: TDate;
 
   Stadion: TStadion;
-end;
-
-type TTeamStatistik = record
-  Punkte: Byte;
-  ToreGeschossen: Byte;
-  ToreKassiert: Byte;
-  Siege: Byte;
-  Unentschieden: Byte;
-  Niederlagen: Byte;
 end;
 
 type TGruppe = TList<TTeam>;
