@@ -227,7 +227,7 @@ begin
   end;
 
   // Team in die Datenbank schreiben
-  FDatabase.AddRowToCSV(Team);
+  FDatabase.ZeileHinzufuegenCSV(Team);
 
   // Fenster schließen
   Self.Close;

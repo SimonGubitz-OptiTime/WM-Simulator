@@ -42,7 +42,7 @@ type TVerlosungUI = class
 
     function VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer; AOwner: TControl): Boolean;
 
-    destructor Free;
+    destructor Destroy;
   end;
 
 implementation
@@ -82,7 +82,7 @@ begin
 
 end;
 
-destructor TVerlosungUI.Free;
+destructor TVerlosungUI.Destroy;
 begin
   FGrids.Free;
 
@@ -93,7 +93,7 @@ begin
     FUITeams.Free;
   end;
 
-  inherited Free;
+  inherited Destroy;
 end;
 
 function TVerlosungUI.VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer;  AOwner: TControl): Boolean;
@@ -117,8 +117,8 @@ begin
   try
     AnimationList := TObjectList<TAnimations>.Create;
 
-    // `GetStructuredTableFromCSV` erstellt für jeden Aufruf ein komplett neues Element/Objekt
-    FState.SetTeams(ATeamDB.GetStructuredTableFromCSV());
+    // `StrukturierteTabelleHinzufuegenCSV` erstellt für jeden Aufruf ein komplett neues Element/Objekt
+    FState.SetTeams(ATeamDB.StrukturierteTabelleHinzufuegenCSV());
 
     // potenziell ineffizient
     for Ndx := 0 to FState.Teams.Count - 1 do
@@ -129,7 +129,7 @@ begin
        // ID für jedes Team setzen
     end;
 
-    FUITeams := ATeamDB.GetStructuredTableFromCSV();
+    FUITeams := ATeamDB.StrukturierteTabelleHinzufuegenCSV();
 
     if ( (FUITeams.Count mod 4) <> 0 ) then
     begin

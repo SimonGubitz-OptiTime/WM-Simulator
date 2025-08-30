@@ -97,7 +97,7 @@ begin
   Stadion.ZuschauerKapazitaet := StrToInt(ZuschauerKapazitaetEingabeFeld.Text);
 
   // In die Datenbank schreiben
-  FDatabase.AddRowToCSV(Stadion);
+  FDatabase.ZeileHinzufuegenCSV(Stadion);
 
   // Fenster schließen
   Self.Close;

@@ -38,7 +38,7 @@ type TGruppenphaseUI = class
 
     procedure GruppenphaseStarten(ALabels: TArray<TLabel>);
 
-    destructor Free;
+    destructor Destroy;
 
 end;
 
@@ -65,11 +65,11 @@ begin
   end;
 end;
 
-destructor TGruppenphaseUI.Free;
+destructor TGruppenphaseUI.Destroy;
 begin
   // Nicht FState freigeben, wird durch MainForm verwaltet
 
-  inherited Free;
+  inherited Destroy;
 end;
 
 /// .ID nutzen, da es schneller ist in Lookups, als ein TTeam mit SizeOf() ≈ (x)Bytes vs .ID 1Byte

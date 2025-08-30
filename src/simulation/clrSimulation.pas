@@ -22,24 +22,29 @@ type TSimulation = class
   public
     constructor Create;
     procedure SpielSimulieren(ACallbackFn: TSimulationCallbackFn; ANdx: Integer);
-    destructor Free;
+    destructor Destroy;
 end;
 
 // Die pause zwischen den Toren in ms
-const 
-    PauseBetweenGoals = 500;
+const
+  PauseBetweenGoals = 500;
 
 implementation
 
 constructor TSimulation.Create;
 begin
-    FTeam1Tore := 0;
-    FTeam2Tore := 0;
-    FTimerCount := 0;
-    FTimer := TTimer.Create(nil);
-    FTimer.Interval := 100; // 100 ms
-    
-    FTotalGoals := Random(7); // 0 bis 6 Tore pro Spiel
+  FTeam1Tore := 0;
+  FTeam2Tore := 0;
+  FTimerCount := 0;
+  FTimer := TTimer.Create(nil);
+  FTimer.Interval := 100; // 100 ms
+
+  FTotalGoals := Random(7); // 0 bis 6 Tore pro Spiel
+end;
+
+destructor TSimulation.Destroy;
+begin
+  FTimer.Free;
 end;
 
 procedure TSimulation.SpielSimulieren(ACallbackFn: TSimulationCallbackFn; ANdx: Integer);
@@ -64,7 +69,7 @@ begin
   if (FTimerCount >= FTotalGoals) then
   begin
     FTimer.Enabled := False;
-    
+
     FCallbackFn(Self, FNdx, FTeam1Tore, FTeam2Tore);
 
     Exit;
@@ -83,11 +88,6 @@ begin
 
   Inc(FTimerCount);
 
-end;
-
-destructor TSimulation.Free;
-begin
-    FTimer.Free;
 end;
 
 

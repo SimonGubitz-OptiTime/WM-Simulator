@@ -171,6 +171,9 @@ begin
   FGruppenphase := nil;
   // FSpiel := nil;
 
+  TeamEingabe := TTeamEingabeFenster.Create(FTeamDB);
+  StadionEingabe := TStadionEingabeFenster.Create(FStadionDB);
+
   TeamGewollteAnzahlLabel.Caption := IntToStr(FGewollteTeamAnzahl);
   StadionGewollteAnzahlLabel.Caption := IntToStr(FGewollteStadionAnzahl);
 
@@ -214,7 +217,7 @@ var
   Rows: TObjectList<TList<String>>;
 begin
 
-  Rows := FTeamDB.GetUnstructuredTableFromCSV();
+  Rows := FTeamDB.UnstrukturierteTabelleHinzufuegenCSV();
   FTeamAnzahl := Rows.Count - 1; // Header
 
   TeamAnzahlLabel.Caption := '0' + IntToStr(FTeamAnzahl);
@@ -236,7 +239,7 @@ begin
     TeamHinzufuegenButton.Enabled := false;
   end;
 
-  // Hierdrin wird GetUnstructuredTableFromCSV aufgerufen also vorher GetStructuredTableFromCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
+  // Hierdrin wird UnstrukturierteTabelleHinzufuegenCSV aufgerufen also vorher StrukturierteTabelleHinzufuegenCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
   TeamZeileZeichnen(Rows);
 
   Rows.Free;
@@ -256,7 +259,7 @@ var
   Rows: TObjectList<TList<String>>;
 begin
 
-  Rows := FStadionDB.GetUnstructuredTableFromCSV();
+  Rows := FStadionDB.UnstrukturierteTabelleHinzufuegenCSV();
   FStadionAnzahl := Rows.Count - 1; // Header
 
   StadionAnzahlLabel.Caption := '0' + IntToStr(FStadionAnzahl);
@@ -278,7 +281,7 @@ begin
     StadionHinzufuegenButton.Enabled := false;
   end;
 
-  // Hierdrin wird GetUnstructuredTableFromCSV aufgerufen also vorher GetStructuredTableFromCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
+  // Hierdrin wird UnstrukturierteTabelleHinzufuegenCSV aufgerufen also vorher StrukturierteTabelleHinzufuegenCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
   StadionTabelleZeichnen(Rows);
 
   Rows.Free;
@@ -295,13 +298,11 @@ end;
 
 procedure TMainForm.TeamHinzufuegenButtonClick(Sender: TObject);
 begin
-  TeamEingabe := TTeamEingabeFenster.Create(FTeamDB);
   TeamEingabe.Show; // ShowModal;
 end;
 
 procedure TMainForm.StadionHinzufuegenButtonClick(Sender: TObject);
 begin
-  StadionEingabe := TStadionEingabeFenster.Create(FStadionDB);
   StadionEingabe.Show; // ShowModal;
 end;
 

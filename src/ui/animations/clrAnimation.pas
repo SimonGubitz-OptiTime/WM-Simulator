@@ -36,7 +36,7 @@ type
     procedure MoveObject(ACallbackFn: TAnimationCallback; AMoveToTop: Integer; AMoveToLeft: Integer; ACount: Integer = -1; ASecondCount: Integer = -1; AThirdCount: Integer = -1);
     procedure TypewriterEffect(AText: String);
 
-    destructor Free;
+    destructor Destroy;
 
   const
     FTimerInterval: Byte = 10;
@@ -66,7 +66,7 @@ begin
 
 end;
 
-destructor TAnimations.Free;
+destructor TAnimations.Destroy;
 begin
   FTimer.Enabled := false;
   FTimer.Free;
