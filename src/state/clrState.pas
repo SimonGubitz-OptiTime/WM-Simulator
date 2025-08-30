@@ -64,6 +64,7 @@ begin
   FTeams.Free;
   FStadien.Free;
   FGroups.Free;
+  FTeamStandings.Free;
 
   inherited Destroy;
 end;

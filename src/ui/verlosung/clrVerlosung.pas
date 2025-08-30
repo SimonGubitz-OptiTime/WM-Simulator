@@ -85,13 +85,7 @@ end;
 destructor TVerlosungUI.Destroy;
 begin
   FGrids.Free;
-
-  if ( (Assigned(FUITeams))
-    and (FUITeams <> nil)
-  ) then
-  begin
-    FUITeams.Free;
-  end;
+  FUITeams.Free;
 
   inherited Destroy;
 end;
@@ -136,10 +130,6 @@ begin
       raise Exception.Create('TVerlosungUI.VerlosungStarten Error: The number of FUITeams must be divisible by 4.');
     end;
 
-    SehrStarkeTeams   := TList<TTeam>.Create;
-    StarkeTeams       := TList<TTeam>.Create;
-    MittelStarkeTeams := TList<TTeam>.Create;
-    SchwacheTeams     := TList<TTeam>.Create;
 
     try
 
@@ -209,6 +199,7 @@ begin
         FState.AddGroup(TempList); // hier
       end;
 
+      TempList.Free;
 
       // Für alle Grids je 4 Teams eintragen
       TeamNdx := 0;

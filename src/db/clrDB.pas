@@ -201,7 +201,7 @@ begin
     raise Exception.Create('db.pas Error: TDB is not initialized. Please add to the database first.');
   end;
 
-  Result := TObjectList<TList<String>>.Create;
+  Result := TObjectList<TList<String>>.Create(true);
 
   if ( Assigned(FCachedUnstructuredCSV)) and ( FCachedUnstructuredCSV.Count > 0) then
   begin

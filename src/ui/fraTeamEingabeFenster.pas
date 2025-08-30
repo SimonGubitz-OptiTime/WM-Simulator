@@ -45,7 +45,7 @@ type
     SpielerListeEingabeButton: TButton;
     SpielerListeEntfernenButton: TButton;
 
-    constructor Create(var ADatabase: TDB<TTeam>); reintroduce;
+    constructor Create(var ADatabase: TDB<TTeam>);
 
     procedure BestaetigenButtonClick(Sender: TObject);
     procedure FIFACodeEingabeFeldChange(Sender: TObject);
@@ -57,9 +57,11 @@ type
     procedure SpielerListeEntfernenButtonClick(Sender: TObject);
     class function GetTableName: ShortString;
 
+    destructor Destroy;
+
   private
     var
-      SpielerListe: TList<String>;
+      FSpielerListe: TList<String>;
 
     var
       FDatabase: TDB<TTeam>;
@@ -81,7 +83,7 @@ begin
     FDatabase := TDB<TTeam>.Create(FTableName);
   end;
 
-  SpielerListe := TList<String>.Create();
+  FSpielerListe := TList<String>.Create;
 
   inherited Create(nil);
 
@@ -102,6 +104,15 @@ begin
 
 end;
 
+destructor TTeamEingabeFenster.Destroy;
+begin
+  // Aufräumen
+  FSpielerListe.Free;
+  FDatabase.Free;
+
+  inherited Destroy;
+end;
+
 procedure TTeamEingabeFenster.EingabeDerListeHinzufuegen;
 begin
   if SpielerListeEingabeFeld.Text = '' then
@@ -110,14 +121,14 @@ begin
   end;
 
   // Der Liste hinzufügen
-  SpielerListe.Add(SpielerListeEingabeFeld.Text);
+  FSpielerListe.Add(SpielerListeEingabeFeld.Text);
 
   // Das Eingabe Feld wieder leeren
   SpielerListeEingabeFeld.Text := '';
 
   // Das Ausgabe Feld neu rendern
   SpielerListeAnzeigeLabel.Caption := clrUtils.StringFormating.FormatSpielerListe
-    (SpielerListe);
+    (FSpielerListe);
 
   // Fokus auf das Eingabefeld setzen
   SpielerListeEingabeFeld.SetFocus;
@@ -128,11 +139,11 @@ begin
   // Wenn das Eingabefeld für Spieler leer ist, wird der letzte Spieler Entfernt, sonst der
   if ( SpielerListeEingabeFeld.Text = '' ) then
   begin
-    SpielerListe.Delete(SpielerListe.Count - 1);
+    FSpielerListe.Delete(FSpielerListe.Count - 1);
   end
   else
   begin
-    SpielerListe.Remove(SpielerListeEingabeFeld.Text);
+    FSpielerListe.Remove(SpielerListeEingabeFeld.Text);
   end;
 
   // Eingabefeld leeren
@@ -140,7 +151,7 @@ begin
 
   // Neu formatieren
   SpielerListeAnzeigeLabel.Caption := clrUtils.StringFormating.FormatSpielerListe
-    (SpielerListe);
+    (FSpielerListe);
 
   // Fokus auf das Eingabefeld setzen
   SpielerListeEingabeFeld.SetFocus;
@@ -183,7 +194,7 @@ begin
   if ( NameEingabeFeld.Text = '') or (FIFACodeEingabeFeld.Text = '') or
     (TeamVerbandEingabeBox.Text = '') or (TeamRankingEingabeBox.Text = '') or
     (HistorischeSiegeEingabeFeld.Text = '') or
-    (HeimstadionEingabeFeld.Text = '') or (SpielerListe.Count = 0 ) then
+    (HeimstadionEingabeFeld.Text = '') or (FSpielerListe.Count = 0 ) then
   begin
     ShowMessage('Bitte füllen Sie alle Felder aus.');
     Exit;
@@ -201,7 +212,7 @@ begin
     Exit;
   end;
 
-  if not ( SpielerListe.Count = 11 ) then
+  if not ( FSpielerListe.Count = 11 ) then
   begin
     ShowMessage('Bitte tragen Sie genau 11 Spieler ein.');
     Exit;
@@ -216,14 +227,14 @@ begin
   Team.Flagge := 0; // TODO: Flagge setzen
   Team.TeamRanking := TTeamRanking(TeamRankingEingabeBox.ItemIndex);
 
-  SetLength(Team.SpielerListe, 11);
-  for placeholder := Low(Team.SpielerListe) to High(Team.SpielerListe) do
+  SetLength(Team.FSpielerListe, 11);
+  for placeholder := Low(Team.FSpielerListe) to High(Team.FSpielerListe) do
   begin
     var
-    s := Team.SpielerListe[placeholder];
+    s := Team.FSpielerListe[placeholder];
     var
-    y := SpielerListe[placeholder];
-    Team.SpielerListe[placeholder] := SpielerListe[placeholder];
+    y := FSpielerListe[placeholder];
+    Team.FSpielerListe[placeholder] := FSpielerListe[placeholder];
   end;
 
   // Team in die Datenbank schreiben

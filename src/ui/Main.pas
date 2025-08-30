@@ -192,7 +192,7 @@ begin
   begin
     StadionDBUpdate;
   end;
-  FStadionDB.AddDBUpdateEventListener(StadionDBUpdate); // fehler hier?
+  FStadionDB.AddDBUpdateEventListener(StadionDBUpdate);
 
 end;
 
