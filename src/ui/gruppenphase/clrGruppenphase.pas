@@ -67,8 +67,6 @@ end;
 
 destructor TGruppenphaseUI.Destroy;
 begin
-  // Nicht FState freigeben, wird durch MainForm verwaltet
-
   inherited Destroy;
 end;
 

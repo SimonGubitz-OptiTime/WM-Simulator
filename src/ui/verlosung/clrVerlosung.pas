@@ -54,7 +54,7 @@ begin
 
   FUITeams := nil;
   FState := AState;
-  FGrids := TObjectList<TStringGrid>.Create;
+  FGrids := TObjectList<TStringGrid>.Create(false);
 
   if ( Length(AGrids) <> 12 ) then
   begin

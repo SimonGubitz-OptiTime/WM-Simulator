@@ -167,18 +167,18 @@ begin
   // Globaler State, wodrin alle Teams, Gruppen und Auskommen nach und nach gespeichert werden
   FState := TWMState.Create;
 
-  FVerlosung := nil;
-  FGruppenphase := nil;
+  FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12], FState);
+  FGruppenphase := TGruppenphaseUI.Create(GruppenphaseStringGrid, FState);
   // FSpiel := nil;
-
-  TeamEingabe := TTeamEingabeFenster.Create(FTeamDB);
-  StadionEingabe := TStadionEingabeFenster.Create(FStadionDB);
 
   TeamGewollteAnzahlLabel.Caption := IntToStr(FGewollteTeamAnzahl);
   StadionGewollteAnzahlLabel.Caption := IntToStr(FGewollteStadionAnzahl);
 
   FTeamDB := TDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
   FStadionDB := TDB<TStadion>.Create(TStadionEingabeFenster.GetTableName);
+
+  TeamEingabe := TTeamEingabeFenster.Create(FTeamDB);
+  StadionEingabe := TStadionEingabeFenster.Create(FStadionDB);
 
   // Teams laden
   if ( FTeamDB.Initialized ) then
@@ -308,10 +308,6 @@ end;
 
 procedure TMainForm.VerlosungStartenButtonClick(Sender: TObject);
 begin
-  if ( not(Assigned(FVerlosung)) or not(FVerlosung.Initialized) ) then
-  begin
-    FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12], FState);
-  end;
   FVerlosungFertig := FVerlosung.VerlosungStarten(FTeamDB, Timer1, VerlosungSheet);
 
   // Wenn es genügend Gruppen gibt
@@ -323,10 +319,6 @@ end;
 
 procedure TMainForm.GruppenphaseStartenButtonClick(Sender: TObject);
 begin
-  if ( not(Assigned(FGruppenphase)) ) then
-  begin
-    FGruppenphase := TGruppenphaseUI.Create(GruppenphaseStringGrid, FState);
-  end;
 
   FGruppenphase.GruppenphaseStarten([ Spiel1Label, Spiel2Label, Spiel3Label, Spiel4Label, Spiel5Label, Spiel6Label ]);
 
@@ -342,11 +334,6 @@ begin
   end;
 
   // Verlosung starten
-  if not ( Assigned(FVerlosung) ) then
-  begin
-    FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12], FState);
-  end;
-
   FVerlosungFertig := FVerlosung.VerlosungStarten(FTeamDB, Timer1, VerlosungSheet);
 end;
 
@@ -377,11 +364,6 @@ begin
         AllowChange := clrUtils.Routing.OnVerlosungChanging
           ((FTeamAnzahl = FGewollteTeamAnzahl) and
           (FStadionAnzahl = FGewollteStadionAnzahl));
-
-        if not ( Assigned(FVerlosung) ) then
-        begin
-          FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12], FState);
-        end;
       end;
     2:
       begin

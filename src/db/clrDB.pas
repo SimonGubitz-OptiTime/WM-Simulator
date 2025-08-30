@@ -38,7 +38,7 @@ type
     function    StrukturierteTabelleHinzufuegenCSV(): TList<T>;
     function    UnstrukturierteTabelleHinzufuegenCSV(): TObjectList<TList<String>>;
 
-    procedure   DBAktuallisierungEventRueckrufHinzufuegen(ACallbackFunction: TDBUpdateEvent);
+    //procedure   DBAktuallisierungEventRueckrufHinzufuegen(ACallbackFunction: TDBUpdateEvent);
     procedure   AddDBUpdateEventListener(ACallbackFunction: TDBUpdateEvent);
 
     destructor  Destroy;
@@ -81,19 +81,22 @@ begin
 
 end;
 
-// procedure TDB<T>.SetRowInCSV(ARowID: Integer; ALine: Integer);
-// begin
-// if not ( FInitialisiert ) then
-// begin
-//  raise Exception.Create('db.pas Error: TDB is not initialized. Please add to the database first.');
-// end;
+destructor TDB<T>.Destroy;
+begin
 
-// // .csv öffnen
+  // Clear the filestream
+  FFS.Free;
 
+  // Free the list of event listeners
+  FDBUpdateEventListeners.Free;
 
-// // Call the event listeners
-// CallDBUpdateEventListeners();
-// end;
+  // Clear the cached data
+  FCachedCSV.Free;
+  // FCachedUnstructuredCSV.Free;
+
+  // Call the inherited destructor
+  inherited Destroy;
+end;
 
 procedure TDB<T>.ZeileHinzufuegenCSV(ARowValues: T; SizeCheck: Boolean = true);
 var
@@ -286,23 +289,6 @@ begin
     end;
   end;
   // ShowMessage('DB Update Event Listener called: ' + IntToStr(FDBUpdateEventListeners.Count) + ' listeners.');
-end;
-
-destructor TDB<T>.Destroy;
-begin
-
-  // Clear the filestream
-  FFS.Free;
-
-  // Free the list of event listeners
-  FDBUpdateEventListeners.Free;
-
-  // Clear the cached data
-  FCachedCSV.Free;
-  // FCachedUnstructuredCSV.Free;
-
-  // Call the inherited destructor
-  inherited Destroy;
 end;
 
 end.

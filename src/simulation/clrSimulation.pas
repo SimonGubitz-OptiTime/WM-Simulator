@@ -45,6 +45,8 @@ end;
 destructor TSimulation.Destroy;
 begin
   FTimer.Free;
+
+  inherited Destroy;
 end;
 
 procedure TSimulation.SpielSimulieren(ACallbackFn: TSimulationCallbackFn; ANdx: Integer);

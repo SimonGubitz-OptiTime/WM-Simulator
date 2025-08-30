@@ -75,6 +75,8 @@ begin
   begin
     FObject.Free;
   end;
+
+  inherited Destroy;
 end;
 
 procedure TAnimations.MoveObject(ACallbackFn: TAnimationCallback;

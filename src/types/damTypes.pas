@@ -44,7 +44,8 @@ public
   Flagge: Byte; // als index für eine TImageList
   FSpielerListe: array of String; // ← Nur Namen, muss um Simplizität in der Rtti array bleiben, kein TList<string>
   TeamRanking: TTeamRanking;
-  TTeamStatistik: TTeamStatistik;
+
+  // TTeamStatistik: TTeamStatistik;
 
   // ↓ sind für RTTI unsichtbar
   ID: Byte;
