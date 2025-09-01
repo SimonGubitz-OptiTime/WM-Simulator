@@ -73,17 +73,17 @@ type IState = interface
     function GetStadien: TList<TStadion>;
     procedure SetStadien(const AStadien: TList<TStadion>);
 
-    function GetGroups: TList<TGruppe>;
-    procedure AddGroup(const AGroup: TGruppe);
-    procedure SetGroups(const AGroups: TList<TGruppe>);
+    function GetGruppen: TList<TGruppe>;
+    procedure AddGruppe(const AGroup: TGruppe);
+    procedure SetGruppen(const AGruppen: TList<TGruppe>);
 
-    function GetTeamStanding: TDictionary<Byte, TTeamStatistik>;
-    procedure SetTeamStanding(const ANewStanding: TDictionary<Byte, TTeamStatistik>);
+    function GetTeamStand: TDictionary<Byte, TTeamStatistik>;
+    procedure SetTeamStand(const ANewStanding: TDictionary<Byte, TTeamStatistik>);
 
     property Teams: TList<TTeam> read GetTeams write SetTeams;
     property Stadien: TList<TStadion> read GetStadien write SetStadien;
-    property Groups: TList<TGruppe> read GetGroups write SetGroups;
-    property TeamStandings: TDictionary<Byte, TTeamStatistik> read GetTeamStanding write SetTeamStanding;
+    property Gruppen: TList<TGruppe> read GetGruppen write SetGruppen;
+    property TeamStands: TDictionary<Byte, TTeamStatistik> read GetTeamStand write SetTeamStand;
 end;
 
 

@@ -57,7 +57,7 @@ type
     procedure SpielerListeEntfernenButtonClick(Sender: TObject);
     class function GetTableName: ShortString;
 
-    destructor Destroy;
+    destructor Destroy; override;
 
   private
     var

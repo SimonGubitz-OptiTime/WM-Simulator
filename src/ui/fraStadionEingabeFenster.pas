@@ -33,7 +33,7 @@ type
     procedure BestaetigenButtonClick(Sender: TObject);
     class function GetTableName: ShortString;
 
-    destructor Destroy;
+    destructor Destroy; override;
 
   private
 

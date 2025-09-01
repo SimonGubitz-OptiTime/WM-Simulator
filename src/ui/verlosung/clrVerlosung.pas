@@ -17,7 +17,7 @@ uses
   damTypes,
   clrState,
   clrAnimation,
-  clrUtils.ShuffleArray,
+  clrUtils.ArrayMischen,
   clrUtils.FilterArray,
   clrUtils.TableFormating;
 
@@ -42,7 +42,7 @@ type TVerlosungUI = class
 
     function VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer; AOwner: TControl): Boolean;
 
-    destructor Destroy;
+    destructor Destroy; override;
   end;
 
 implementation
@@ -84,7 +84,7 @@ end;
 
 destructor TVerlosungUI.Destroy;
 begin
-  FGrids.Free;
+  FGrids.Destroy;
   FUITeams.Free;
 
   inherited Destroy;
@@ -106,6 +106,8 @@ begin
   begin
     clrUtils.TableFormating.TabelleLeeren(Grid);
   end;
+
+  Grid.Free;
 
 
   try
@@ -176,10 +178,10 @@ begin
       end;
 
 
-      clrUtils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(SehrStarkeTeams);
-      clrUtils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(StarkeTeams);
-      clrUtils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(MittelStarkeTeams);
-      clrUtils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(SchwacheTeams);
+      clrUtils.ArrayMischen.TShuffleArrayUtils<TTeam>.Shuffle(SehrStarkeTeams);
+      clrUtils.ArrayMischen.TShuffleArrayUtils<TTeam>.Shuffle(StarkeTeams);
+      clrUtils.ArrayMischen.TShuffleArrayUtils<TTeam>.Shuffle(MittelStarkeTeams);
+      clrUtils.ArrayMischen.TShuffleArrayUtils<TTeam>.Shuffle(SchwacheTeams);
 
 
       FUITeams.Clear;
@@ -196,7 +198,7 @@ begin
         TempList.AddRange([ SehrStarkeTeams[Ndx], StarkeTeams[Ndx], MittelStarkeTeams[Ndx], SchwacheTeams[Ndx] ]);
 
         // und für die zentrale Lagerung
-        FState.AddGroup(TempList); // hier
+        FState.AddGruppe(TempList); // hier
       end;
 
       TempList.Free;
@@ -232,7 +234,7 @@ begin
               (ColNdx * FRowSize[GridNdx]);
 
             AnimationList.Add(TAnimations.Create(ATimer, TControl(TempLabel), 150)); // .150 sek
-            AnimationList.Last.MoveObject(AnimationCallbackFn, MoveTop, Grid.Left + 15, ColNdx, GridNdx, TeamNdx);
+            AnimationList.Last.ObjektBewegen(AnimationCallbackFn, MoveTop, Grid.Left + 15, ColNdx, GridNdx, TeamNdx);
 
             Inc(TeamNdx);
           end;

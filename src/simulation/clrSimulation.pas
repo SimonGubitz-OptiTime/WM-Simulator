@@ -22,7 +22,7 @@ type TSimulation = class
   public
     constructor Create;
     procedure SpielSimulieren(ACallbackFn: TSimulationCallbackFn; ANdx: Integer);
-    destructor Destroy;
+    destructor Destroy; override;
 end;
 
 // Die pause zwischen den Toren in ms

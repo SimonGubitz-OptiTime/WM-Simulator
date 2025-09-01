@@ -160,7 +160,7 @@
         <DCCReference Include="utils\CSV\clrUtils.CSV.pas"/>
         <DCCReference Include="utils\db\clrUtils.DB.pas"/>
         <DCCReference Include="utils\routing\clrUtils.Routing.pas"/>
-        <DCCReference Include="utils\arrays\clrUtils.ShuffleArray.pas"/>
+        <DCCReference Include="utils\arrays\clrUtils.ArrayMischen.pas"/>
         <DCCReference Include="utils\table_formating\clrUtils.TableFormating.pas"/>
         <DCCReference Include="utils\string_formating\clrUtils.StringFormating.pas"/>
         <DCCReference Include="utils\arrays\clrUtils.FilterArray.pas"/>

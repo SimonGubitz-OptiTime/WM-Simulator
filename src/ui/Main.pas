@@ -311,7 +311,7 @@ begin
   FVerlosungFertig := FVerlosung.VerlosungStarten(FTeamDB, Timer1, VerlosungSheet);
 
   // Wenn es genügend Gruppen gibt
-  if ( FState.GetGroups.Count = 12 ) then
+  if ( FState.GetGruppen.Count = 12 ) then
   begin
     ZurGruppenphaseButton.Enabled := true;
   end;

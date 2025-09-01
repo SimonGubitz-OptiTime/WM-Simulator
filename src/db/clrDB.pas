@@ -94,6 +94,7 @@ begin
   FCachedCSV.Free;
   // FCachedUnstructuredCSV.Free;
 
+
   // Call the inherited destructor
   inherited Destroy;
 end;

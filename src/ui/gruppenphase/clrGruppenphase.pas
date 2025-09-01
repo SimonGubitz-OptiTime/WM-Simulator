@@ -38,7 +38,7 @@ type TGruppenphaseUI = class
 
     procedure GruppenphaseStarten(ALabels: TArray<TLabel>);
 
-    destructor Destroy;
+    destructor Destroy; override;
 
 end;
 
@@ -143,13 +143,13 @@ begin
 
   FLabels := ALabels;
 
-  if ( FState.Groups.count = 0 ) then
+  if ( FState.Gruppen.count = 0 ) then
   begin
     ShowMessage('Bitte zuerst Verlosung starten.');
   end;
 
 
-  for CurrentGroup in FState.Groups do
+  for CurrentGroup in FState.Gruppen do
   begin
 
     FMatches := CreateUniqueMatches(CurrentGroup);

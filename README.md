@@ -107,7 +107,7 @@ C:.
 |   |   
 |   \---icons
 |           add.png
-|           groups.png
+|           Gruppen.png
 |           sports_soccer.png
 |           Stadion.png
 |           
