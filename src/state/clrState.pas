@@ -23,10 +23,10 @@ type TWMState = class(TInterfacedObject, IState)
 
     FTeamStands: TDictionary<Byte, TTeamStatistik>;
 
-    AchtelFinalisten: TList<TPair<Byte, Byte>>;
-    ViertelFinalisten: TList<TPair<Byte, Byte>>;
-    HalbFinalisten: TList<TPair<Byte, Byte>>;
-    Finalisten: TPair<Byte, Byte>;
+    FAchtelFinalisten: TList<TPair<Byte, Byte>>;
+    FViertelFinalisten: TList<TPair<Byte, Byte>>;
+    FHalbFinalisten: TList<TPair<Byte, Byte>>;
+    FFinalisten: TPair<Byte, Byte>;
   public
     constructor Create;
 
@@ -154,7 +154,7 @@ end;
 
 procedure TWMState.AddOrSetTeamStandByID(const ID: Integer; const Stand: TTeamStatistik);
 begin
-
+  FTeamStands.AddOrSetValue(ID, Stand);
 end;
 
 procedure TWMState.SetTeamStand(const ATeamStand: TDictionary<Byte, TTeamStatistik>);

@@ -13,8 +13,10 @@ uses
   damTypes,
   clrState,
   clrSimulation,
+  clrUtils.HashMap,
   clrUtils.TableFormating,
-  clrUtils.StringFormating;
+  clrUtils.StringFormating,
+  clrUtils.UpdateStandings;
 
 
 type TGruppenphaseUI = class
@@ -182,15 +184,32 @@ begin
     end;
 
     // Das man die Chance hat etwas zu sehen
-    // Sleep(5000);
+    // Sleep(2000);
 
   end;
+
+  const MODIFY_IN_PLACE = false;
+  // Schritt 1. Das Dictionary sortieren
+  clrUtils.HashMap.Sort(FState.TeamStands, MODIFY_IN_PLACE);
+  { clrUtils.HashMap.THashMapUtils.Sort<Byte, TTeamRanking>(function(Param: TTeamRanking; NextParam: TTeamRanking)
+    begin
+      if ( not(Param is TTeamRanking) ) then
+      begin
+        raise Exception.Create('Error in callback function of HashMapSort Param not of TKey');
+      end;
+      Result := Param.Punkte > NextParam.Punkte;
+    end;
+  );}
+
+  // Schritt 2. Die jeweiligen top einträge als Spiele für das Achtelfinale eintragen
+
+  // ShowMessage('Die Gruppenphase ist abgeschlossen.');
+
 end;
 
 procedure TGruppenphaseUI.CallbackSimulation(Sender: TObject; ANdx: Integer; ATeam1Tore, ATeam2Tore: Integer);
 var
   Team1, Team2: TTeam;
-  HasStand: Boolean;
   TempStand1, TempStand2: TTeamStatistik;
 begin
 
@@ -199,62 +218,11 @@ begin
   FLabels[ANdx].Caption := clrUtils.StringFormating.FormatMatchString(Team1.Name, Team2.Name, ATeam1Tore, ATeam2Tore);
 
 
-  TempStand1 := Default(TTeamStatistik);
-  TempStand2 := Default(TTeamStatistik); 
-
-  HasStand := FState.GetTeamStand.ContainsKey(Team1.ID);
-  if ( HasStand ) then
-  begin
-    TempStand1 := FState.ForceGetTeamStandByID(Team1.ID);
-  end;
-
-  HasStand := FState.GetTeamStand.ContainsKey(Team2.ID);
-  if ( HasStand ) then
-  begin
-    TempStand2 := FState.ForceGetTeamStandByID(Team2.ID);
-  end;
-
-  if ( Team1Tore = Team2Tore ) then
-  begin
-    TempStand1.Punkte := TempStand1.Punkte + 1; // unentschieden + 1
-    TempStand2.Punkte := TempStand2.Punkte + 1; // unentschieden + 1
-
-    TempStand1.ToreGeschossen := TempStand1.ToreGeschossen + Team1Tore;
-    TempStand2.ToreGeschossen := TempStand2.ToreGeschossen + Team2Tore;
-    TempStand1.ToreKassiert := TempStand1.ToreKassiert + Team2Tore;
-    TempStand2.ToreKassiert := TempStand2.ToreKassiert + Team1Tore;
-
-    TempStand1.Unentschieden := TempStand1.Unentschieden + 1;
-    TempStand2.Unentschieden := TempStand2.Unentschieden + 1;
-  end
-  else if ( Team1Tore > Team2Tore ) then
-  begin
-    TempStand1.Punkte := TempStand1.Punkte + 3; // gewonnen + 3
-
-    TempStand1.ToreGeschossen := TempStand1.ToreGeschossen + Team1Tore;
-    TempStand2.ToreGeschossen := TempStand2.ToreGeschossen + Team2Tore;
-    TempStand1.ToreKassiert := TempStand1.ToreKassiert + Team2Tore;
-    TempStand2.ToreKassiert := TempStand2.ToreKassiert + Team1Tore;
-
-    TempStand1.Siege := TempStand1.Siege + 1;
-    TempStand2.Niederlagen := TempStand2.Niederlagen + 1;
-  end
-  else if ( Team1Tore < Team2Tore ) then
-  begin
-    TempStand2.Punkte := TempStand2.Punkte + 3; // gewonnen + 3
-
-    TempStand1.ToreGeschossen := TempStand1.ToreGeschossen + Team1Tore;
-    TempStand2.ToreGeschossen := TempStand2.ToreGeschossen + Team2Tore;
-    TempStand1.ToreKassiert := TempStand1.ToreKassiert + Team2Tore;
-    TempStand2.ToreKassiert := TempStand2.ToreKassiert + Team1Tore;
-
-    TempStand2.Siege := TempStand2.Siege + 1;
-    TempStand1.Niederlagen := TempStand1.Niederlagen + 1;
-  end;
+  clrUtils.UpdateStandings.UpdatedStandings(FState, ATeam1Tore, ATeam2Tore, Team1.ID, Team2.ID, TempStand1, TempStand2);
 
 
-  FState.SetTeamStandForID(Team1.ID, TempStand1);
-  FState.SetTeamStandForID(Team2.ID, TempStand2);
+  FState.AddOrSetTeamStandByID(Team1.ID, TempStand1);
+  FState.AddOrSetTeamStandByID(Team2.ID, TempStand2);
 
 end;
 

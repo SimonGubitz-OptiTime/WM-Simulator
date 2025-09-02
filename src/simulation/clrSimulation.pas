@@ -58,6 +58,11 @@ begin
 
   FTimer.Enabled := true;
   FTimer.OnTimer := TimerEvent;
+
+  while FTimerCount < FTotalGoals do
+  begin
+    Application.ProcessMessages;
+  end;
 end;
 
 procedure TSimulation.TimerEvent(Sender: TObject);
