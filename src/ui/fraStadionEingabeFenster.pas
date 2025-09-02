@@ -51,13 +51,15 @@ implementation
 
 constructor TStadionEingabeFenster.Create(var ADatabase: TDB<TStadion>);
 begin
+  
+  inherited Create(nil);
+
   FDatabase := ADatabase;
   if not ( FDatabase.Initialized ) then
   begin
     FDatabase := TDB<TStadion>.Create(FTableName);
   end;
 
-  inherited Create(nil);
 end;
 
 destructor TStadionEingabeFenster.Destroy;

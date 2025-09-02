@@ -198,16 +198,14 @@ end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
-  // Aufräumen
-
 
   FState.Destroy;
 
-  FVerlosung.Free;
-  FGruppenphase.Free;
-
   FStadionDB.Destroy;
   FTeamDB.Destroy;
+
+  FVerlosung.Free;
+  FGruppenphase.Free;
 
   StadionEingabe.Free;
   TeamEingabe.Free;
@@ -218,7 +216,7 @@ var
   Rows: TObjectList<TList<String>>;
 begin
 
-  Rows := FTeamDB.UnstukturierteTabelleErhaltenCSV();
+  Rows := FTeamDB.UnstrukturierteTabelleErhaltenCSV();
   FTeamAnzahl := Rows.Count - 1; // Header
 
   TeamAnzahlLabel.Caption := '0' + IntToStr(FTeamAnzahl);
@@ -240,7 +238,7 @@ begin
     TeamHinzufuegenButton.Enabled := false;
   end;
 
-  // Hierdrin wird UnstukturierteTabelleErhaltenCSV aufgerufen also vorher StukturierteTabelleErhaltenCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
+  // Hierdrin wird UnstrukturierteTabelleErhaltenCSV aufgerufen also vorher StrukturierteTabelleErhaltenCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
   TeamZeileZeichnen(Rows);
 
   Rows.Free;
@@ -260,7 +258,7 @@ var
   Rows: TObjectList<TList<String>>;
 begin
 
-  Rows := FStadionDB.UnstukturierteTabelleErhaltenCSV();
+  Rows := FStadionDB.UnstrukturierteTabelleErhaltenCSV();
   FStadionAnzahl := Rows.Count - 1; // Header
 
   StadionAnzahlLabel.Caption := '0' + IntToStr(FStadionAnzahl);
@@ -282,7 +280,7 @@ begin
     StadionHinzufuegenButton.Enabled := false;
   end;
 
-  // Hierdrin wird UnstukturierteTabelleErhaltenCSV aufgerufen also vorher StukturierteTabelleErhaltenCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
+  // Hierdrin wird UnstrukturierteTabelleErhaltenCSV aufgerufen also vorher StrukturierteTabelleErhaltenCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
   StadionTabelleZeichnen(Rows);
 
   Rows.Free;
@@ -309,7 +307,7 @@ end;
 
 procedure TMainForm.VerlosungStartenButtonClick(Sender: TObject);
 begin
-  FVerlosungFertig := FVerlosung.VerlosungStarten(FTeamDB, Timer1, VerlosungSheet);
+  FVerlosungFertig := FVerlosung.VerlosungStarten(FTeamDB, VerlosungSheet);
 
   // Wenn es genügend Gruppen gibt
   if ( FState.GetGruppen.Count = 12 ) then
@@ -335,7 +333,7 @@ begin
   end;
 
   // Verlosung starten
-  FVerlosungFertig := FVerlosung.VerlosungStarten(FTeamDB, Timer1, VerlosungSheet);
+  FVerlosungFertig := FVerlosung.VerlosungStarten(FTeamDB, VerlosungSheet);
 end;
 
 procedure TMainForm.ZurGruppenphaseButtonClick(Sender: TObject);

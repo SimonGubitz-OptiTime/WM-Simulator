@@ -31,7 +31,7 @@ type
     FCallbackThirdCount: Integer;
   public
 
-    constructor Create(var ATimer: TTimer; AObject: TControl; ATime: Integer; ADestroyObjectOnFinish: Boolean = true);
+    constructor Create(var AObject: TControl; ATime: Integer; ADestroyObjectOnFinish: Boolean = true);
 
     procedure ObjektBewegen(ACallbackFn: TAnimationCallback; AMoveToTop: Integer; AMoveToLeft: Integer; ACount: Integer = -1; ASecondCount: Integer = -1; AThirdCount: Integer = -1);
     procedure TypewriterEffect(AText: String);
@@ -47,33 +47,31 @@ type
 
 implementation
 
-constructor TAnimations.Create(var ATimer: TTimer; AObject: TControl; ATime: Integer; ADestroyObjectOnFinish: Boolean = true);
+constructor TAnimations.Create(var AObject: TControl; ATime: Integer; ADestroyObjectOnFinish: Boolean = true);
 begin
+
+  inherited Create;
 
   FDestroyObject := ADestroyObjectOnFinish;
   FFinishedAnimation := false;
 
-  // ShowMessage('before');
   FObject := AObject;
-  // ShowMessage('after');
 
-  FTimer := ATimer;
+  FTimer := TTimer.Create(nil);
   FTimer.Interval := FTimerInterval;
   FTimer.OnTimer := ObjektBewegenTick;
   FTimerAmount := 0;
 
   FTimerDuration := ATime;
-
 end;
 
 destructor TAnimations.Destroy;
 begin
-  FTimer.Enabled := false;
-  FTimer.Free;
+  FTimer.Destroy;
 
   if ( FDestroyObject ) then
   begin
-    FObject.Free;
+    FreeAndNil(FObject);
   end;
 
   inherited Destroy;
@@ -96,17 +94,11 @@ begin
 
   FTimer.Enabled := true;
 
-  { TThread.Queue(nil,
-    procedure
-    begin }
+
   while not FFinishedAnimation do
   begin
     Application.ProcessMessages;
-    Sleep(10);
   end;
-  { end
-    ); }
-
 end;
 
 procedure TAnimations.ObjektBewegenTick(ASender: TObject);
@@ -131,7 +123,7 @@ begin
     // Wenn das Objekt zerstört werden soll, dann hier aufräumen
     if ( FDestroyObject ) then
     begin
-      FObject.Free;
+      FreeAndNil(FObject);
     end;
 
     Exit;

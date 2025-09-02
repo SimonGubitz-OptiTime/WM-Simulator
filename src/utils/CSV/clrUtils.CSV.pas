@@ -233,11 +233,11 @@ begin
     end;
 
     // Für jedes Feld in TempFieldArray den Wert in das richtige Feld von TempRes schreiben
-    RttiContext := TRttiContext.Create;
+    RttiFields := TObjectList<TRttiField>.Create(false);
     try
 
       RttiType := RttiContext.GetType(TypeInfo(T));
-      RttiFields := TObjectList<TRttiField>.Create;
+      RttiContext := TRttiContext.Create;
 
       try
         RttiFields.AddRange(RttiType.GetFields);
@@ -255,10 +255,10 @@ begin
           RttiFields[j].SetValue(@TempRes, TempValue);
         end;
       finally
-        // RttiFields.Free;
+        RttiContext.Free;
       end;
     finally
-      RttiContext.Free;
+      RttiFields.Free;
     end;
   finally
     TempFieldArray.Free;
@@ -278,12 +278,12 @@ begin
 
   Result := TList<String>.Create;
 
-  RttiContext := TRttiContext.Create;
+  RttiFields := TObjectList<TRttiField>.Create;
 
   try
 
     RttiType := RttiContext.GetType(TypeInfo(T));
-    RttiFields := TObjectList<TRttiField>.Create;
+    RttiContext := TRttiContext.Create;
 
     try
       RttiFields.AddRange(RttiType.GetFields);
@@ -292,10 +292,10 @@ begin
         Result.Add(RttiFields[Ndx].Name);
       end;
     finally
-      // RttiFields.Free;
+      RttiContext.Free;
     end;
   finally
-    RttiContext.Free;
+    RttiFields.Free;
   end;
 
 end;

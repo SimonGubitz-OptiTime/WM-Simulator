@@ -77,6 +77,8 @@ implementation
 constructor TTeamEingabeFenster.Create(var ADatabase: TDB<TTeam>);
 begin
 
+  inherited Create(nil);
+  
   FDatabase := ADatabase;
   if not ( FDatabase.Initialized ) then
   begin
@@ -85,7 +87,6 @@ begin
 
   FSpielerListe := TList<String>.Create;
 
-  inherited Create(nil);
 
   // Nach dem inherited Create call, sind nun die Children des Forms nicht mehr "nil"
   TeamVerbandEingabeBox.Items.Add('AFC');

@@ -38,9 +38,10 @@ type TVerlosungUI = class
 
   public
     property Initialized: Boolean read FInitialized;
+
     constructor Create(AGrids: array of TStringGrid; AState: TWMState);
 
-    function VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer; AOwner: TControl): Boolean;
+    function VerlosungStarten(var ATeamDB: TDB<TTeam>; AOwner: TControl): Boolean;
 
     destructor Destroy; override;
   end;
@@ -51,6 +52,8 @@ constructor TVerlosungUI.Create(AGrids: array of TStringGrid; AState: TWMState);
 var
   i, j: Integer;
 begin
+
+  inherited Create;
 
   FUITeams := nil;
   FState := AState;
@@ -90,7 +93,7 @@ begin
   inherited Destroy;
 end;
 
-function TVerlosungUI.VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer;  AOwner: TControl): Boolean;
+function TVerlosungUI.VerlosungStarten(var ATeamDB: TDB<TTeam>; AOwner: TControl): Boolean;
 var
   Grid: TStringGrid;
   TempList: TList<TTeam>;
@@ -109,11 +112,11 @@ begin
 
 
   try
-    AnimationList := TObjectList<TAnimations>.Create(false);
+    AnimationList := TObjectList<TAnimations>.Create(true);
 
-    // `StukturierteTabelleErhaltenCSV` erstellt für jeden Aufruf ein komplett neues Element/Objekt
-    FUITeams := ATeamDB.StukturierteTabelleErhaltenCSV();
-    FState.SetTeams(ATeamDB.StukturierteTabelleErhaltenCSV());
+    // `StrukturierteTabelleErhaltenCSV` erstellt für jeden Aufruf ein komplett neues Element/Objekt
+    FUITeams := ATeamDB.StrukturierteTabelleErhaltenCSV();
+    FState.SetTeams(ATeamDB.StrukturierteTabelleErhaltenCSV());
     FState.ClearGruppen();
 
     // potenziell ineffizient
@@ -184,7 +187,7 @@ begin
 
 
       FUITeams.Clear;
-
+      
       for Ndx := 0 to SehrStarkeTeams.Count - 1 do
       begin
         // Jedes Sehr starke Team wird mit den anderen Stärken in eine Gruppe gepackt
@@ -230,7 +233,7 @@ begin
             MoveTop := Grid.Top + Round(TempLabel.Height / 2) +
               (ColNdx * FRowSize[GridNdx]);
 
-            AnimationList.Add(TAnimations.Create(ATimer, TControl(TempLabel), 150)); // .150 sek
+            AnimationList.Add(TAnimations.Create(TControl(TempLabel), 150)); // .150 sek
             AnimationList.Last.ObjektBewegen(AnimationCallbackFn, MoveTop, Grid.Left + 15, ColNdx, GridNdx, TeamNdx);
 
             Inc(TeamNdx);

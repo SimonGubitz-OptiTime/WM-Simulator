@@ -20,7 +20,7 @@ type TSimulation = class
 
     procedure TimerEvent(Sender: TObject);
   public
-    constructor Create;
+    constructor Create(PossibleMaxGoals: Byte = 6);
     procedure SpielSimulieren(ACallbackFn: TSimulationCallbackFn; ANdx: Integer);
     destructor Destroy; override;
 end;
@@ -31,20 +31,21 @@ const
 
 implementation
 
-constructor TSimulation.Create;
+constructor TSimulation.Create(PossibleMaxGoals: Byte = 6);
 begin
   FTeam1Tore := 0;
   FTeam2Tore := 0;
   FTimerCount := 0;
   FTimer := TTimer.Create(nil);
+  FTimer.Enabled := false;
   FTimer.Interval := 100; // 100 ms
 
-  FTotalGoals := Random(7); // 0 bis 6 Tore pro Spiel
+  FTotalGoals := Random(PossibleMaxGoals + 1);
 end;
 
 destructor TSimulation.Destroy;
 begin
-  FTimer.Free;
+  FTimer.Destroy;
 
   inherited Destroy;
 end;
@@ -55,22 +56,16 @@ begin
   FNdx := ANdx;
   FCallbackFn := ACallbackFn;
 
-  FTimer.Enabled := True;
+  FTimer.Enabled := true;
   FTimer.OnTimer := TimerEvent;
-
-
-  while FTimerCount < FTotalGoals do
-  begin
-    Application.ProcessMessages;
-  end;
 end;
 
 procedure TSimulation.TimerEvent(Sender: TObject);
 begin
 
-  if (FTimerCount >= FTotalGoals) then
+  if ( FTimerCount >= FTotalGoals ) then
   begin
-    FTimer.Enabled := False;
+    FTimer.Enabled := false;
 
     FCallbackFn(Self, FNdx, FTeam1Tore, FTeam2Tore);
 
@@ -79,7 +74,7 @@ begin
 
   // Random Tore generieren
   // Hier kann noch eine Logik rein, die die Stärke der Teams berücksichtigt und auch ob es im Heimstadion gespielt wird
-  if ( Random(2) = 0 ) then
+  if ( Random(100) < 50 ) then
   begin
     Inc(FTeam1Tore);
   end

@@ -21,6 +21,7 @@ type TGruppenphaseUI = class
   private
 
     FState: TWMState;
+    FSimulation: TSimulation;
     FGrid: TStringGrid;
     FMatches: TList<TPair<Byte, Byte>>; // eigene TDictionary implementierung, mit mehreren gleichen Keys
     FLabels: TArray<TLabel>;
@@ -29,8 +30,6 @@ type TGruppenphaseUI = class
     ///   Algorithmisch Spiele verteilen
     /// </summary>
     function CreateUniqueMatches(AGroup: TGruppe): TList<TPair<Byte, Byte>>;
-
-
     procedure CallbackSimulation(Sender: TObject; ANdx: Integer; ATeam1Tore, ATeam2Tore: Integer);
 
   public
@@ -51,6 +50,7 @@ var
 begin
   FState := AState;
   FGrid := AGruppenphaseGrid;
+  FSimulation := TSimulation.Create;
 
   var ColSize := Floor(FGrid.Width / FGrid.ColCount) - 2;
   var RowSize := Floor(FGrid.Height / FGrid.RowCount) - 2;
@@ -67,10 +67,12 @@ end;
 
 destructor TGruppenphaseUI.Destroy;
 begin
+  FSimulation.Destroy;
+
   inherited Destroy;
 end;
 
-/// .ID nutzen, da es schneller ist in Lookups, als ein TTeam mit SizeOf() ≈ (x)Bytes vs .ID 1Byte
+/// .ID nutzen, da es schneller ist in Lookups, als ein TTeam mit SizeOf() ≈ 28 Bytes vs .ID 1Byte
 /// Nachteil -> man muss das Objekt in Gruppenphase wieder per Array Lookup finden, da ID fest zu dem globalen Array steht
 function TGruppenphaseUI.CreateUniqueMatches(AGroup: TGruppe): TList<TPair<Byte, Byte>>;
 var
@@ -83,6 +85,8 @@ var
   ArrVal: TPair<Byte, Byte>;
   Ndx: Integer;
 begin
+
+  // ShowMessage('Sizeof TTeam is: ' + IntToStr(SizeOf(TTeam))); // 28 - 32bit 56 - 64bit
 
   FGameDict := TDictionary<Byte, TList<Byte>>.Create;
 
@@ -170,10 +174,7 @@ begin
       ALabels[Ndx].Font.Style := [fsBold];
       ALabels[Ndx].Font.Color := clGreen;
 
-
-      var Simulation := TSimulation.Create;
-
-      Simulation.SpielSimulieren(CallbackSimulation, Ndx);
+      FSimulation.SpielSimulieren(CallbackSimulation, Ndx);    
 
       ALabels[Ndx].Font.Style := [];
       ALabels[Ndx].Font.Color := clWindowText;
