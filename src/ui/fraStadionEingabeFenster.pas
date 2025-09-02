@@ -28,10 +28,12 @@ type
     ZuschauerKapazitaetEingabeFeld: TEdit;
     BestaetigenButton: TButton;
 
-    constructor Create(var ADatabase: TDB<TStadion>); reintroduce;
+    constructor Create(var ADatabase: TDB<TStadion>);
 
     procedure BestaetigenButtonClick(Sender: TObject);
     class function GetTableName: ShortString;
+
+    destructor Destroy; override;
 
   private
 
@@ -56,6 +58,14 @@ begin
   end;
 
   inherited Create(nil);
+end;
+
+destructor TStadionEingabeFenster.Destroy;
+begin
+  // Aufräumen
+  FDatabase.Free;
+
+  inherited Destroy;
 end;
 
 procedure TStadionEingabeFenster.BestaetigenButtonClick(Sender: TObject);
@@ -97,7 +107,7 @@ begin
   Stadion.ZuschauerKapazitaet := StrToInt(ZuschauerKapazitaetEingabeFeld.Text);
 
   // In die Datenbank schreiben
-  FDatabase.AddRowToCSV(Stadion);
+  FDatabase.ZeileHinzufuegenCSV(Stadion);
 
   // Fenster schließen
   Self.Close;

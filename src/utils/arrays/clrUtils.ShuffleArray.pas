@@ -1,4 +1,4 @@
-unit clrUtils.ShuffleArray;
+unit clrUtils.ArrayMischen;
 
 interface
 

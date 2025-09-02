@@ -16,8 +16,8 @@ type TWMState = class(TInterfacedObject, IState)
   private
     FTeams: TList<TTeam>;
     FStadien: TList<TStadion>;
-    FGroups: TList<TGruppe>;
-    FTeamStandings: TDictionary<Byte, TTeamStatistik>;
+    FGruppen: TList<TGruppe>;
+    FTeamStands: TDictionary<Byte, TTeamStatistik>;
     AchtelFinalisten: TList<TPair<Byte, Byte>>;
     ViertelFinalisten: TList<TPair<Byte, Byte>>;
     HablFinalisten: TList<TPair<Byte, Byte>>;
@@ -32,19 +32,19 @@ type TWMState = class(TInterfacedObject, IState)
     function GetStadien: TList<TStadion>;
     procedure SetStadien(const AStadien: TList<TStadion>);
 
-    function GetGroups: TList<TGruppe>;
-    procedure AddGroup(const AGroup: TGruppe);
-    procedure SetGroups(const AGroups: TList<TGruppe>);
+    function GetGruppen: TList<TGruppe>;
+    procedure AddGruppe(const AGroup: TGruppe);
+    procedure SetGruppen(const AGruppen: TList<TGruppe>);
 
-    function GetTeamStanding: TDictionary<Byte, TTeamStatistik>;
-    procedure SetTeamStanding(const ATeamStanding: TDictionary<Byte, TTeamStatistik>);
+    function GetTeamStand: TDictionary<Byte, TTeamStatistik>;
+    procedure SetTeamStand(const ATeamStand: TDictionary<Byte, TTeamStatistik>);
 
-    destructor Destroy;
+    destructor Destroy; override;
   published
     property Teams: TList<TTeam> read GetTeams write SetTeams;
     property Stadien: TList<TStadion> read GetStadien write SetStadien;
-    property Groups: TList<TGruppe> read GetGroups write SetGroups;
-    property TeamStandings: TDictionary<Byte, TTeamStatistik> read GetTeamStanding write SetTeamStanding;
+    property Gruppen: TList<TGruppe> read GetGruppen write SetGruppen;
+    property TeamStands: TDictionary<Byte, TTeamStatistik> read GetTeamStand write SetTeamStand;
 end;
 
 
@@ -54,8 +54,8 @@ constructor TWMState.Create;
 begin
   FTeams := TList<TTeam>.Create;
   FStadien := TList<TStadion>.Create;
-  FGroups := TList<TGruppe>.Create;
-  FTeamStandings := TDictionary<Byte, TTeamStatistik>.Create;
+  FGruppen := TList<TGruppe>.Create;
+  FTeamStands := TDictionary<Byte, TTeamStatistik>.Create;
 
 end;
 
@@ -63,7 +63,8 @@ destructor TWMState.Destroy;
 begin
   FTeams.Free;
   FStadien.Free;
-  FGroups.Free;
+  FGruppen.Free;
+  FTeamStands.Free;
 
   inherited Destroy;
 end;
@@ -98,29 +99,29 @@ begin
   FStadien := AStadien;
 end;
 
-function TWMState.GetGroups: TList<TGruppe>;
+function TWMState.GetGruppen: TList<TGruppe>;
 begin
-  Result := FGroups;
+  Result := FGruppen;
 end;
 
-procedure TWMState.AddGroup(const AGroup: TGruppe);
+procedure TWMState.AddGruppe(const AGroup: TGruppe);
 begin
-  FGroups.Add(AGroup);
+  FGruppen.Add(AGroup);
 end;
 
-procedure TWMState.SetGroups(const AGroups: TList<TGruppe>);
+procedure TWMState.SetGruppen(const AGruppen: TList<TGruppe>);
 begin
-  FGroups := AGroups;
+  FGruppen := AGruppen;
 end;
 
-function TWMState.GetTeamStanding: TDictionary<Byte, TTeamStatistik>;
+function TWMState.GetTeamStand: TDictionary<Byte, TTeamStatistik>;
 begin
-  Result := FTeamStandings;
+  Result := FTeamStands;
 end;
 
-procedure TWMState.SetTeamStanding(const ATeamStanding: TDictionary<Byte, TTeamStatistik>);
+procedure TWMState.SetTeamStand(const ATeamStand: TDictionary<Byte, TTeamStatistik>);
 begin
-  FTeamStandings := ATeamStanding;
+  FTeamStands := ATeamStand;
 end;
 
 end.

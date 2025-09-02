@@ -17,7 +17,7 @@ uses
   damTypes,
   clrState,
   clrAnimation,
-  clrUtils.ShuffleArray,
+  clrUtils.ArrayMischen,
   clrUtils.FilterArray,
   clrUtils.TableFormating;
 
@@ -42,7 +42,7 @@ type TVerlosungUI = class
 
     function VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer; AOwner: TControl): Boolean;
 
-    destructor Free;
+    destructor Destroy; override;
   end;
 
 implementation
@@ -54,7 +54,7 @@ begin
 
   FUITeams := nil;
   FState := AState;
-  FGrids := TObjectList<TStringGrid>.Create;
+  FGrids := TObjectList<TStringGrid>.Create(false);
 
   if ( Length(AGrids) <> 12 ) then
   begin
@@ -82,18 +82,12 @@ begin
 
 end;
 
-destructor TVerlosungUI.Free;
+destructor TVerlosungUI.Destroy;
 begin
-  FGrids.Free;
+  FGrids.Destroy;
+  FUITeams.Free;
 
-  if ( (Assigned(FUITeams))
-    and (FUITeams <> nil)
-  ) then
-  begin
-    FUITeams.Free;
-  end;
-
-  inherited Free;
+  inherited Destroy;
 end;
 
 function TVerlosungUI.VerlosungStarten(var ATeamDB: TDB<TTeam>; ATimer: TTimer;  AOwner: TControl): Boolean;
@@ -113,12 +107,14 @@ begin
     clrUtils.TableFormating.TabelleLeeren(Grid);
   end;
 
+  Grid.Free;
+
 
   try
     AnimationList := TObjectList<TAnimations>.Create;
 
-    // `GetStructuredTableFromCSV` erstellt für jeden Aufruf ein komplett neues Element/Objekt
-    FState.SetTeams(ATeamDB.GetStructuredTableFromCSV());
+    // `StrukturierteTabelleHinzufuegenCSV` erstellt für jeden Aufruf ein komplett neues Element/Objekt
+    FState.SetTeams(ATeamDB.StrukturierteTabelleHinzufuegenCSV());
 
     // potenziell ineffizient
     for Ndx := 0 to FState.Teams.Count - 1 do
@@ -129,17 +125,13 @@ begin
        // ID für jedes Team setzen
     end;
 
-    FUITeams := ATeamDB.GetStructuredTableFromCSV();
+    FUITeams := ATeamDB.StrukturierteTabelleHinzufuegenCSV();
 
     if ( (FUITeams.Count mod 4) <> 0 ) then
     begin
       raise Exception.Create('TVerlosungUI.VerlosungStarten Error: The number of FUITeams must be divisible by 4.');
     end;
 
-    SehrStarkeTeams   := TList<TTeam>.Create;
-    StarkeTeams       := TList<TTeam>.Create;
-    MittelStarkeTeams := TList<TTeam>.Create;
-    SchwacheTeams     := TList<TTeam>.Create;
 
     try
 
@@ -186,10 +178,10 @@ begin
       end;
 
 
-      clrUtils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(SehrStarkeTeams);
-      clrUtils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(StarkeTeams);
-      clrUtils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(MittelStarkeTeams);
-      clrUtils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(SchwacheTeams);
+      clrUtils.ArrayMischen.TShuffleArrayUtils<TTeam>.Shuffle(SehrStarkeTeams);
+      clrUtils.ArrayMischen.TShuffleArrayUtils<TTeam>.Shuffle(StarkeTeams);
+      clrUtils.ArrayMischen.TShuffleArrayUtils<TTeam>.Shuffle(MittelStarkeTeams);
+      clrUtils.ArrayMischen.TShuffleArrayUtils<TTeam>.Shuffle(SchwacheTeams);
 
 
       FUITeams.Clear;
@@ -206,9 +198,10 @@ begin
         TempList.AddRange([ SehrStarkeTeams[Ndx], StarkeTeams[Ndx], MittelStarkeTeams[Ndx], SchwacheTeams[Ndx] ]);
 
         // und für die zentrale Lagerung
-        FState.AddGroup(TempList); // hier
+        FState.AddGruppe(TempList); // hier
       end;
 
+      TempList.Free;
 
       // Für alle Grids je 4 Teams eintragen
       TeamNdx := 0;
@@ -241,7 +234,7 @@ begin
               (ColNdx * FRowSize[GridNdx]);
 
             AnimationList.Add(TAnimations.Create(ATimer, TControl(TempLabel), 150)); // .150 sek
-            AnimationList.Last.MoveObject(AnimationCallbackFn, MoveTop, Grid.Left + 15, ColNdx, GridNdx, TeamNdx);
+            AnimationList.Last.ObjektBewegen(AnimationCallbackFn, MoveTop, Grid.Left + 15, ColNdx, GridNdx, TeamNdx);
 
             Inc(TeamNdx);
           end;

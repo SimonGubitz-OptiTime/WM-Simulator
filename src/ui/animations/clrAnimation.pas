@@ -33,15 +33,15 @@ type
 
     constructor Create(var ATimer: TTimer; AObject: TControl; ATime: Integer; ADestroyObjectOnFinish: Boolean = true);
 
-    procedure MoveObject(ACallbackFn: TAnimationCallback; AMoveToTop: Integer; AMoveToLeft: Integer; ACount: Integer = -1; ASecondCount: Integer = -1; AThirdCount: Integer = -1);
+    procedure ObjektBewegen(ACallbackFn: TAnimationCallback; AMoveToTop: Integer; AMoveToLeft: Integer; ACount: Integer = -1; ASecondCount: Integer = -1; AThirdCount: Integer = -1);
     procedure TypewriterEffect(AText: String);
 
-    destructor Free;
+    destructor Destroy; override;
 
   const
     FTimerInterval: Byte = 10;
 
-    procedure MoveObjectTick(ASender: TObject);
+    procedure ObjektBewegenTick(ASender: TObject);
 
   end;
 
@@ -59,14 +59,14 @@ begin
 
   FTimer := ATimer;
   FTimer.Interval := FTimerInterval;
-  FTimer.OnTimer := MoveObjectTick;
+  FTimer.OnTimer := ObjektBewegenTick;
   FTimerAmount := 0;
 
   FTimerDuration := ATime;
 
 end;
 
-destructor TAnimations.Free;
+destructor TAnimations.Destroy;
 begin
   FTimer.Enabled := false;
   FTimer.Free;
@@ -75,9 +75,11 @@ begin
   begin
     FObject.Free;
   end;
+
+  inherited Destroy;
 end;
 
-procedure TAnimations.MoveObject(ACallbackFn: TAnimationCallback;
+procedure TAnimations.ObjektBewegen(ACallbackFn: TAnimationCallback;
   AMoveToTop: Integer; AMoveToLeft: Integer;
   ACount: Integer = -1; ASecondCount: Integer = -1; AThirdCount: Integer = -1);
 begin
@@ -107,7 +109,7 @@ begin
 
 end;
 
-procedure TAnimations.MoveObjectTick(ASender: TObject);
+procedure TAnimations.ObjektBewegenTick(ASender: TObject);
 var
   progress: Double;
 begin
@@ -137,7 +139,7 @@ begin
 
   if ( not(FObject is TControl) ) then
   begin
-    raise Exception.Create('TAnimations.MoveObjectTick Error: Sender is not a TControl.');
+    raise Exception.Create('TAnimations.ObjektBewegenTick Error: Sender is not a TControl.');
   end;
 
   // change the top and left vals
@@ -152,7 +154,7 @@ procedure TAnimations.TypewriterEffect(AText: String);
 begin
   if ( not(FObject is TControl) ) then
   begin
-    raise Exception.Create('TAnimations.MoveObjectTick Error: Sender is not a TControl.');
+    raise Exception.Create('TAnimations.ObjektBewegenTick Error: Sender is not a TControl.');
   end;
   
 end;

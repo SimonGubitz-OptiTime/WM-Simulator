@@ -38,7 +38,7 @@ type TGruppenphaseUI = class
 
     procedure GruppenphaseStarten(ALabels: TArray<TLabel>);
 
-    destructor Free;
+    destructor Destroy; override;
 
 end;
 
@@ -65,11 +65,9 @@ begin
   end;
 end;
 
-destructor TGruppenphaseUI.Free;
+destructor TGruppenphaseUI.Destroy;
 begin
-  // Nicht FState freigeben, wird durch MainForm verwaltet
-
-  inherited Free;
+  inherited Destroy;
 end;
 
 /// .ID nutzen, da es schneller ist in Lookups, als ein TTeam mit SizeOf() ≈ (x)Bytes vs .ID 1Byte
@@ -145,13 +143,13 @@ begin
 
   FLabels := ALabels;
 
-  if ( FState.Groups.count = 0 ) then
+  if ( FState.Gruppen.count = 0 ) then
   begin
     ShowMessage('Bitte zuerst Verlosung starten.');
   end;
 
 
-  for CurrentGroup in FState.Groups do
+  for CurrentGroup in FState.Gruppen do
   begin
 
     FMatches := CreateUniqueMatches(CurrentGroup);

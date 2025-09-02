@@ -38,7 +38,7 @@ type TTeam = record
     HistorischeWMSiege: Byte;
     Heimstadion: TStadion; // in der Simulation vielleicht +5% Siegchancen
     Flagge: Byte; // als index für eine TImageList
-    SpielerListe: array[0..11] of String; // Nur Namen
+    FSpielerListe: array[0..11] of String; // Nur Namen
     TeamRanking: TTeamRanking;
 
     // ↓ für spätere Statistiken - keine Stammdaten
@@ -107,7 +107,7 @@ C:.
 |   |   
 |   \---icons
 |           add.png
-|           groups.png
+|           Gruppen.png
 |           sports_soccer.png
 |           Stadion.png
 |           

@@ -167,8 +167,8 @@ begin
   // Globaler State, wodrin alle Teams, Gruppen und Auskommen nach und nach gespeichert werden
   FState := TWMState.Create;
 
-  FVerlosung := nil;
-  FGruppenphase := nil;
+  FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12], FState);
+  FGruppenphase := TGruppenphaseUI.Create(GruppenphaseStringGrid, FState);
   // FSpiel := nil;
 
   TeamGewollteAnzahlLabel.Caption := IntToStr(FGewollteTeamAnzahl);
@@ -176,6 +176,9 @@ begin
 
   FTeamDB := TDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
   FStadionDB := TDB<TStadion>.Create(TStadionEingabeFenster.GetTableName);
+
+  TeamEingabe := TTeamEingabeFenster.Create(FTeamDB);
+  StadionEingabe := TStadionEingabeFenster.Create(FStadionDB);
 
   // Teams laden
   if ( FTeamDB.Initialized ) then
@@ -189,7 +192,7 @@ begin
   begin
     StadionDBUpdate;
   end;
-  FStadionDB.AddDBUpdateEventListener(StadionDBUpdate); // fehler hier?
+  FStadionDB.AddDBUpdateEventListener(StadionDBUpdate);
 
 end;
 
@@ -214,7 +217,7 @@ var
   Rows: TObjectList<TList<String>>;
 begin
 
-  Rows := FTeamDB.GetUnstructuredTableFromCSV();
+  Rows := FTeamDB.UnstrukturierteTabelleHinzufuegenCSV();
   FTeamAnzahl := Rows.Count - 1; // Header
 
   TeamAnzahlLabel.Caption := '0' + IntToStr(FTeamAnzahl);
@@ -236,7 +239,7 @@ begin
     TeamHinzufuegenButton.Enabled := false;
   end;
 
-  // Hierdrin wird GetUnstructuredTableFromCSV aufgerufen also vorher GetStructuredTableFromCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
+  // Hierdrin wird UnstrukturierteTabelleHinzufuegenCSV aufgerufen also vorher StrukturierteTabelleHinzufuegenCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
   TeamZeileZeichnen(Rows);
 
   Rows.Free;
@@ -256,7 +259,7 @@ var
   Rows: TObjectList<TList<String>>;
 begin
 
-  Rows := FStadionDB.GetUnstructuredTableFromCSV();
+  Rows := FStadionDB.UnstrukturierteTabelleHinzufuegenCSV();
   FStadionAnzahl := Rows.Count - 1; // Header
 
   StadionAnzahlLabel.Caption := '0' + IntToStr(FStadionAnzahl);
@@ -278,7 +281,7 @@ begin
     StadionHinzufuegenButton.Enabled := false;
   end;
 
-  // Hierdrin wird GetUnstructuredTableFromCSV aufgerufen also vorher GetStructuredTableFromCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
+  // Hierdrin wird UnstrukturierteTabelleHinzufuegenCSV aufgerufen also vorher StrukturierteTabelleHinzufuegenCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
   StadionTabelleZeichnen(Rows);
 
   Rows.Free;
@@ -295,26 +298,20 @@ end;
 
 procedure TMainForm.TeamHinzufuegenButtonClick(Sender: TObject);
 begin
-  TeamEingabe := TTeamEingabeFenster.Create(FTeamDB);
   TeamEingabe.Show; // ShowModal;
 end;
 
 procedure TMainForm.StadionHinzufuegenButtonClick(Sender: TObject);
 begin
-  StadionEingabe := TStadionEingabeFenster.Create(FStadionDB);
   StadionEingabe.Show; // ShowModal;
 end;
 
 procedure TMainForm.VerlosungStartenButtonClick(Sender: TObject);
 begin
-  if ( not(Assigned(FVerlosung)) or not(FVerlosung.Initialized) ) then
-  begin
-    FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12], FState);
-  end;
   FVerlosungFertig := FVerlosung.VerlosungStarten(FTeamDB, Timer1, VerlosungSheet);
 
   // Wenn es genügend Gruppen gibt
-  if ( FState.GetGroups.Count = 12 ) then
+  if ( FState.GetGruppen.Count = 12 ) then
   begin
     ZurGruppenphaseButton.Enabled := true;
   end;
@@ -322,10 +319,6 @@ end;
 
 procedure TMainForm.GruppenphaseStartenButtonClick(Sender: TObject);
 begin
-  if ( not(Assigned(FGruppenphase)) ) then
-  begin
-    FGruppenphase := TGruppenphaseUI.Create(GruppenphaseStringGrid, FState);
-  end;
 
   FGruppenphase.GruppenphaseStarten([ Spiel1Label, Spiel2Label, Spiel3Label, Spiel4Label, Spiel5Label, Spiel6Label ]);
 
@@ -341,11 +334,6 @@ begin
   end;
 
   // Verlosung starten
-  if not ( Assigned(FVerlosung) ) then
-  begin
-    FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12], FState);
-  end;
-
   FVerlosungFertig := FVerlosung.VerlosungStarten(FTeamDB, Timer1, VerlosungSheet);
 end;
 
@@ -376,11 +364,6 @@ begin
         AllowChange := clrUtils.Routing.OnVerlosungChanging
           ((FTeamAnzahl = FGewollteTeamAnzahl) and
           (FStadionAnzahl = FGewollteStadionAnzahl));
-
-        if not ( Assigned(FVerlosung) ) then
-        begin
-          FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12], FState);
-        end;
       end;
     2:
       begin
