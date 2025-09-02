@@ -12,15 +12,20 @@ uses
   clrDB;
 
 
+
+
+
 type TWMState = class(TInterfacedObject, IState)
   private
     FTeams: TList<TTeam>;
     FStadien: TList<TStadion>;
     FGruppen: TList<TGruppe>;
+
     FTeamStands: TDictionary<Byte, TTeamStatistik>;
+
     AchtelFinalisten: TList<TPair<Byte, Byte>>;
     ViertelFinalisten: TList<TPair<Byte, Byte>>;
-    HablFinalisten: TList<TPair<Byte, Byte>>;
+    HalbFinalisten: TList<TPair<Byte, Byte>>;
     Finalisten: TPair<Byte, Byte>;
   public
     constructor Create;
@@ -38,6 +43,9 @@ type TWMState = class(TInterfacedObject, IState)
     procedure   ClearGruppen();         
 
     function    GetTeamStand: TDictionary<Byte, TTeamStatistik>;
+    function    ForceGetTeamStandByID(const ID: Integer): TTeamStatistik;
+    function    TryGetTeamStandByID(const ID: Integer; out Return: TTeamStatistik): Boolean;
+    procedure   AddOrSetTeamStandByID(const ID: Integer; const Stand: TTeamStatistik);
     procedure   SetTeamStand(const ATeamStand: TDictionary<Byte, TTeamStatistik>);
 
     destructor  Destroy; override;
@@ -123,6 +131,30 @@ end;
 function TWMState.GetTeamStand: TDictionary<Byte, TTeamStatistik>;
 begin
   Result := FTeamStands;
+end;
+
+function TWMState.ForceGetTeamStandByID(const ID: Integer): TTeamStatistik;
+begin
+  Result := FTeamStands[ID];
+end;
+
+function TWMState.TryGetTeamStandByID(const ID: Integer; out Return: TTeamStatistik): Boolean;
+begin
+  if ( FTeamStands.ContainsKey(ID) ) then
+  begin
+    Return := FTeamStands[ID];
+    Result := true;
+  end
+  else
+  begin
+    Return := Default(TTeamStatistik);
+    Result := false;
+  end;
+end;
+
+procedure TWMState.AddOrSetTeamStandByID(const ID: Integer; const Stand: TTeamStatistik);
+begin
+
 end;
 
 procedure TWMState.SetTeamStand(const ATeamStand: TDictionary<Byte, TTeamStatistik>);

@@ -190,10 +190,72 @@ end;
 procedure TGruppenphaseUI.CallbackSimulation(Sender: TObject; ANdx: Integer; ATeam1Tore, ATeam2Tore: Integer);
 var
   Team1, Team2: TTeam;
+  HasStand: Boolean;
+  TempStand1, TempStand2: TTeamStatistik;
 begin
+
   Team1 := FState.Teams[FMatches[ANdx].Key];
   Team2 := FState.Teams[FMatches[ANdx].Value];
   FLabels[ANdx].Caption := clrUtils.StringFormating.FormatMatchString(Team1.Name, Team2.Name, ATeam1Tore, ATeam2Tore);
+
+
+  TempStand1 := Default(TTeamStatistik);
+  TempStand2 := Default(TTeamStatistik); 
+
+  HasStand := FState.GetTeamStand.ContainsKey(Team1.ID);
+  if ( HasStand ) then
+  begin
+    TempStand1 := FState.ForceGetTeamStandByID(Team1.ID);
+  end;
+
+  HasStand := FState.GetTeamStand.ContainsKey(Team2.ID);
+  if ( HasStand ) then
+  begin
+    TempStand2 := FState.ForceGetTeamStandByID(Team2.ID);
+  end;
+
+  if ( Team1Tore = Team2Tore ) then
+  begin
+    TempStand1.Punkte := TempStand1.Punkte + 1; // unentschieden + 1
+    TempStand2.Punkte := TempStand2.Punkte + 1; // unentschieden + 1
+
+    TempStand1.ToreGeschossen := TempStand1.ToreGeschossen + Team1Tore;
+    TempStand2.ToreGeschossen := TempStand2.ToreGeschossen + Team2Tore;
+    TempStand1.ToreKassiert := TempStand1.ToreKassiert + Team2Tore;
+    TempStand2.ToreKassiert := TempStand2.ToreKassiert + Team1Tore;
+
+    TempStand1.Unentschieden := TempStand1.Unentschieden + 1;
+    TempStand2.Unentschieden := TempStand2.Unentschieden + 1;
+  end
+  else if ( Team1Tore > Team2Tore ) then
+  begin
+    TempStand1.Punkte := TempStand1.Punkte + 3; // gewonnen + 3
+
+    TempStand1.ToreGeschossen := TempStand1.ToreGeschossen + Team1Tore;
+    TempStand2.ToreGeschossen := TempStand2.ToreGeschossen + Team2Tore;
+    TempStand1.ToreKassiert := TempStand1.ToreKassiert + Team2Tore;
+    TempStand2.ToreKassiert := TempStand2.ToreKassiert + Team1Tore;
+
+    TempStand1.Siege := TempStand1.Siege + 1;
+    TempStand2.Niederlagen := TempStand2.Niederlagen + 1;
+  end
+  else if ( Team1Tore < Team2Tore ) then
+  begin
+    TempStand2.Punkte := TempStand2.Punkte + 3; // gewonnen + 3
+
+    TempStand1.ToreGeschossen := TempStand1.ToreGeschossen + Team1Tore;
+    TempStand2.ToreGeschossen := TempStand2.ToreGeschossen + Team2Tore;
+    TempStand1.ToreKassiert := TempStand1.ToreKassiert + Team2Tore;
+    TempStand2.ToreKassiert := TempStand2.ToreKassiert + Team1Tore;
+
+    TempStand2.Siege := TempStand2.Siege + 1;
+    TempStand1.Niederlagen := TempStand1.Niederlagen + 1;
+  end;
+
+
+  FState.SetTeamStandForID(Team1.ID, TempStand1);
+  FState.SetTeamStandForID(Team2.ID, TempStand2);
+
 end;
 
 end.
