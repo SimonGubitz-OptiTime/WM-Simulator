@@ -20,7 +20,11 @@ uses
   clrState in 'state\clrState.pas',
   clrGruppenphase in 'ui\gruppenphase\clrGruppenphase.pas',
   clrSimulation in 'simulation\clrSimulation.pas',
-  clrUtils.ShuffleArray in 'utils\arrays\clrUtils.ShuffleArray.pas';
+  clrUtils.ShuffleArray in 'utils\arrays\clrUtils.ShuffleArray.pas',
+  clrUtils.UpdateStandings in 'utils\match_standings\clrUtils.UpdateStandings.pas',
+  clrUtils.SortArray in 'utils\arrays\clrUtils.SortArray.pas',
+  clrUtils.SortHashMap in 'utils\hash_map\clrUtils.SortHashMap.pas',
+  clrEndspiele in 'ui\endspiele\clrEndspiele.pas';
 
 {$R *.res}
 

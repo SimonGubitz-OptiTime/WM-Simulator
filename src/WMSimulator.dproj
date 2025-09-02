@@ -168,6 +168,10 @@
         <DCCReference Include="ui\gruppenphase\clrGruppenphase.pas"/>
         <DCCReference Include="simulation\clrSimulation.pas"/>
         <DCCReference Include="utils\arrays\clrUtils.ShuffleArray.pas"/>
+        <DCCReference Include="utils\match_standings\clrUtils.UpdateStandings.pas"/>
+        <DCCReference Include="utils\arrays\clrUtils.SortArray.pas"/>
+        <DCCReference Include="utils\hash_map\clrUtils.SortHashMap.pas"/>
+        <DCCReference Include="ui\endspiele\clrEndspiele.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
