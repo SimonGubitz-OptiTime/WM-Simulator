@@ -25,21 +25,22 @@ type TWMState = class(TInterfacedObject, IState)
   public
     constructor Create;
 
-    function GetTeams: TList<TTeam>;
-    procedure SetTeam(const ANdx: Integer; const ATeam: TTeam);
-    procedure SetTeams(const ATeams: TList<TTeam>);
+    function    GetTeams: TList<TTeam>;
+    procedure   SetTeam(const ANdx: Integer; const ATeam: TTeam);
+    procedure   SetTeams(const ATeams: TList<TTeam>);
 
-    function GetStadien: TList<TStadion>;
-    procedure SetStadien(const AStadien: TList<TStadion>);
+    function    GetStadien: TList<TStadion>;
+    procedure   SetStadien(const AStadien: TList<TStadion>);
 
-    function GetGruppen: TList<TGruppe>;
-    procedure AddGruppe(const AGroup: TGruppe);
-    procedure SetGruppen(const AGruppen: TList<TGruppe>);
+    function    GetGruppen: TList<TGruppe>;
+    procedure   AddGruppe(const AGroup: TGruppe);
+    procedure   SetGruppen(const AGruppen: TList<TGruppe>);
+    procedure   ClearGruppen();         
 
-    function GetTeamStand: TDictionary<Byte, TTeamStatistik>;
-    procedure SetTeamStand(const ATeamStand: TDictionary<Byte, TTeamStatistik>);
+    function    GetTeamStand: TDictionary<Byte, TTeamStatistik>;
+    procedure   SetTeamStand(const ATeamStand: TDictionary<Byte, TTeamStatistik>);
 
-    destructor Destroy; override;
+    destructor  Destroy; override;
   published
     property Teams: TList<TTeam> read GetTeams write SetTeams;
     property Stadien: TList<TStadion> read GetStadien write SetStadien;
@@ -112,6 +113,11 @@ end;
 procedure TWMState.SetGruppen(const AGruppen: TList<TGruppe>);
 begin
   FGruppen := AGruppen;
+end;
+
+procedure TWMState.ClearGruppen();
+begin
+  FGruppen.Clear;
 end;
 
 function TWMState.GetTeamStand: TDictionary<Byte, TTeamStatistik>;

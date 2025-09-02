@@ -35,13 +35,13 @@ type
 
     procedure   ZeileHinzufuegenCSV(ARowValues: T; SizeCheck: Boolean = true);
 
-    function    StrukturierteTabelleHinzufuegenCSV(): TList<T>;
-    function    UnstrukturierteTabelleHinzufuegenCSV(): TObjectList<TList<String>>;
+    function    StukturierteTabelleErhaltenCSV(): TList<T>;
+    function    UnstukturierteTabelleErhaltenCSV(): TObjectList<TList<String>>;
 
     //procedure   DBAktuallisierungEventRueckrufHinzufuegen(ACallbackFunction: TDBUpdateEvent);
     procedure   AddDBUpdateEventListener(ACallbackFunction: TDBUpdateEvent);
 
-    destructor  Destroy;
+    destructor  Destroy; override;
 
   end;
 
@@ -75,8 +75,8 @@ begin
   {if ( FFS.Size <> 0 ) then
   begin
     // Write cache
-    FCachedCSV              := StrukturierteTabelleHinzufuegenCSV();
-    FCachedUnstructuredCSV  := UnstrukturierteTabelleHinzufuegenCSV();
+    FCachedCSV              := StukturierteTabelleErhaltenCSV();
+    FCachedUnstructuredCSV  := UnstukturierteTabelleErhaltenCSV();
   end;}
 
 end;
@@ -146,7 +146,7 @@ end;
 // Returns a structured table from the CSV file
 // There will be no error if the file is empty, just an empty array
 // The State of the File is determined by the FInitialisiert variable
-function TDB<T>.StrukturierteTabelleHinzufuegenCSV(): TList<T>;
+function TDB<T>.StukturierteTabelleErhaltenCSV(): TList<T>;
 var
   SR: TStreamReader;
   FileSize: Int64;
@@ -193,7 +193,7 @@ begin
   end;
 end;
 
-function TDB<T>.UnstrukturierteTabelleHinzufuegenCSV(): TObjectList<TList<String>>;
+function TDB<T>.UnstukturierteTabelleErhaltenCSV(): TObjectList<TList<String>>;
 var
   SR: TStreamReader;
   Temp: TList<String>;

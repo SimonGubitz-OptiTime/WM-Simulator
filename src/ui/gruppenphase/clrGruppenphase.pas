@@ -181,7 +181,7 @@ begin
     end;
 
     // Das man die Chance hat etwas zu sehen
-    Sleep(5000);
+    // Sleep(5000);
 
   end;
 end;

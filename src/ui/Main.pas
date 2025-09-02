@@ -199,8 +199,6 @@ end;
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   // Aufräumen
-  StadionEingabe.Free;
-  TeamEingabe.Free;
 
 
   FState.Destroy;
@@ -210,6 +208,9 @@ begin
 
   FStadionDB.Destroy;
   FTeamDB.Destroy;
+
+  StadionEingabe.Free;
+  TeamEingabe.Free;
 end;
 
 procedure TMainForm.TeamDBUpdate;
@@ -217,7 +218,7 @@ var
   Rows: TObjectList<TList<String>>;
 begin
 
-  Rows := FTeamDB.UnstrukturierteTabelleHinzufuegenCSV();
+  Rows := FTeamDB.UnstukturierteTabelleErhaltenCSV();
   FTeamAnzahl := Rows.Count - 1; // Header
 
   TeamAnzahlLabel.Caption := '0' + IntToStr(FTeamAnzahl);
@@ -239,7 +240,7 @@ begin
     TeamHinzufuegenButton.Enabled := false;
   end;
 
-  // Hierdrin wird UnstrukturierteTabelleHinzufuegenCSV aufgerufen also vorher StrukturierteTabelleHinzufuegenCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
+  // Hierdrin wird UnstukturierteTabelleErhaltenCSV aufgerufen also vorher StukturierteTabelleErhaltenCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
   TeamZeileZeichnen(Rows);
 
   Rows.Free;
@@ -259,7 +260,7 @@ var
   Rows: TObjectList<TList<String>>;
 begin
 
-  Rows := FStadionDB.UnstrukturierteTabelleHinzufuegenCSV();
+  Rows := FStadionDB.UnstukturierteTabelleErhaltenCSV();
   FStadionAnzahl := Rows.Count - 1; // Header
 
   StadionAnzahlLabel.Caption := '0' + IntToStr(FStadionAnzahl);
@@ -281,7 +282,7 @@ begin
     StadionHinzufuegenButton.Enabled := false;
   end;
 
-  // Hierdrin wird UnstrukturierteTabelleHinzufuegenCSV aufgerufen also vorher StrukturierteTabelleHinzufuegenCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
+  // Hierdrin wird UnstukturierteTabelleErhaltenCSV aufgerufen also vorher StukturierteTabelleErhaltenCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
   StadionTabelleZeichnen(Rows);
 
   Rows.Free;

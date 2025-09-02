@@ -62,9 +62,6 @@ end;
 
 destructor TStadionEingabeFenster.Destroy;
 begin
-  // Aufräumen
-  FDatabase.Free;
-
   inherited Destroy;
 end;
 

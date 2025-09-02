@@ -17,7 +17,7 @@ uses
   damTypes,
   clrState,
   clrAnimation,
-  clrUtils.ArrayMischen,
+  clrUtils.ShuffleArray,
   clrUtils.FilterArray,
   clrUtils.TableFormating;
 
@@ -107,14 +107,14 @@ begin
     clrUtils.TableFormating.TabelleLeeren(Grid);
   end;
 
-  Grid.Free;
-
 
   try
-    AnimationList := TObjectList<TAnimations>.Create;
+    AnimationList := TObjectList<TAnimations>.Create(false);
 
-    // `StrukturierteTabelleHinzufuegenCSV` erstellt für jeden Aufruf ein komplett neues Element/Objekt
-    FState.SetTeams(ATeamDB.StrukturierteTabelleHinzufuegenCSV());
+    // `StukturierteTabelleErhaltenCSV` erstellt für jeden Aufruf ein komplett neues Element/Objekt
+    FUITeams := ATeamDB.StukturierteTabelleErhaltenCSV();
+    FState.SetTeams(ATeamDB.StukturierteTabelleErhaltenCSV());
+    FState.ClearGruppen();
 
     // potenziell ineffizient
     for Ndx := 0 to FState.Teams.Count - 1 do
@@ -125,7 +125,6 @@ begin
        // ID für jedes Team setzen
     end;
 
-    FUITeams := ATeamDB.StrukturierteTabelleHinzufuegenCSV();
 
     if ( (FUITeams.Count mod 4) <> 0 ) then
     begin
@@ -178,10 +177,10 @@ begin
       end;
 
 
-      clrUtils.ArrayMischen.TShuffleArrayUtils<TTeam>.Shuffle(SehrStarkeTeams);
-      clrUtils.ArrayMischen.TShuffleArrayUtils<TTeam>.Shuffle(StarkeTeams);
-      clrUtils.ArrayMischen.TShuffleArrayUtils<TTeam>.Shuffle(MittelStarkeTeams);
-      clrUtils.ArrayMischen.TShuffleArrayUtils<TTeam>.Shuffle(SchwacheTeams);
+      clrUtils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(SehrStarkeTeams);
+      clrUtils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(StarkeTeams);
+      clrUtils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(MittelStarkeTeams);
+      clrUtils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(SchwacheTeams);
 
 
       FUITeams.Clear;
@@ -200,8 +199,6 @@ begin
         // und für die zentrale Lagerung
         FState.AddGruppe(TempList); // hier
       end;
-
-      TempList.Free;
 
       // Für alle Grids je 4 Teams eintragen
       TeamNdx := 0;
@@ -225,9 +222,9 @@ begin
 
             TempLabel.Parent := AOwner as TWinControl;
             TempLabel.Caption := FUITeams[TeamNdx].Name;
-            TempLabel.Top := Round((AOwner.Height / 2) - (Height / 2));
+            TempLabel.Top := Round((AOwner.Height / 2) - (TempLabel.Height / 2));
             // Middle
-            TempLabel.Left := Round((AOwner.Width / 2) - (Width / 2)); // Middle
+            TempLabel.Left := Round((AOwner.Width / 2) - (TempLabel.Width / 2)); // Middle
 
             var
             MoveTop := Grid.Top + Round(TempLabel.Height / 2) +

@@ -108,7 +108,6 @@ destructor TTeamEingabeFenster.Destroy;
 begin
   // Aufräumen
   FSpielerListe.Free;
-  FDatabase.Free;
 
   inherited Destroy;
 end;
