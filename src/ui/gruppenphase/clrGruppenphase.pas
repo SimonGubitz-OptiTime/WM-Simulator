@@ -13,7 +13,7 @@ uses
   damTypes,
   clrState,
   clrSimulation,
-  clrUtils.HashMap,
+  clrUtils.SortHashMap,
   clrUtils.TableFormating,
   clrUtils.StringFormating,
   clrUtils.UpdateStandings;
@@ -190,13 +190,15 @@ begin
 
   const MODIFY_IN_PLACE = false;
   // Schritt 1. Das Dictionary sortieren
-  clrUtils.HashMap.Sort(FState.TeamStands, MODIFY_IN_PLACE);
+  var OutputHash: TDictionary<Byte, TTeamStatistik>;
+  clrUtils.SortHashMap.THashMapUtils.Sort(FState.TeamStands, OutputHash, MODIFY_IN_PLACE);
   { clrUtils.HashMap.THashMapUtils.Sort<Byte, TTeamRanking>(function(Param: TTeamRanking; NextParam: TTeamRanking)
     begin
       if ( not(Param is TTeamRanking) ) then
       begin
         raise Exception.Create('Error in callback function of HashMapSort Param not of TKey');
       end;
+
       Result := Param.Punkte > NextParam.Punkte;
     end;
   );}

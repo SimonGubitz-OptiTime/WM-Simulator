@@ -65,7 +65,6 @@ begin
   FStadien := TList<TStadion>.Create;
   FGruppen := TList<TGruppe>.Create;
   FTeamStands := TDictionary<Byte, TTeamStatistik>.Create;
-
 end;
 
 destructor TWMState.Destroy;
