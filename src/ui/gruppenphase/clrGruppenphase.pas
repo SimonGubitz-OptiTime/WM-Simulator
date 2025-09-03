@@ -32,7 +32,7 @@ type TGruppenphaseUI = class
     ///   Algorithmisch Spiele verteilen
     /// </summary>
     function CreateUniqueMatches(AGroup: TGruppe): TList<TPair<Byte, Byte>>;
-    procedure CallbackSimulation(Sender: TObject; ANdx: Integer; ATeam1Tore, ATeam2Tore: Integer);
+    procedure CallbackSimulation(Sender: TObject; AMatchNdx: Integer; ATeam1Tore, ATeam2Tore: Integer);
 
   public
     constructor Create(AGruppenphaseGrid: TStringGrid; var AState: TWMState);
@@ -201,11 +201,13 @@ begin
   // Vielleicht noch pro gruppe TGruppenphase private Fields als temp storage dafür oder als funktions vars und dann die generische version und die besetzung von FAchtelFinale
   var TopTeams := clrUtils.SortHashMap.THashMapUtils.Sort(FState.GetTeamStand);
 
-  clrUtils.SortHashMap.THashMapUtils.Sort<Byte, TTeamStatistik>(FState.TeamStands, function(Left: TTeamStatistik; Right: TTeamStatistik): Boolean
+  clrUtils.SortHashMap.THashMapUtils.Sort<Byte, TTeamStatistik>(FState.TeamStands,
+    function(Left: TTeamStatistik; Right: TTeamStatistik): Boolean
     begin
-      Result := Left.Punkte - Right.Punkte;
+      Result := (Left.Punkte - Right.Punkte) > 0;
     end
   );
+
 
   // Schritt 2. Die jeweiligen top einträge als Spiele für das Achtelfinale eintragen
 
@@ -215,15 +217,15 @@ begin
 
 end;
 
-procedure TGruppenphaseUI.CallbackSimulation(Sender: TObject; ANdx: Integer; ATeam1Tore, ATeam2Tore: Integer);
+procedure TGruppenphaseUI.CallbackSimulation(Sender: TObject; AMatchNdx: Integer; ATeam1Tore, ATeam2Tore: Integer);
 var
   Team1, Team2: TTeam;
   TempStand1, TempStand2: TTeamStatistik;
 begin
 
-  Team1 := FState.Teams[FMatches[ANdx].Key];
-  Team2 := FState.Teams[FMatches[ANdx].Value];
-  FLabels[ANdx].Caption := clrUtils.StringFormating.FormatMatchString(Team1.Name, Team2.Name, ATeam1Tore, ATeam2Tore);
+  Team1 := FState.Teams[FMatches[AMatchNdx].Key];
+  Team2 := FState.Teams[FMatches[AMatchNdx].Value];
+  FLabels[AMatchNdx].Caption := clrUtils.StringFormating.FormatMatchString(Team1.Name, Team2.Name, ATeam1Tore, ATeam2Tore);
 
   clrUtils.UpdateStandings.GetUpdatedStandings(FState, ATeam1Tore, ATeam2Tore, Team1.ID, Team2.ID, TempStand1, TempStand2);
 

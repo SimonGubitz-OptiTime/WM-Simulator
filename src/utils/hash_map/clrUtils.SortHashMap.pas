@@ -14,11 +14,11 @@ function Sort(var HashMap: TDictionary<Byte, Integer>): TList<TPair<Byte, Intege
 type THashMapUtils = class
 
 
-  // class function Sort<TValue>(var HashMap: TDictionary<Byte, TTeamStatistik>; ConditionFn: clrUtils.SortArray.TConditionFn<TValue>); overload;
+  // class function Sort<TValue>(HashMap: TDictionary<Byte, TTeamStatistik>; ConditionFn: clrUtils.SortArray.TConditionFn<TValue>); overload;
   class function Sort(HashMap: TDictionary<Byte, TTeamStatistik>): TList<TPair<Byte, TTeamStatistik>>; overload;
 
-  // class function Sort<TKey, TValue>(var HashMap: TDictionary<TKey, TValue>): TList<TPair<TKey, TValue>>; overload;
-  class function Sort<TKey, TValue>(var HashMap: TDictionary<TKey, TValue>; ConditionFn: clrUtils.SortArray.TConditionFn<TValue>): TList<TPair<TKey, TValue>>; overload;
+  // class function Sort<TKey, TValue>(HashMap: TDictionary<TKey, TValue>): TList<TPair<TKey, TValue>>; overload;
+  class function Sort<TKey, TValue>(HashMap: TDictionary<TKey, TValue>; ConditionFn: clrUtils.SortArray.TConditionFn<TValue>): TList<TPair<TKey, TValue>>; overload;
 
 end;
 
@@ -30,7 +30,12 @@ var
   KeysArray: TArray<Byte>; //TArray<TKey>;
   ValuesArray: TArray<Integer>; //TArray<TValue>;
 begin
-  // THashMapUtils.Sort<Byte, Integer>(HashMap, );
+  Result := THashMapUtils.Sort<Byte, Integer>(HashMap,
+    function(Right: Integer; Left: Integer): Boolean
+    begin
+      Result := Left < Right;
+    end
+  );
 end;
 
 
@@ -73,7 +78,7 @@ begin
 end;
 
 
-class function THashMapUtils.Sort<TKey, TValue>(var HashMap: TDictionary<TKey, TValue>; ConditionFn: clrUtils.SortArray.TConditionFn<TValue>): TList<TPair<TKey, TValue>>;
+class function THashMapUtils.Sort<TKey, TValue>(HashMap: TDictionary<TKey, TValue>; ConditionFn: clrUtils.SortArray.TConditionFn<TValue>): TList<TPair<TKey, TValue>>;
 var
   Ndx: Integer;
   KeysArray: TArray<TKey>;
@@ -94,7 +99,7 @@ begin
     var j := Ndx - 1;
 
     while ( (j >= 0)
-      and (ConditionFn(ValuesArray[j], val)) ) do
+      and (ConditionFn(val, ValuesArray[j])) ) do
     begin
       ValuesArray[j + 1] := ValuesArray[j];
       KeysArray[j + 1] := KeysArray[j];
