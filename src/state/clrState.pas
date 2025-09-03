@@ -44,8 +44,8 @@ type TWMState = class(TInterfacedObject, IState)
 
     function    GetTeamStand: TDictionary<Byte, TTeamStatistik>;
     function    ForceGetTeamStandByID(const ID: Integer): TTeamStatistik;
-    function    TryGetTeamStandByID(const ID: Integer; out Return: TTeamStatistik): Boolean;
-    procedure   AddOrSetTeamStandByID(const ID: Integer; const Stand: TTeamStatistik);
+    function    TryGetTeamStandByID(const ID: Byte; out Return: TTeamStatistik): Boolean;
+    procedure   AddOrSetTeamStandByID(const ID: Byte; const Stand: TTeamStatistik);
     procedure   SetTeamStand(const ATeamStand: TDictionary<Byte, TTeamStatistik>);
 
     destructor  Destroy; override;
@@ -137,7 +137,7 @@ begin
   Result := FTeamStands[ID];
 end;
 
-function TWMState.TryGetTeamStandByID(const ID: Integer; out Return: TTeamStatistik): Boolean;
+function TWMState.TryGetTeamStandByID(const ID: Byte; out Return: TTeamStatistik): Boolean;
 begin
   if ( FTeamStands.ContainsKey(ID) ) then
   begin
@@ -151,8 +151,12 @@ begin
   end;
 end;
 
-procedure TWMState.AddOrSetTeamStandByID(const ID: Integer; const Stand: TTeamStatistik);
+procedure TWMState.AddOrSetTeamStandByID(const ID: Byte; const Stand: TTeamStatistik);
 begin
+
+  if not Assigned(Self) then
+    raise Exception.Create('Fehlermeldung');
+    
   FTeamStands.AddOrSetValue(ID, Stand);
 end;
 

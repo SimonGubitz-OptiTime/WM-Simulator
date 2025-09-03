@@ -35,7 +35,7 @@ type TGruppenphaseUI = class
     procedure CallbackSimulation(Sender: TObject; ANdx: Integer; ATeam1Tore, ATeam2Tore: Integer);
 
   public
-    constructor Create(AGruppenphaseGrid: TStringGrid; AState: TWMState);
+    constructor Create(AGruppenphaseGrid: TStringGrid; var AState: TWMState);
 
     procedure GruppenphaseStarten(ALabels: TArray<TLabel>);
 
@@ -46,7 +46,7 @@ end;
 
 implementation
 
-constructor TGruppenphaseUI.Create(AGruppenphaseGrid: TStringGrid; AState: TWMState);
+constructor TGruppenphaseUI.Create(AGruppenphaseGrid: TStringGrid; var AState: TWMState);
 var
   j: Integer;
 begin
@@ -143,13 +143,13 @@ end;
 procedure TGruppenphaseUI.GruppenphaseStarten(ALabels: TArray<TLabel>);
 var
   CurrentGroup: TGruppe;
-
   Ndx: Integer;
+  FSimulationList: TObjectList<TSimulation>;
 begin
 
   FLabels := ALabels;
 
-  if ( FState.Gruppen.count = 0 ) then
+  if ( FState.Gruppen.Count = 0 ) then
   begin
     ShowMessage('Bitte zuerst Verlosung starten.');
   end;
@@ -176,11 +176,20 @@ begin
       ALabels[Ndx].Font.Style := [fsBold];
       ALabels[Ndx].Font.Color := clGreen;
 
-      FSimulation.SpielSimulieren(CallbackSimulation, Ndx);    
+
+      FSimulationList := TObjectList<TSimulation>.Create;
+      try
+        FSimulationList.Add(TSimulation.Create);
+        FSimulationList.Last.SpielSimulieren(CallbackSimulation, Ndx);
+
+      finally
+        FSimulationList.Free;
+      end;
+
+
 
       ALabels[Ndx].Font.Style := [];
       ALabels[Ndx].Font.Color := clWindowText;
-
     end;
 
     // Das man die Chance hat etwas zu sehen
@@ -189,9 +198,11 @@ begin
   end;
 
   const MODIFY_IN_PLACE = false;
-  // Schritt 1. Das Dictionary sortieren
   var OutputHash: TDictionary<Byte, TTeamStatistik>;
-  clrUtils.SortHashMap.THashMapUtils.Sort(FState.TeamStands, OutputHash, MODIFY_IN_PLACE);
+  clrUtils.SortHashMap.THashMapUtils.Sort(FState.GetTeamStand, OutputHash, MODIFY_IN_PLACE);
+
+  // ShowMessage('Top Team: ' + IntToStr(OutputHash.ToArray[0].Key));
+
   { clrUtils.HashMap.THashMapUtils.Sort<Byte, TTeamRanking>(function(Param: TTeamRanking; NextParam: TTeamRanking)
     begin
       if ( not(Param is TTeamRanking) ) then
@@ -219,9 +230,7 @@ begin
   Team2 := FState.Teams[FMatches[ANdx].Value];
   FLabels[ANdx].Caption := clrUtils.StringFormating.FormatMatchString(Team1.Name, Team2.Name, ATeam1Tore, ATeam2Tore);
 
-
-  clrUtils.UpdateStandings.UpdatedStandings(FState, ATeam1Tore, ATeam2Tore, Team1.ID, Team2.ID, TempStand1, TempStand2);
-
+  clrUtils.UpdateStandings.GetUpdatedStandings(FState, ATeam1Tore, ATeam2Tore, Team1.ID, Team2.ID, TempStand1, TempStand2);
 
   FState.AddOrSetTeamStandByID(Team1.ID, TempStand1);
   FState.AddOrSetTeamStandByID(Team2.ID, TempStand2);

@@ -1,4 +1,4 @@
-unit clrSimulation;
+﻿unit clrSimulation;
 
 interface
 
@@ -17,6 +17,9 @@ type TSimulation = class
     FNdx: Integer;
     FCallbackFn: TSimulationCallbackFn;
     FTeam1Tore, FTeam2Tore: Integer;
+
+    FPossibleMaxGoals: Integer;
+    FSimulationFinished: Boolean;
 
     procedure TimerEvent(Sender: TObject);
   public
@@ -38,9 +41,15 @@ begin
   FTimerCount := 0;
   FTimer := TTimer.Create(nil);
   FTimer.Enabled := false;
-  FTimer.Interval := 100; // 100 ms
+  {$IFDEF DEBUG}
+    FTimer.Interval := 25;
+  {$ENDIF}
 
-  FTotalGoals := Random(PossibleMaxGoals + 1);
+  // FTimer.Interval := 250; // 250 ms
+
+  FPossibleMaxGoals := PossibleMaxGoals;
+
+  FSimulationFinished := false;
 end;
 
 destructor TSimulation.Destroy;
@@ -52,14 +61,19 @@ end;
 
 procedure TSimulation.SpielSimulieren(ACallbackFn: TSimulationCallbackFn; ANdx: Integer);
 begin
+  FTeam1Tore := 0;
+  FTeam2Tore := 0;
+  FTimerCount := 0;
+  FTotalGoals := Random(FPossibleMaxGoals + 1);
+  FSimulationFinished := false;
 
   FNdx := ANdx;
   FCallbackFn := ACallbackFn;
-
-  FTimer.Enabled := true;
+  
   FTimer.OnTimer := TimerEvent;
+  FTimer.Enabled := true;
 
-  while FTimerCount < FTotalGoals do
+  while not FSimulationFinished do
   begin
     Application.ProcessMessages;
   end;
@@ -70,6 +84,7 @@ begin
 
   if ( FTimerCount >= FTotalGoals ) then
   begin
+    FSimulationFinished := true;
     FTimer.Enabled := false;
 
     FCallbackFn(Self, FNdx, FTeam1Tore, FTeam2Tore);

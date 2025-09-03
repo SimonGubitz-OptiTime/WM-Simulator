@@ -9,7 +9,7 @@ uses
 procedure Sort(var ArrayToSort: TList<Integer>);
 
 // checks if Param is !=<> NextParam
-type TCallbackFn<T> = reference to function(Param: T; NextParam: T): Boolean;
+type TCallbackFn<T> = reference to function(Left: T; Right: T): Boolean;
 
 type TSortArrayUtils<T> = class
   public
