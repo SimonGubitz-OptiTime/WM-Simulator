@@ -28,9 +28,9 @@ begin
     var j := Ndx - 1;
 
     while ( (j >= 0)
-      and (CallbackFn(ArrayToSort[j], ArrayToSort[j+1])) ) do
+      and (CallbackFn(ArrayToSort[j], key)) ) do
     begin
-      ArrayToSort[Ndx] := ArrayToSort[j];
+      ArrayToSort[j + 1] := ArrayToSort[j];
       j := j - 1;
     end;
 
@@ -50,7 +50,7 @@ begin
     while ( (j >= 0)
       and (key < ArrayToSort[j]) ) do
     begin
-      ArrayToSort[Ndx] := ArrayToSort[j];
+      ArrayToSort[j + 1] := ArrayToSort[j];
       j := j - 1;
     end;
 

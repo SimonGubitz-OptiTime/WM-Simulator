@@ -16,6 +16,7 @@ bin/
 *.dproj.local
 *.res
 *.identcache
+settings.json
 
 # Ignore everything in database/
 database/*

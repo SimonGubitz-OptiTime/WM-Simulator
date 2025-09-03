@@ -198,8 +198,8 @@ begin
   end;
 
   const MODIFY_IN_PLACE = false;
-  var OutputHash: TDictionary<Byte, TTeamStatistik>;
-  clrUtils.SortHashMap.THashMapUtils.Sort(FState.GetTeamStand, OutputHash, MODIFY_IN_PLACE);
+  var OutputList: TList<TPair<Byte, TTeamStatistik>>;
+  clrUtils.SortHashMap.THashMapUtils.Sort(FState.GetTeamStand, OutputList, MODIFY_IN_PLACE);
 
   // ShowMessage('Top Team: ' + IntToStr(OutputHash.ToArray[0].Key));
 
