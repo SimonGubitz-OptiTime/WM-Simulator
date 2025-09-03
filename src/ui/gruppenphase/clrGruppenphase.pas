@@ -37,7 +37,7 @@ type TGruppenphaseUI = class
   public
     constructor Create(AGruppenphaseGrid: TStringGrid; var AState: TWMState);
 
-    procedure GruppenphaseStarten(ALabels: TArray<TLabel>);
+    procedure GruppenphaseStarten(AGruppenphaseLabels: TArray<TLabel>; ASechzehntelfinaleLabels: TArray<TLabel>);
 
     destructor Destroy; override;
 
@@ -140,18 +140,23 @@ begin
 
 end;
 
-procedure TGruppenphaseUI.GruppenphaseStarten(ALabels: TArray<TLabel>);
+procedure TGruppenphaseUI.GruppenphaseStarten(AGruppenphaseLabels: TArray<TLabel>; ASechzehntelfinaleLabels: TArray<TLabel>);
 var
   CurrentGroup: TGruppe;
   Ndx: Integer;
   FSimulationList: TObjectList<TSimulation>;
+
+  Gruppen: TList<TGruppe>;
+
+  SechzehntelfinaleLabel: TLabel;
 begin
 
-  FLabels := ALabels;
+  FLabels := AGruppenphaseLabels;
 
   if ( FState.Gruppen.Count = 0 ) then
   begin
     ShowMessage('Bitte zuerst Verlosung starten.');
+    Exit;
   end;
 
 
@@ -165,7 +170,7 @@ begin
 
       clrUtils.TableFormating.TeamTabelleZeichnen(FGrid, CurrentGroup);
 
-      ALabels[Ndx].Caption := clrUtils.StringFormating.FormatMatchString(
+      AGruppenphaseLabels[Ndx].Caption := clrUtils.StringFormating.FormatMatchString(
         FState.Teams[FMatches[Ndx].Key].Name,
         FState.Teams[FMatches[Ndx].Value].Name,
         0,
@@ -173,8 +178,8 @@ begin
       );
 
       // Das aktuelle Spiel immer grün markieren
-      ALabels[Ndx].Font.Style := [fsBold];
-      ALabels[Ndx].Font.Color := clGreen;
+      AGruppenphaseLabels[Ndx].Font.Style := [fsBold];
+      AGruppenphaseLabels[Ndx].Font.Color := clGreen;
 
 
       FSimulationList := TObjectList<TSimulation>.Create;
@@ -188,8 +193,8 @@ begin
 
 
 
-      ALabels[Ndx].Font.Style := [];
-      ALabels[Ndx].Font.Color := clWindowText;
+      AGruppenphaseLabels[Ndx].Font.Style := [];
+      AGruppenphaseLabels[Ndx].Font.Color := clWindowText;
     end;
 
     // Das man die Chance hat etwas zu sehen
@@ -201,7 +206,8 @@ begin
   // Vielleicht noch pro gruppe TGruppenphase private Fields als temp storage dafür oder als funktions vars und dann die generische version und die besetzung von FAchtelFinale
   var TopTeams := clrUtils.SortHashMap.THashMapUtils.Sort(FState.GetTeamStand);
 
-  clrUtils.SortHashMap.THashMapUtils.Sort<Byte, TTeamStatistik>(FState.TeamStands,
+  clrUtils.SortHashMap.THashMapUtils.Sort<Byte, TTeamStatistik>(
+    FState.TeamStands,
     function(Left: TTeamStatistik; Right: TTeamStatistik): Boolean
     begin
       Result := (Left.Punkte - Right.Punkte) > 0;
@@ -210,6 +216,16 @@ begin
 
 
   // Schritt 2. Die jeweiligen top einträge als Spiele für das Achtelfinale eintragen
+  for SechzehntelfinaleLabel in ASechzehntelfinaleLabels do
+  begin
+    with SechzehntelfinaleLabel do
+    begin
+      Caption := 'asdfasd';
+    end;
+  end;
+
+
+
 
 
 

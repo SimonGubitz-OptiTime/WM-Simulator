@@ -54,6 +54,11 @@ type TWMState = class(TInterfacedObject, IState)
     property Stadien: TList<TStadion> read GetStadien write SetStadien;
     property Gruppen: TList<TGruppe> read GetGruppen write SetGruppen;
     property TeamStands: TDictionary<Byte, TTeamStatistik> read GetTeamStand write SetTeamStand;
+
+//    property AchtelFinalisten;
+//    property ViertelFinalisten;
+//    property HalbFinalisten;
+//    property Finalisten;
 end;
 
 

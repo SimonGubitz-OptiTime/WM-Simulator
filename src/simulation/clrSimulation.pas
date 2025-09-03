@@ -31,6 +31,8 @@ end;
 // Die pause zwischen den Toren in ms
 const
   PauseBetweenGoals = 500;
+  HeimspielSiegchancen = 5;
+  
 
 implementation
 

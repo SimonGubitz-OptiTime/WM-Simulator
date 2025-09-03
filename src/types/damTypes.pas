@@ -16,12 +16,9 @@ type
   TTeamRanking = (SehrStark, Stark, MittelStark, Schwach);
 
 type TStadion = record
-  Name: String; // z.B. "Allianz Arena"
-  Ort: String; // z.B. "München"
+  Name: String;
+  Ort: String;
   ZuschauerKapazitaet: UInt32;
-  // Zuschauer Zahl kann größer als WordMax 65'535 sein
-  Zuschauer: UInt32;
-  // " - für die Simulation wenn >90% Kapazität, +5% Siegchancen wenn Heimstadion
 end;
 
 type TTeamStatistik = record
