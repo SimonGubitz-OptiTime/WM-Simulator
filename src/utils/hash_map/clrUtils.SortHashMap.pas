@@ -8,22 +8,23 @@ uses
   damTypes;
 
 
-procedure Sort(var HashMap: TDictionary<Byte, Integer>); overload;
+function Sort(var HashMap: TDictionary<Byte, Integer>): TList<TPair<Byte, Integer>>; overload;
 
 
 type THashMapUtils = class
 
-//  class procedure Sort<T>(var HashMap: TDictionary<Byte, TTeamStatistik>; CallbackFn: clrUtils.SortArray.TCallbackFn<T>); overload;
-//  class procedure Sort(HashMap: TDictionary<Byte, TTeamStatistik>; out OutputHashMap: TDictionary<Byte, TTeamStatistik>; InPlace: Boolean = false); // overload;
 
-//  class procedure Sort<TKey, TValue>(var HashMap: TDictionary<Byte, TTeamStatistik>; CallbackFn: clrUtils.SortArray.TCallbackFn<T>); overload;
-//  class procedure Sort<TKey, TValue>(HashMap: TDictionary<Byte, TTeamStatistik>; out OutputHashMap: TDictionary<Byte, TTeamStatistik>; InPlace: Boolean = false); // overload;
+  // class function Sort<TValue>(var HashMap: TDictionary<Byte, TTeamStatistik>; ConditionFn: clrUtils.SortArray.TConditionFn<TValue>); overload;
+  class function Sort(HashMap: TDictionary<Byte, TTeamStatistik>): TList<TPair<Byte, TTeamStatistik>>; overload;
+
+  // class function Sort<TKey, TValue>(var HashMap: TDictionary<TKey, TValue>): TList<TPair<TKey, TValue>>; overload;
+  class function Sort<TKey, TValue>(var HashMap: TDictionary<TKey, TValue>; ConditionFn: clrUtils.SortArray.TConditionFn<TValue>): TList<TPair<TKey, TValue>>; overload;
 
 end;
 
 implementation
 
-procedure Sort(var HashMap: TDictionary<Byte, Integer>): TList<TPair<Byte, Integer>>;
+function Sort(var HashMap: TDictionary<Byte, Integer>): TList<TPair<Byte, Integer>>;
 var
   Ndx: Integer;
   KeysArray: TArray<Byte>; //TArray<TKey>;
@@ -33,19 +34,18 @@ begin
 end;
 
 
-class procedure THashMapUtils.Sort(HashMap: TDictionary<Byte, TTeamStatistik>; out OutputHashMap: TDictionary<Byte, TTeamStatistik>; InPlace: Boolean = false);
+class function THashMapUtils.Sort(HashMap: TDictionary<Byte, TTeamStatistik>): TList<TPair<Byte, TTeamStatistik>>;
 var
   Ndx: Integer;
-  KeysArray: TArray<Byte>; //TArray<TKey>;
-  ValuesArray: TArray<TTeamStatistik>; //TArray<TValue>;
-  Map: TDictionary<Byte, TTeamStatistik>; //TDictionary<TKey, TValue>;
+  KeysArray: TArray<Byte>;
+  ValuesArray: TArray<TTeamStatistik>;
+  Map: TDictionary<Byte, TTeamStatistik>;
 begin
 
   KeysArray := HashMap.Keys.ToArray;
   ValuesArray := HashMap.Values.ToArray;
 
-  Result := TList<Byte, Integer>.Create;
-  // Result := TList<TKey, TValue>.Create;
+  Result := TList<TPair<Byte, TTeamStatistik>>.Create;
 
   // Insertion sort
   for Ndx := 1 to HashMap.Count - 1 do
@@ -56,20 +56,60 @@ begin
     var j := Ndx - 1;
 
     while ( (j >= 0)
-      and (val < ValuesArray[j]) ) do
+      and (val.Punkte < ValuesArray[j].Punkte) ) do
     begin
       ValuesArray[j + 1] := ValuesArray[j];
       KeysArray[j + 1] := KeysArray[j];
-      Map.Add(TPair.Create(KeysArray[j + 1], ValuesArray[j]));
+      Result.Add(TPair<Byte, TTeamStatistik>.Create(KeysArray[j + 1], ValuesArray[j]));
       j := j - 1;
     end;
 
     KeysArray[j + 1] := key;
     ValuesArray[j + 1] := val;
-    HashMap.Add(TPair.Create(KeysArray[j + 1], ValuesArray[j + 1]));
+    Result.Add(TPair<Byte, TTeamStatistik>.Create(KeysArray[j + 1], ValuesArray[j + 1]));
 
   end;
 
 end;
+
+
+class function THashMapUtils.Sort<TKey, TValue>(var HashMap: TDictionary<TKey, TValue>; ConditionFn: clrUtils.SortArray.TConditionFn<TValue>): TList<TPair<TKey, TValue>>;
+var
+  Ndx: Integer;
+  KeysArray: TArray<TKey>;
+  ValuesArray: TArray<TValue>;
+begin
+
+  KeysArray := HashMap.Keys.ToArray;
+  ValuesArray := HashMap.Values.ToArray;
+
+  Result := TList<TPair<TKey, TValue>>.Create;
+
+  // Insertion sort
+  for Ndx := 1 to HashMap.Count - 1 do
+  begin
+
+    var key := KeysArray[Ndx];
+    var val := ValuesArray[Ndx];
+    var j := Ndx - 1;
+
+    while ( (j >= 0)
+      and (ConditionFn(ValuesArray[j], val)) ) do
+    begin
+      ValuesArray[j + 1] := ValuesArray[j];
+      KeysArray[j + 1] := KeysArray[j];
+      Result.Add(TPair<TKey, TValue>.Create(KeysArray[j + 1], ValuesArray[j]));
+      j := j - 1;
+    end;
+
+    KeysArray[j + 1] := key;
+    ValuesArray[j + 1] := val;
+    Result.Add(TPair<TKey, TValue>.Create(KeysArray[j + 1], ValuesArray[j + 1]));
+
+  end;
+
+
+end;
+
 
 end.

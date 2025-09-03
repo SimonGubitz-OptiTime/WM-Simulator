@@ -197,26 +197,21 @@ begin
 
   end;
 
-  const MODIFY_IN_PLACE = false;
-  var OutputList: TList<TPair<Byte, TTeamStatistik>>;
-  clrUtils.SortHashMap.THashMapUtils.Sort(FState.GetTeamStand, OutputList, MODIFY_IN_PLACE);
 
-  // ShowMessage('Top Team: ' + IntToStr(OutputHash.ToArray[0].Key));
+  // Vielleicht noch pro gruppe TGruppenphase private Fields als temp storage dafür oder als funktions vars und dann die generische version und die besetzung von FAchtelFinale
+  var TopTeams := clrUtils.SortHashMap.THashMapUtils.Sort(FState.GetTeamStand);
 
-  { clrUtils.HashMap.THashMapUtils.Sort<Byte, TTeamRanking>(function(Param: TTeamRanking; NextParam: TTeamRanking)
+  clrUtils.SortHashMap.THashMapUtils.Sort<Byte, TTeamStatistik>(FState.TeamStands, function(Left: TTeamStatistik; Right: TTeamStatistik): Boolean
     begin
-      if ( not(Param is TTeamRanking) ) then
-      begin
-        raise Exception.Create('Error in callback function of HashMapSort Param not of TKey');
-      end;
-
-      Result := Param.Punkte > NextParam.Punkte;
-    end;
-  );}
+      Result := Left.Punkte - Right.Punkte;
+    end
+  );
 
   // Schritt 2. Die jeweiligen top einträge als Spiele für das Achtelfinale eintragen
 
-  // ShowMessage('Die Gruppenphase ist abgeschlossen.');
+
+
+  ShowMessage('Die Gruppenphase ist abgeschlossen.');
 
 end;
 

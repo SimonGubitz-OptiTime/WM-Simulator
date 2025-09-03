@@ -8,17 +8,17 @@ uses
 
 procedure Sort(var ArrayToSort: TList<Integer>);
 
-// checks if Param is !=<> NextParam
-type TCallbackFn<T> = reference to function(Left: T; Right: T): Boolean;
+// checks if Left is > 0, 0, < 0 Right
+type TConditionFn<T> = reference to function(Left: T; Right: T): Boolean;
 
 type TSortArrayUtils<T> = class
   public
-    class procedure Sort(var ArrayToSort: TList<T>; CallbackFn: TCallbackFn<T>);
+    class procedure Sort(var ArrayToSort: TList<T>; ConditionFn: TConditionFn<T>);
 end;
 
 implementation
 
-class procedure TSortArrayUtils<T>.Sort(var ArrayToSort: TList<T>; CallbackFn: TCallbackFn<T>);
+class procedure TSortArrayUtils<T>.Sort(var ArrayToSort: TList<T>; ConditionFn: TConditionFn<T>);
 var
   Ndx: Integer;
 begin
@@ -28,7 +28,7 @@ begin
     var j := Ndx - 1;
 
     while ( (j >= 0)
-      and (CallbackFn(ArrayToSort[j], key)) ) do
+      and (ConditionFn(ArrayToSort[j], key))) do
     begin
       ArrayToSort[j + 1] := ArrayToSort[j];
       j := j - 1;
