@@ -208,8 +208,6 @@ begin
           FSimulationList.Free;
         end;
 
-
-
         AGruppenphaseLabels[Ndx].Font.Style := [];
         AGruppenphaseLabels[Ndx].Font.Color := clWindowText;
       end;
@@ -235,6 +233,10 @@ begin
     end;
 
 
+    // Compose round-of-32 teams
+    // FTopTeams.AddRange(TopTeams);
+    TopTeams.AddRange([ThirdPlaceTeams[0], ThirdPlaceTeams[1], ThirdPlaceTeams[2], ThirdPlaceTeams[3], ThirdPlaceTeams[4], ThirdPlaceTeams[5], ThirdPlaceTeams[6], ThirdPlaceTeams[7]]);
+
     // Die jeweiligen top Einträge als Spiele für das Sechzehntelfinale eintragen
     for var i := 0 to (TopTeams.Count div 2) - 1 do
     begin
@@ -254,7 +256,7 @@ begin
     ShowMessage('Die Gruppenphase ist abgeschlossen.');
   finally
     TopTeams.Destroy;
-    FThirdPlaceTeams.Destroy;
+    ThirdPlaceTeams.Destroy;
   end;
 
 end;
