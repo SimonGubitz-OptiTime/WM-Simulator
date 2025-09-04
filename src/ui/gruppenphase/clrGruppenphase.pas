@@ -29,7 +29,6 @@ type TGruppenphaseUI = class
     FLabels: TArray<TLabel>;
     FCurrentGroup: TGruppe;
     FCurrentGroupStandings: TDictionary<Byte, TTeamStatistik>;
-    FTopTeams: TList<Byte>;
 
 
 
@@ -59,7 +58,6 @@ begin
   FGrid := AGruppenphaseGrid;
   FSimulation := TSimulation.Create;
   FCurrentGroupStandings := TDictionary<Byte, TTeamStatistik>.Create;
-  FTopTeams := TList<Byte>.Create;
 
   var ColSize := Floor(FGrid.Width / FGrid.ColCount) - 2;
   var RowSize := Floor(FGrid.Height / FGrid.RowCount) - 2;
@@ -76,7 +74,7 @@ end;
 
 destructor TGruppenphaseUI.Destroy;
 begin
-  FTopTeams.Destroy;
+  // FTopTeams.Destroy;
   FSimulation.Destroy;
   FCurrentGroupStandings.Destroy;
 
@@ -158,93 +156,106 @@ var
   Gruppen: TList<TGruppe>;
 
   SechzehntelfinaleLabel: TLabel;
+
+  TopTeams: TList<Byte>;
+  ThirdPlaceTeams: TList<Byte>;
 begin
 
   FLabels := AGruppenphaseLabels;
 
-  if ( FState.Gruppen.Count = 0 ) then
-  begin
-    ShowMessage('Bitte zuerst Verlosung starten.');
-    Exit;
-  end;
+  TopTeams := TList<Byte>.Create;
+  ThirdPlaceTeams := TList<Byte>.Create;
+
+  try
+    if ( FState.Gruppen.Count = 0 ) then
+    begin
+      ShowMessage('Bitte zuerst Verlosung starten.');
+      Exit;
+    end;
 
 
-  for CurrentGroup in FState.Gruppen do
-  begin
-
-    FCurrentGroup := CurrentGroup;
-    FCurrentGroupStandings.Clear;
-
-    FMatches := CreateUniqueMatches(FCurrentGroup);
-
-    for Ndx := 0 to FMatches.Count - 1 do
+    for CurrentGroup in FState.Gruppen do
     begin
 
-      clrUtils.TableFormating.TeamTabelleZeichnen(FGrid, FCurrentGroup);
+      FCurrentGroup := CurrentGroup;
+      FCurrentGroupStandings.Clear;
 
-      AGruppenphaseLabels[Ndx].Caption := clrUtils.StringFormating.FormatMatchString(
-        FState.Teams[FMatches[Ndx].Key].Name,
-        FState.Teams[FMatches[Ndx].Value].Name,
-        0,
-        0
-      );
+      FMatches := CreateUniqueMatches(FCurrentGroup);
 
-      // Das aktuelle Spiel immer grün markieren
-      AGruppenphaseLabels[Ndx].Font.Style := [fsBold];
-      AGruppenphaseLabels[Ndx].Font.Color := clGreen;
+      for Ndx := 0 to FMatches.Count - 1 do
+      begin
+
+        clrUtils.TableFormating.TeamTabelleZeichnen(FGrid, FCurrentGroup);
+
+        AGruppenphaseLabels[Ndx].Caption := clrUtils.StringFormating.FormatMatchString(
+          FState.Teams[FMatches[Ndx].Key].Name,
+          FState.Teams[FMatches[Ndx].Value].Name,
+          0,
+          0
+        );
+
+        // Das aktuelle Spiel immer grün markieren
+        AGruppenphaseLabels[Ndx].Font.Style := [fsBold];
+        AGruppenphaseLabels[Ndx].Font.Color := clGreen;
 
 
-      FSimulationList := TObjectList<TSimulation>.Create;
-      try
-        FSimulationList.Add(TSimulation.Create);
-        FSimulationList.Last.SpielSimulieren(CallbackSimulation, Ndx);
+        FSimulationList := TObjectList<TSimulation>.Create;
+        try
+          FSimulationList.Add(TSimulation.Create);
+          FSimulationList.Last.SpielSimulieren(CallbackSimulation, Ndx);
 
-      finally
-        FSimulationList.Free;
+        finally
+          FSimulationList.Free;
+        end;
+
+
+
+        AGruppenphaseLabels[Ndx].Font.Style := [];
+        AGruppenphaseLabels[Ndx].Font.Color := clWindowText;
       end;
 
 
-
-      AGruppenphaseLabels[Ndx].Font.Style := [];
-      AGruppenphaseLabels[Ndx].Font.Color := clWindowText;
-    end;
-
-
-    // Extract the top 2 teams
-    var x := clrUtils.SortHashMap.THashMapUtils.Sort<Byte, TTeamStatistik>(
-      FCurrentGroupStandings,
-      function(Left: TTeamStatistik; Right: TTeamStatistik): Boolean
-      begin
-        Result := (Left.Punkte - Right.Punkte) > 0;
-      end,
-      true // as array, as to avoid object copying and ambiguous cleanup behavior
-    );
-
-    FTopTeams.AddRange([ x[0].Key, x[1].Key ]);
-
-    // Das man die Chance hat etwas zu sehen
-    // Sleep(200);
-
-  end;
-
-
-  // Die jeweiligen top Einträge als Spiele für das Sechzehntelfinale eintragen
-  for var i := 0 to (FTopTeams.Count div 2) - 1 do
-  begin
-    with ASechzehntelfinaleLabels[i] do
-    begin
-      Caption := clrUtils.StringFormating.FormatMatchString(
-        FState.Teams[ FTopTeams[i*2] ].Name,
-        FState.Teams[ FTopTeams[i*2 + 1 + 1 - (i mod 2)*2 ] ].Name,
-        0, 0
+      // Extract the top 2 teams
+      var x := clrUtils.SortHashMap.THashMapUtils.Sort<Byte, TTeamStatistik>(
+        FCurrentGroupStandings,
+        function(Left: TTeamStatistik; Right: TTeamStatistik): Boolean
+        begin
+          Result := (Left.Punkte - Right.Punkte) > 0;
+        end,
+        true // as array, as to avoid object copying and ambiguous cleanup behavior
       );
 
-      // Add them to the FState.SechzehntelFinale
+      TopTeams.Add(x[0].Key);
+      TopTeams.Add(x[1].Key);
+      ThirdPlaceTeams.Add(x[1].Key);
+
+      // Das man die Chance hat etwas zu sehen
+      // Sleep(200);
+
     end;
+
+
+    // Die jeweiligen top Einträge als Spiele für das Sechzehntelfinale eintragen
+    for var i := 0 to (TopTeams.Count div 2) - 1 do
+    begin
+      with ASechzehntelfinaleLabels[i] do
+      begin
+        Caption := clrUtils.StringFormating.FormatMatchString(
+          FState.Teams[ TopTeams[i*2] ].Name,
+          FState.Teams[ TopTeams[i*2 + 1 + 1 - (i mod 2)*2 ] ].Name,
+          0, 0
+        );
+
+        // Add them to the FState.SechzehntelFinale
+      end;
+    end;
+
+
+    ShowMessage('Die Gruppenphase ist abgeschlossen.');
+  finally
+    TopTeams.Destroy;
+    FThirdPlaceTeams.Destroy;
   end;
-
-
-  ShowMessage('Die Gruppenphase ist abgeschlossen.');
 
 end;
 
