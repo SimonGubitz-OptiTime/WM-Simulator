@@ -3,13 +3,19 @@
 interface
 
 uses
+  System.Classes,
+  System.Generics.Collections,
+  System.IOUtils,
+  System.Math,
+  System.RTTI,
+  System.SysUtils,
+  Vcl.Dialogs,
+  Vcl.Forms,
   damTypes,
   clrDB,
   clrUtils.DB,
   clrUtils.CSV,
-  clrUtils.RTTI,
-  System.Generics.Collections, System.Classes, System.SysUtils, System.IOUtils,
-  System.RTTI, Vcl.Dialogs;
+  clrUtils.RTTI;
 
 type
   TCSVDB<T: record> = class(TInterfacedObject, IDB<T>)
@@ -21,7 +27,7 @@ type
     /// Gibt an, ob die Datei bereit ist geöffnet und beschrieben zu werden
     FInitialisiert: Boolean;
     FDateiName: String;
-    FDateiOrdner: String;
+    FOrdnerPfad: String;
 
     FCachedCSV: TList<T>;
     FCachedUnstructuredCSV: TObjectList<TList<String>>;
@@ -34,7 +40,7 @@ type
 
     constructor Create(ATableName: String);
 
-    procedure   ZeileHinzufuegen(ARowValues: T; SizeCheck: Boolean = true);
+    procedure   ZeileHinzufuegen(ARowValues: T);
 
     function    StrukturierteTabelleErhalten(): TList<T>;
     function    UnstrukturierteTabelleErhalten(): TObjectList<TList<String>>;
@@ -61,10 +67,10 @@ begin
 
   // Dateien
   FDateiName := clrUtils.DB.GetTablesFilePath(FTabellenName);
-  FDateiOrdner := clrUtils.DB.GetTablesDirPath();
-  if not ( TDirectory.Exists(FDateiOrdner) ) then
+  FOrdnerPfad := clrUtils.DB.GetTablesDirPath();
+  if not ( TDirectory.Exists(FOrdnerPfad) ) then
   begin
-    TDirectory.CreateDirectory(FDateiOrdner);
+    TDirectory.CreateDirectory(FOrdnerPfad);
   end;
 
   if not ( FileExists(FDateiName) ) then
@@ -111,15 +117,14 @@ begin
   Result := FInitialisiert;
 end;
 
-procedure TCSVDB<T>.ZeileHinzufuegen(ARowValues: T; SizeCheck: Boolean = true);
+procedure TCSVDB<T>.ZeileHinzufuegen(ARowValues: T);
 var
   SW: TStreamWriter;
   WriterString: String;
 begin
 
   if ( not(FileExists(FDateiName))
-       or ( SizeCheck
-            and (FFS.size = 0))
+       or (FFS.size = 0)
   ) then
   begin
     AddCSVTableToDB(ARowValues);
@@ -134,10 +139,11 @@ begin
 
     try
       SW.BaseStream.Position := FFS.size;
-      { if SW.Encoding = TEncoding.UTF16 then
+      // Position in Bytes in the Stream
+      if SW.Encoding = TEncoding.Unicode then
       begin
-        SW.BaseStream.Position := FFS.size / 2; // 2 byte pro character
-      end; }
+        SW.BaseStream.Position := Floor(FFS.size / 2); // 2 byte pro character
+      end;
 
       WriterString := clrUtils.CSV.TCSVUtils<T>.SerializeRowCSV(ARowValues);
       SW.WriteLine(WriterString);
@@ -161,8 +167,6 @@ end;
 function TCSVDB<T>.StrukturierteTabelleErhalten(): TList<T>;
 var
   SR: TStreamReader;
-  FileSize: Int64;
-  Lines: TStringList;
   Row: T;
 
   Line: String;
@@ -182,7 +186,6 @@ begin
   end
   else
   begin
-    Row := Default (T);
     SR := TStreamReader.Create(FFS);
 
     try

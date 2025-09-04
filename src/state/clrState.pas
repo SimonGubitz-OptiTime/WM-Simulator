@@ -10,10 +10,6 @@ uses
   Vcl.Dialogs,
   damTypes;
 
-
-
-
-
 type TWMState = class(TInterfacedObject, IState)
   private
     FTeams: TList<TTeam>;

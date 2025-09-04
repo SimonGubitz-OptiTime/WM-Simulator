@@ -28,6 +28,7 @@ type TGruppenphaseUI = class
     FMatches: TList<TPair<Byte, Byte>>; // sortierbare TDictionary implementierung, mit mehreren gleichen Keys
     FLabels: TArray<TLabel>;
     FCurrentGroup: TGruppe;
+    FCurrentGroupStandings: TDictionary<Byte, TTeamStatistik>;
 
 
     /// <summary>
@@ -231,21 +232,14 @@ begin
   Team2 := FState.Teams[FMatches[AMatchNdx].Value];
   FLabels[AMatchNdx].Caption := clrUtils.StringFormating.FormatMatchString(Team1.Name, Team2.Name, ATeam1Tore, ATeam2Tore);
 
+  // schreibt die Werte in TempStand1 & TempStand2
   clrUtils.UpdateStandings.GetUpdatedStandings(FState, ATeam1Tore, ATeam2Tore, Team1.ID, Team2.ID, TempStand1, TempStand2);
 
-  // FCurrentGroup Sortieren, und hinzufügen
-  var TopTeams := clrUtils.SortHashMap.THashMapUtils.Sort(FState.GetTeamStand);
 
-  clrUtils.SortHashMap.THashMapUtils.Sort<Byte, TTeamStatistik>(
-    FState.TeamStands,
-    function(Left: TTeamStatistik; Right: TTeamStatistik): Boolean
-    begin
-      Result := (Left.Punkte - Right.Punkte) > 0;
-    end
-  );
-
+  // updated
 
 
 end;
+
 
 end.

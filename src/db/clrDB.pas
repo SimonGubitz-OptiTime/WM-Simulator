@@ -16,7 +16,7 @@ type
   IDB<T: record> = interface
     ['{14e3dfdb-2111-4f24-9a1e-eca451b36d29}']
 
-      procedure   ZeileHinzufuegen(ARowValues: T; SizeCheck: Boolean = true);
+      procedure   ZeileHinzufuegen(ARowValues: T);
       function    StrukturierteTabelleErhalten(): TList<T>;
       function    UnstrukturierteTabelleErhalten(): TObjectList<TList<String>>;
       procedure   AddDBUpdateEventListener(ACallbackFunction: TDBUpdateEvent);

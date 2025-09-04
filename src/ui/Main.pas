@@ -250,9 +250,6 @@ begin
 
   FState.Destroy;
 
-  FTeamDB._Release;
-  FStadionDB._Release;
-
   FVerlosung.Free;
   FGruppenphase.Free;
 

@@ -52,21 +52,20 @@ type
     procedure EingabeDerListeHinzufuegen;
     procedure EingabeDerListeEntfernen;
     procedure SpielerListeEingabeButtonClick(Sender: TObject);
-    procedure SpielerListeEingabeFeldKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
+    procedure SpielerListeEingabeFeldKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure SpielerListeEntfernenButtonClick(Sender: TObject);
+
     class function GetTableName: ShortString;
 
     destructor Destroy; override;
 
   private
     var
+      FDatabase: IDB<TTeam>;
       FSpielerListe: TList<String>;
 
-    var
-      FDatabase: IDB<TTeam>;
-
     const
+      // ShortString, weil ich einen Value-Type für const brauche
       FTableName: ShortString = 'Teams';
   end;
 

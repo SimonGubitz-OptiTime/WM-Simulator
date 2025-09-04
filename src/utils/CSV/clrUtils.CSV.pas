@@ -13,7 +13,7 @@ function SerializeCSV(CSVArray: TList<String>): String;
 function DeserializeCSV(CSVString: String): TList<String>;
 
 type
-  TCSVUtils<T: record > = record
+  TCSVUtils<T: record> = record
     class function SerializeCSV(CSVArray: TList<T>): String; static;
     class function DeserializeCSV(CSVString: String): TList<T>; static;
 

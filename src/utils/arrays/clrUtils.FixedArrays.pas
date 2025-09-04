@@ -6,6 +6,7 @@ uses
   System.Generics.Collections, System.Generics.Defaults;
 
 type
+  // record, da es auf dem Stack lebt und keinen State braucht
   TFixedArrayUtils<T> = record
     class function LastFilledIndex(ArrayToSearch: TList<T>): Integer; static;
   end;

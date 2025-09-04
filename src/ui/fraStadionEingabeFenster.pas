@@ -42,8 +42,9 @@ type
 
     // ShortString, weil sonst der Compiler wegen des gemanageten Strings meckert
     const
+      // ShortString, weil ich einen Value-Type für const brauche
       FTableName: ShortString = 'Stadien';
-end;
+  end;
 
 implementation
 
