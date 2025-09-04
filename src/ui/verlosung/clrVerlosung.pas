@@ -128,6 +128,14 @@ begin
        // ID für jedes Team setzen
     end;
 
+    // als debug showmessage mit jeder ID als neue Zeile
+    var Msg: String := '';
+    for TempTeam in FState.Teams do
+    begin
+      Msg := Msg + IntToStr(TempTeam.ID) + ': ' + TempTeam.Name + sLineBreak;
+    end;
+    ShowMessage(Msg);
+
 
     if ( (FUITeams.Count mod 4) <> 0 ) then
     begin
