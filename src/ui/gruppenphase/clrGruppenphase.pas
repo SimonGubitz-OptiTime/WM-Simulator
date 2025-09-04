@@ -159,6 +159,7 @@ var
 
   TopTeams: TList<Byte>;
   ThirdPlaceTeams: TList<Byte>;
+  RoundOf32Teams: TList<Byte>;
 begin
 
   FLabels := AGruppenphaseLabels;
@@ -234,23 +235,11 @@ begin
 
 
     // Compose round-of-32 teams
-    // FTopTeams.AddRange(TopTeams);
-    TopTeams.AddRange([ThirdPlaceTeams[0], ThirdPlaceTeams[1], ThirdPlaceTeams[2], ThirdPlaceTeams[3], ThirdPlaceTeams[4], ThirdPlaceTeams[5], ThirdPlaceTeams[6], ThirdPlaceTeams[7]]);
+    RoundOf32Teams.AddRange(TopTeams);
+    RoundOf32Teams.AddRange([ThirdPlaceTeams[0], ThirdPlaceTeams[1], ThirdPlaceTeams[2], ThirdPlaceTeams[3], ThirdPlaceTeams[4], ThirdPlaceTeams[5], ThirdPlaceTeams[6], ThirdPlaceTeams[7]]);
 
     // Die jeweiligen top Einträge als Spiele für das Sechzehntelfinale eintragen
-    for var i := 0 to (TopTeams.Count div 2) - 1 do
-    begin
-      with ASechzehntelfinaleLabels[i] do
-      begin
-        Caption := clrUtils.StringFormating.FormatMatchString(
-          FState.Teams[ TopTeams[i*2] ].Name,
-          FState.Teams[ TopTeams[i*2 + 1 + 1 - (i mod 2)*2 ] ].Name,
-          0, 0
-        );
-
-        // Add them to the FState.SechzehntelFinale
-      end;
-    end;
+    
 
 
     ShowMessage('Die Gruppenphase ist abgeschlossen.');
