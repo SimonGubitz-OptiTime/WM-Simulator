@@ -29,6 +29,8 @@ type TGruppenphaseUI = class
     FLabels: TArray<TLabel>;
     FCurrentGroup: TGruppe;
     FCurrentGroupStandings: TDictionary<Byte, TTeamStatistik>;
+    FTopTeams: TList<Byte>;
+
 
 
     /// <summary>
@@ -56,6 +58,8 @@ begin
   FState := AState;
   FGrid := AGruppenphaseGrid;
   FSimulation := TSimulation.Create;
+  FCurrentGroupStandings := TDictionary<Byte, TTeamStatistik>.Create;
+  FTopTeams := TList<Byte>.Create;
 
   var ColSize := Floor(FGrid.Width / FGrid.ColCount) - 2;
   var RowSize := Floor(FGrid.Height / FGrid.RowCount) - 2;
@@ -72,7 +76,9 @@ end;
 
 destructor TGruppenphaseUI.Destroy;
 begin
+  FTopTeams.Destroy;
   FSimulation.Destroy;
+  FCurrentGroupStandings.Destroy;
 
   inherited Destroy;
 end;
@@ -167,6 +173,7 @@ begin
   begin
 
     FCurrentGroup := CurrentGroup;
+    FCurrentGroupStandings.Clear;
 
     FMatches := CreateUniqueMatches(FCurrentGroup);
 
@@ -202,18 +209,37 @@ begin
       AGruppenphaseLabels[Ndx].Font.Color := clWindowText;
     end;
 
+
+    // Extract the top 2 teams
+    var x := clrUtils.SortHashMap.THashMapUtils.Sort<Byte, TTeamStatistik>(
+      FCurrentGroupStandings,
+      function(Left: TTeamStatistik; Right: TTeamStatistik): Boolean
+      begin
+        Result := (Left.Punkte - Right.Punkte) > 0;
+      end,
+      true // as array, as to avoid object copying and ambiguous cleanup behavior
+    );
+
+    FTopTeams.AddRange([ x[0].Key, x[1].Key ]);
+
     // Das man die Chance hat etwas zu sehen
-    // Sleep(2000);
+    // Sleep(200);
 
   end;
 
 
   // Die jeweiligen top Einträge als Spiele für das Sechzehntelfinale eintragen
-  for SechzehntelfinaleLabel in ASechzehntelfinaleLabels do
+  for var i := 0 to (FTopTeams.Count div 2) - 1 do
   begin
-    with SechzehntelfinaleLabel do
+    with ASechzehntelfinaleLabels[i] do
     begin
-      Caption := 'asdfasd';
+      Caption := clrUtils.StringFormating.FormatMatchString(
+        FState.Teams[ FTopTeams[i*2] ].Name,
+        FState.Teams[ FTopTeams[i*2 + 1 + 1 - (i mod 2)*2 ] ].Name,
+        0, 0
+      );
+
+      // Add them to the FState.SechzehntelFinale
     end;
   end;
 
@@ -232,12 +258,17 @@ begin
   Team2 := FState.Teams[FMatches[AMatchNdx].Value];
   FLabels[AMatchNdx].Caption := clrUtils.StringFormating.FormatMatchString(Team1.Name, Team2.Name, ATeam1Tore, ATeam2Tore);
 
-  // schreibt die Werte in TempStand1 & TempStand2
+  // Schreibt die Werte in TempStand1 & TempStand2
   clrUtils.UpdateStandings.GetUpdatedStandings(FState, ATeam1Tore, ATeam2Tore, Team1.ID, Team2.ID, TempStand1, TempStand2);
 
 
-  // updated
+  // Update the CurrentGroup
+  FCurrentGroupStandings.AddOrSetValue(Team1.ID, TempStand1);
+  FCurrentGroupStandings.AddOrSetValue(Team2.ID, TempStand2);
 
+  // Also write it in the global FState.Stands to have a non scoped saved state
+  FState.AddOrSetTeamStandByID(Team1.ID, TempStand1);
+  FState.AddOrSetTeamStandByID(Team2.ID, TempStand2);
 
 end;
 

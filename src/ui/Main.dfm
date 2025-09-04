@@ -26,7 +26,7 @@ object MainForm: TMainForm
     Top = 0
     Width = 1309
     Height = 797
-    ActivePage = VerlosungSheet
+    ActivePage = SpielSheet
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 0
     OnChanging = PageControlChanging

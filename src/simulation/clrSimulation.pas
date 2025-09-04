@@ -32,7 +32,7 @@ end;
 const
   PauseBetweenGoals = 500;
   HeimspielSiegchancen = 5;
-  
+
 
 implementation
 
@@ -71,7 +71,7 @@ begin
 
   FNdx := ANdx;
   FCallbackFn := ACallbackFn;
-  
+
   FTimer.OnTimer := TimerEvent;
   FTimer.Enabled := true;
 
@@ -96,6 +96,7 @@ begin
 
   // Random Tore generieren
   // Hier kann noch eine Logik rein, die die Stärke der Teams berücksichtigt und auch ob es im Heimstadion gespielt wird
+  // Basierend auf TTeamRanking
   if ( Random(100) < 50 ) then
   begin
     Inc(FTeam1Tore);
