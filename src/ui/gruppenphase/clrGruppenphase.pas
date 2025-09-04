@@ -239,7 +239,37 @@ begin
     RoundOf32Teams.AddRange([ThirdPlaceTeams[0], ThirdPlaceTeams[1], ThirdPlaceTeams[2], ThirdPlaceTeams[3], ThirdPlaceTeams[4], ThirdPlaceTeams[5], ThirdPlaceTeams[6], ThirdPlaceTeams[7]]);
 
     // Die jeweiligen top Einträge als Spiele für das Sechzehntelfinale eintragen
-    
+    for var i := 0 to 15 do  // 16 matches
+    begin
+      var team1Index := i;
+      var team2Index := 31 - i;  // Creates 0vs31, 1vs30, 2vs29, etc.
+
+      // Alternative pairing strategies:
+      // Sequential: team2Index := i + 16;  // Creates 0vs16, 1vs17, 2vs18, etc.
+      // Custom logic based on group positions
+
+      // Verify indices are valid and teams are different
+      if (team1Index < RoundOf32Teams.Count) and
+         (team2Index < RoundOf32Teams.Count) and
+         (RoundOf32Teams[team1Index] <> RoundOf32Teams[team2Index]) then
+      begin
+        with ASechzehntelfinaleLabels[i] do
+        begin
+          Caption := clrUtils.StringFormating.FormatMatchString(
+            FState.Teams[RoundOf32Teams[team1Index]].Name,
+            FState.Teams[RoundOf32Teams[team2Index]].Name,
+            0, 0
+          );
+
+          // TODO: Add teams to FState.SechzehntelFinale structure
+          // FState.SechzehntelFinale.Add(...);
+        end;
+      end
+      else
+      begin
+        ShowMessage(Format('Error: Invalid pairing for match %d', [i]));
+      end;
+    end;
 
 
     ShowMessage('Die Gruppenphase ist abgeschlossen.');
