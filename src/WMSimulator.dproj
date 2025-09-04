@@ -173,6 +173,7 @@
         <DCCReference Include="utils\hash_map\clrUtils.SortHashMap.pas"/>
         <DCCReference Include="ui\endspiele\clrEndspiele.pas"/>
         <DCCReference Include="db\csv\clrCSVDB.pas"/>
+        <DCCReference Include="ui\ko-phase\clrKOPhase.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

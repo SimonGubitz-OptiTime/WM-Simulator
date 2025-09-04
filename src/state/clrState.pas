@@ -18,10 +18,12 @@ type TWMState = class(TInterfacedObject, IState)
 
     FTeamStands: TDictionary<Byte, TTeamStatistik>;
 
+    FSechzehntelFinalisten: TList<TPair<Byte, Byte>>;
     FAchtelFinalisten: TList<TPair<Byte, Byte>>;
     FViertelFinalisten: TList<TPair<Byte, Byte>>;
     FHalbFinalisten: TList<TPair<Byte, Byte>>;
     FFinalisten: TPair<Byte, Byte>;
+    FSpielUmPlatz3: TPair<Byte, Byte>;
   public
     constructor Create;
 
@@ -43,6 +45,22 @@ type TWMState = class(TInterfacedObject, IState)
     procedure   AddOrSetTeamStandByID(const ID: Byte; const Stand: TTeamStatistik);
     procedure   SetTeamStand(const ATeamStand: TDictionary<Byte, TTeamStatistik>);
 
+    function    GetSechzehntelFinalisten: TList<TPair<Byte, Byte>>;
+    function    GetAchtelFinalisten: TList<TPair<Byte, Byte>>;
+    function    GetViertelFinalisten: TList<TPair<Byte, Byte>>;
+    function    GetHalbFinalisten: TList<TPair<Byte, Byte>>;
+    function    GetFinalisten: TPair<Byte, Byte>;
+    function    GetSpielUmPlatz3: TPair<Byte, Byte>;
+
+    procedure   SetSechzehntelFinalisten(const SechzehntelFinalisten: TList<TPair<Byte, Byte>>);
+    procedure   AddSechzehntelFinalist(const SechzehntelFinalist: TPair<Byte, Byte>);
+
+    procedure   SetAchtelFinalisten(const AchtelFinalisten: TList<TPair<Byte, Byte>>);
+    procedure   SetViertelFinalisten(const ViertelFinalisten: TList<TPair<Byte, Byte>>);
+    procedure   SetHalbFinalisten(const HalbFinalisten: TList<TPair<Byte, Byte>>);
+    procedure   SetFinalisten(const Finalisten: TPair<Byte, Byte>);
+    procedure   SetSpielUmPlatz3(const SpielUmPlatz3: TPair<Byte, Byte>);
+
     destructor  Destroy; override;
 
   published
@@ -51,10 +69,12 @@ type TWMState = class(TInterfacedObject, IState)
     property Gruppen: TList<TGruppe> read GetGruppen write SetGruppen;
     property TeamStands: TDictionary<Byte, TTeamStatistik> read GetTeamStand write SetTeamStand;
 
-//    property AchtelFinalisten;
-//    property ViertelFinalisten;
-//    property HalbFinalisten;
-//    property Finalisten;
+    property SechzehntelFinalisten: TList<TPair<Byte, Byte>> read GetSechzehntelFinalisten write SetSechzehntelFinalisten;
+    property AchtelFinalisten: TList<TPair<Byte, Byte>> read GetAchtelFinalisten write SetAchtelFinalisten;
+    property ViertelFinalisten: TList<TPair<Byte, Byte>> read GetViertelFinalisten write SetViertelFinalisten;
+    property HalbFinalisten: TList<TPair<Byte, Byte>> read GetHalbFinalisten write SetHalbFinalisten;
+    property Finalisten: TPair<Byte, Byte> read GetFinalisten write SetFinalisten;
+    property SpielUmPlatz3: TPair<Byte, Byte> read GetSpielUmPlatz3 write SetSpielUmPlatz3;
 end;
 
 
@@ -66,6 +86,14 @@ begin
   FStadien := TList<TStadion>.Create;
   FGruppen := TList<TGruppe>.Create;
   FTeamStands := TDictionary<Byte, TTeamStatistik>.Create;
+
+
+  FSechzehntelFinalisten := TList<TPair<Byte, Byte>>.Create;
+  FAchtelFinalisten := TList<TPair<Byte, Byte>>.Create;
+  FViertelFinalisten := TList<TPair<Byte, Byte>>.Create;
+  FHalbFinalisten := TList<TPair<Byte, Byte>>.Create;
+  {FFinalisten := TPair<Byte, Byte>.Create;
+  FSpielUmPlatz3 := TPair<Byte, Byte>.Create;}
 end;
 
 destructor TWMState.Destroy;
@@ -154,10 +182,6 @@ end;
 
 procedure TWMState.AddOrSetTeamStandByID(const ID: Byte; const Stand: TTeamStatistik);
 begin
-
-  if not Assigned(Self) then
-    raise Exception.Create('Fehlermeldung');
-    
   FTeamStands.AddOrSetValue(ID, Stand);
 end;
 
@@ -165,5 +189,72 @@ procedure TWMState.SetTeamStand(const ATeamStand: TDictionary<Byte, TTeamStatist
 begin
   FTeamStands := ATeamStand;
 end;
+
+function TWMState.GetSechzehntelFinalisten: TList<TPair<Byte, Byte>>;
+begin
+  Result := FSechzehntelFinalisten;
+end;
+
+function TWMState.GetAchtelFinalisten: TList<TPair<Byte, Byte>>;
+begin
+  Result := FAchtelFinalisten;
+end;
+
+function TWMState.GetViertelFinalisten: TList<TPair<Byte, Byte>>;
+begin
+  Result := FViertelFinalisten;
+end;
+
+function TWMState.GetHalbFinalisten: TList<TPair<Byte, Byte>>;
+begin
+  Result := FHalbFinalisten;
+end;
+
+function TWMState.GetFinalisten: TPair<Byte, Byte>;
+begin
+  Result := FFinalisten;
+end;
+
+function TWMState.GetSpielUmPlatz3: TPair<Byte, Byte>;
+begin
+  Result := FSpielUmPlatz3;
+end;
+
+
+procedure TWMState.SetSechzehntelFinalisten(const SechzehntelFinalisten: TList<TPair<Byte, Byte>>);
+begin
+  FSechzehntelFinalisten := SechzehntelFinalisten;
+end;
+
+procedure TWMState.AddSechzehntelFinalist(const SechzehntelFinalist: TPair<Byte, Byte>);
+begin
+  FSechzehntelFinalisten.Add(SechzehntelFinalist);
+end;
+
+procedure TWMState.SetAchtelFinalisten(const AchtelFinalisten: TList<TPair<Byte, Byte>>);
+begin
+  FAchtelFinalisten := AchtelFinalisten;
+end;
+
+procedure TWMState.SetViertelFinalisten(const ViertelFinalisten: TList<TPair<Byte, Byte>>);
+begin
+  FViertelFinalisten := ViertelFinalisten;
+end;
+
+procedure TWMState.SetHalbFinalisten(const HalbFinalisten: TList<TPair<Byte, Byte>>);
+begin
+  FHalbFinalisten := HalbFinalisten;
+end;
+
+procedure TWMState.SetFinalisten(const Finalisten: TPair<Byte, Byte>);
+begin
+  FFinalisten := Finalisten;
+end;
+
+procedure TWMState.SetSpielUmPlatz3(const SpielUmPlatz3: TPair<Byte, Byte>);
+begin
+  FSpielUmPlatz3 := SpielUmPlatz3;
+end;
+
 
 end.

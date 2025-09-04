@@ -187,7 +187,7 @@ begin
 
 
       FUITeams.Clear;
-      
+
       for Ndx := 0 to SehrStarkeTeams.Count - 1 do
       begin
         // Jedes Sehr starke Team wird mit den anderen Stärken in eine Gruppe gepackt
@@ -241,6 +241,8 @@ begin
         end;
         Inc(GridNdx);
       end;
+
+      ShowMessage('Die Verlosung ist abgeschlossen.');
     finally
       AnimationList.Free;
 

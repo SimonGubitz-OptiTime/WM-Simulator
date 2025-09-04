@@ -483,7 +483,7 @@ object MainForm: TMainForm
       DesignSize = (
         1301
         767)
-      object FinaleMatchLabel: TLabel
+      object FinaleLabel: TLabel
         Left = 1147
         Top = 342
         Width = 115
@@ -497,7 +497,7 @@ object MainForm: TMainForm
         Font.Style = []
         ParentFont = False
       end
-      object FinaleLabel: TLabel
+      object Label179: TLabel
         Left = 1147
         Top = 325
         Width = 28
@@ -526,7 +526,7 @@ object MainForm: TMainForm
         Font.Quality = fqDraft
         ParentFont = False
       end
-      object Platz3MatchLabel: TLabel
+      object SpielUmPlatz3Label: TLabel
         Left = 1147
         Top = 414
         Width = 124
@@ -585,7 +585,7 @@ object MainForm: TMainForm
         Font.Style = []
         ParentFont = False
       end
-      object Label12: TLabel
+      object HalbfinaleLabel1: TLabel
         Left = 936
         Top = 342
         Width = 124
@@ -613,7 +613,7 @@ object MainForm: TMainForm
         Font.Style = [fsBold]
         ParentFont = False
       end
-      object Label20: TLabel
+      object ViertelfinaleLabel4: TLabel
         Left = 740
         Top = 533
         Width = 124
@@ -627,7 +627,7 @@ object MainForm: TMainForm
         Font.Style = []
         ParentFont = False
       end
-      object Label21: TLabel
+      object ViertelfinaleLabel3: TLabel
         Left = 740
         Top = 459
         Width = 124
@@ -683,7 +683,7 @@ object MainForm: TMainForm
         Font.Style = [fsBold]
         ParentFont = False
       end
-      object Label4: TLabel
+      object HalbfinaleLabel2: TLabel
         Left = 936
         Top = 414
         Width = 124
@@ -761,7 +761,7 @@ object MainForm: TMainForm
         Font.Style = [fsBold]
         ParentFont = False
       end
-      object Label9: TLabel
+      object ViertelfinaleLabel2: TLabel
         Left = 740
         Top = 283
         Width = 124
@@ -775,7 +775,7 @@ object MainForm: TMainForm
         Font.Style = []
         ParentFont = False
       end
-      object Label14: TLabel
+      object ViertelfinaleLabel1: TLabel
         Left = 740
         Top = 211
         Width = 124
@@ -865,7 +865,7 @@ object MainForm: TMainForm
         Font.Style = [fsBold]
         ParentFont = False
       end
-      object Label26: TLabel
+      object AchtelfinaleLabel7: TLabel
         Left = 544
         Top = 551
         Width = 124
@@ -879,7 +879,7 @@ object MainForm: TMainForm
         Font.Style = []
         ParentFont = False
       end
-      object Label27: TLabel
+      object AchtelfinaleLabel8: TLabel
         Left = 544
         Top = 623
         Width = 124
@@ -893,7 +893,7 @@ object MainForm: TMainForm
         Font.Style = []
         ParentFont = False
       end
-      object Label28: TLabel
+      object AchtelfinaleLabel6: TLabel
         Left = 544
         Top = 481
         Width = 124
@@ -907,7 +907,7 @@ object MainForm: TMainForm
         Font.Style = []
         ParentFont = False
       end
-      object Label29: TLabel
+      object AchtelfinaleLabel5: TLabel
         Left = 544
         Top = 409
         Width = 124
@@ -921,7 +921,7 @@ object MainForm: TMainForm
         Font.Style = []
         ParentFont = False
       end
-      object Label31: TLabel
+      object AchtelfinaleLabel4: TLabel
         Left = 544
         Top = 342
         Width = 124
@@ -935,7 +935,7 @@ object MainForm: TMainForm
         Font.Style = []
         ParentFont = False
       end
-      object Label32: TLabel
+      object AchtelfinaleLabel3: TLabel
         Left = 544
         Top = 266
         Width = 124
@@ -949,7 +949,7 @@ object MainForm: TMainForm
         Font.Style = []
         ParentFont = False
       end
-      object Label33: TLabel
+      object AchtelfinaleLabel1: TLabel
         Left = 544
         Top = 104
         Width = 124
@@ -963,7 +963,7 @@ object MainForm: TMainForm
         Font.Style = []
         ParentFont = False
       end
-      object Label34: TLabel
+      object AchtelfinaleLabel2: TLabel
         Left = 544
         Top = 176
         Width = 124
@@ -1650,6 +1650,15 @@ object MainForm: TMainForm
         Font.Name = 'Arial'
         Font.Style = [fsBold]
         ParentFont = False
+      end
+      object kophaseStartenButton: TButton
+        Left = 56
+        Top = 371
+        Width = 145
+        Height = 25
+        Caption = 'KO-Phase starten'
+        TabOrder = 0
+        OnClick = kophaseStartenButtonClick
       end
     end
   end

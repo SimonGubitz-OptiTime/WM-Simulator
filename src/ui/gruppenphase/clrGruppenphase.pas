@@ -39,7 +39,7 @@ type TGruppenphaseUI = class
     procedure CallbackSimulation(Sender: TObject; AMatchNdx: Integer; ATeam1Tore, ATeam2Tore: Integer);
 
   public
-    constructor Create(AGruppenphaseGrid: TStringGrid; var AState: TWMState);
+    constructor Create(AGruppenphaseGrid: TStringGrid; const AState: TWMState);
 
     procedure GruppenphaseStarten(AGruppenphaseLabels: TArray<TLabel>; ASechzehntelfinaleLabels: TArray<TLabel>);
 
@@ -50,7 +50,7 @@ end;
 
 implementation
 
-constructor TGruppenphaseUI.Create(AGruppenphaseGrid: TStringGrid; var AState: TWMState);
+constructor TGruppenphaseUI.Create(AGruppenphaseGrid: TStringGrid; const AState: TWMState);
 var
   j: Integer;
 begin
@@ -260,7 +260,7 @@ begin
 
           // TODO: Add teams to FState.SechzehntelFinale structure
           // in a TArray<TPair<Byte, Byte>> datastructure
-          // FState.SechzehntelFinale.Add(...);
+          FState.AddSechzehntelFinalist(TPair<Byte, Byte>.Create(RoundOf32Teams[team1Index], RoundOf32Teams[team2Index]));
         end;
       end
       else
