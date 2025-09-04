@@ -8,8 +8,7 @@ uses
   System.Generics.Collections,
   System.SysUtils,
   Vcl.Dialogs,
-  damTypes,
-  clrDB;
+  damTypes;
 
 
 
@@ -40,7 +39,7 @@ type TWMState = class(TInterfacedObject, IState)
     function    GetGruppen: TList<TGruppe>;
     procedure   AddGruppe(const AGroup: TGruppe);
     procedure   SetGruppen(const AGruppen: TList<TGruppe>);
-    procedure   ClearGruppen();         
+    procedure   ClearGruppen();
 
     function    GetTeamStand: TDictionary<Byte, TTeamStatistik>;
     function    ForceGetTeamStandByID(const ID: Integer): TTeamStatistik;
@@ -49,6 +48,7 @@ type TWMState = class(TInterfacedObject, IState)
     procedure   SetTeamStand(const ATeamStand: TDictionary<Byte, TTeamStatistik>);
 
     destructor  Destroy; override;
+
   published
     property Teams: TList<TTeam> read GetTeams write SetTeams;
     property Stadien: TList<TStadion> read GetStadien write SetStadien;

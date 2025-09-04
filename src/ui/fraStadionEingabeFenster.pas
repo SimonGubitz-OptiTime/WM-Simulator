@@ -28,7 +28,7 @@ type
     ZuschauerKapazitaetEingabeFeld: TEdit;
     BestaetigenButton: TButton;
 
-    constructor Create(var ADatabase: TDB<TStadion>);
+    constructor Create(var ADatabase: IDB<TStadion>);
 
     procedure BestaetigenButtonClick(Sender: TObject);
     class function GetTableName: ShortString;
@@ -38,7 +38,7 @@ type
   private
 
     var
-      FDatabase: TDB<TStadion>;
+      FDatabase: IDB<TStadion>;
 
     // ShortString, weil sonst der Compiler wegen des gemanageten Strings meckert
     const
@@ -49,16 +49,12 @@ implementation
 
 {$R *.dfm}
 
-constructor TStadionEingabeFenster.Create(var ADatabase: TDB<TStadion>);
+constructor TStadionEingabeFenster.Create(var ADatabase: IDB<TStadion>);
 begin
-  
+
   inherited Create(nil);
 
   FDatabase := ADatabase;
-  if not ( FDatabase.Initialized ) then
-  begin
-    FDatabase := TDB<TStadion>.Create(FTableName);
-  end;
 
 end;
 
@@ -106,7 +102,7 @@ begin
   Stadion.ZuschauerKapazitaet := StrToInt(ZuschauerKapazitaetEingabeFeld.Text);
 
   // In die Datenbank schreiben
-  FDatabase.ZeileHinzufuegenCSV(Stadion);
+  FDatabase.ZeileHinzufuegen(Stadion);
 
   // Fenster schließen
   Self.Close;

@@ -20,6 +20,7 @@ uses
   Winapi.Messages,
   Winapi.Windows,
   clrDB,
+  clrCSVDB,
   damTypes,
   clrState,
   clrVerlosung,
@@ -27,7 +28,8 @@ uses
   fraTeamEingabeFenster,
   fraStadionEingabeFenster,
   clrUtils.Routing,
-  clrUtils.TableFormating, Vcl.Outline, Vcl.ToolWin;
+  clrUtils.TableFormating,
+  Vcl.ToolWin;
 
 type  TMainForm = class(TForm)
     PageControl: TPageControl;
@@ -173,8 +175,8 @@ type  TMainForm = class(TForm)
     TeamEingabe: TTeamEingabeFenster;
     StadionEingabe: TStadionEingabeFenster;
 
-    FTeamDB: TDB<TTeam>;
-    FStadionDB: TDB<TStadion>;
+    FTeamDB: IDB<TTeam>;
+    FStadionDB: IDB<TStadion>;
 
     FTeamAnzahl: Integer;
     FStadionAnzahl: Integer;
@@ -221,21 +223,21 @@ begin
   TeamGewollteAnzahlLabel.Caption := IntToStr(FGewollteTeamAnzahl);
   StadionGewollteAnzahlLabel.Caption := IntToStr(FGewollteStadionAnzahl);
 
-  FTeamDB := TDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
-  FStadionDB := TDB<TStadion>.Create(TStadionEingabeFenster.GetTableName);
+  FTeamDB := TCSVDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
+  FStadionDB := TCSVDB<TStadion>.Create(TStadionEingabeFenster.GetTableName);
 
   TeamEingabe := TTeamEingabeFenster.Create(FTeamDB);
   StadionEingabe := TStadionEingabeFenster.Create(FStadionDB);
 
   // Teams laden
-  if ( FTeamDB.Initialized ) then
+  if ( FTeamDB.Initialisiert ) then
   begin
     TeamDBUpdate;
   end;
   FTeamDB.AddDBUpdateEventListener(TeamDBUpdate);
 
   // Stadien laden
-  if ( FStadionDB.Initialized ) then
+  if ( FStadionDB.Initialisiert ) then
   begin
     StadionDBUpdate;
   end;
@@ -248,8 +250,8 @@ begin
 
   FState.Destroy;
 
-  FStadionDB.Destroy;
-  FTeamDB.Destroy;
+  FTeamDB._Release;
+  FStadionDB._Release;
 
   FVerlosung.Free;
   FGruppenphase.Free;
@@ -263,7 +265,7 @@ var
   Rows: TObjectList<TList<String>>;
 begin
 
-  Rows := FTeamDB.UnstrukturierteTabelleErhaltenCSV();
+  Rows := FTeamDB.UnstrukturierteTabelleErhalten();
   FTeamAnzahl := Rows.Count - 1; // Header
 
   TeamAnzahlLabel.Caption := '0' + IntToStr(FTeamAnzahl);
@@ -285,7 +287,7 @@ begin
     TeamHinzufuegenButton.Enabled := false;
   end;
 
-  // Hierdrin wird UnstrukturierteTabelleErhaltenCSV aufgerufen also vorher StrukturierteTabelleErhaltenCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
+  // Hierdrin wird UnstrukturierteTabelleErhalten aufgerufen also vorher StrukturierteTabelleErhalten aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
   TeamZeileZeichnen(Rows);
 
   Rows.Free;
@@ -305,7 +307,7 @@ var
   Rows: TObjectList<TList<String>>;
 begin
 
-  Rows := FStadionDB.UnstrukturierteTabelleErhaltenCSV();
+  Rows := FStadionDB.UnstrukturierteTabelleErhalten();
   FStadionAnzahl := Rows.Count - 1; // Header
 
   StadionAnzahlLabel.Caption := '0' + IntToStr(FStadionAnzahl);
@@ -327,7 +329,7 @@ begin
     StadionHinzufuegenButton.Enabled := false;
   end;
 
-  // Hierdrin wird UnstrukturierteTabelleErhaltenCSV aufgerufen also vorher StrukturierteTabelleErhaltenCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
+  // Hierdrin wird UnstrukturierteTabelleErhalten aufgerufen also vorher StrukturierteTabelleErhalten aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
   StadionTabelleZeichnen(Rows);
 
   Rows.Free;

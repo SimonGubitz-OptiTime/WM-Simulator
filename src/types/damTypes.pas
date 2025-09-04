@@ -7,9 +7,6 @@ uses
 
 
 type
-  TDBUpdateEvent = procedure of object;
-
-type
   TTeamVerband = (AFC, CAF, CONCACAF, CONMEBOL, OFC, UEFA);
 
 type
@@ -47,9 +44,9 @@ end;
 
 type TSpiel = record
   Team1: TTeam;
-  Team1Spielstand: Byte; // kein Spiel wird über 255 gehen
   Team2: TTeam;
-  Team2Spielstand: Byte; // ↑
+  Team1Spielstand: Byte;
+  Team2Spielstand: Byte;
 
   AustragunsDatum: TDate;
 

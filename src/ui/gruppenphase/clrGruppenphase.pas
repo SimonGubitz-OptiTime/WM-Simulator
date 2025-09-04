@@ -25,8 +25,10 @@ type TGruppenphaseUI = class
     FState: TWMState;
     FSimulation: TSimulation;
     FGrid: TStringGrid;
-    FMatches: TList<TPair<Byte, Byte>>; // eigene TDictionary implementierung, mit mehreren gleichen Keys
+    FMatches: TList<TPair<Byte, Byte>>; // sortierbare TDictionary implementierung, mit mehreren gleichen Keys
     FLabels: TArray<TLabel>;
+    FCurrentGroup: TGruppe;
+
 
     /// <summary>
     ///   Algorithmisch Spiele verteilen
@@ -163,12 +165,14 @@ begin
   for CurrentGroup in FState.Gruppen do
   begin
 
-    FMatches := CreateUniqueMatches(CurrentGroup);
+    FCurrentGroup := CurrentGroup;
+
+    FMatches := CreateUniqueMatches(FCurrentGroup);
 
     for Ndx := 0 to FMatches.Count - 1 do
     begin
 
-      clrUtils.TableFormating.TeamTabelleZeichnen(FGrid, CurrentGroup);
+      clrUtils.TableFormating.TeamTabelleZeichnen(FGrid, FCurrentGroup);
 
       AGruppenphaseLabels[Ndx].Caption := clrUtils.StringFormating.FormatMatchString(
         FState.Teams[FMatches[Ndx].Key].Name,
@@ -203,19 +207,7 @@ begin
   end;
 
 
-  // Vielleicht noch pro gruppe TGruppenphase private Fields als temp storage dafür oder als funktions vars und dann die generische version und die besetzung von FAchtelFinale
-  var TopTeams := clrUtils.SortHashMap.THashMapUtils.Sort(FState.GetTeamStand);
-
-  clrUtils.SortHashMap.THashMapUtils.Sort<Byte, TTeamStatistik>(
-    FState.TeamStands,
-    function(Left: TTeamStatistik; Right: TTeamStatistik): Boolean
-    begin
-      Result := (Left.Punkte - Right.Punkte) > 0;
-    end
-  );
-
-
-  // Schritt 2. Die jeweiligen top einträge als Spiele für das Achtelfinale eintragen
+  // Die jeweiligen top Einträge als Spiele für das Sechzehntelfinale eintragen
   for SechzehntelfinaleLabel in ASechzehntelfinaleLabels do
   begin
     with SechzehntelfinaleLabel do
@@ -223,10 +215,6 @@ begin
       Caption := 'asdfasd';
     end;
   end;
-
-
-
-
 
 
   ShowMessage('Die Gruppenphase ist abgeschlossen.');
@@ -245,8 +233,18 @@ begin
 
   clrUtils.UpdateStandings.GetUpdatedStandings(FState, ATeam1Tore, ATeam2Tore, Team1.ID, Team2.ID, TempStand1, TempStand2);
 
-  FState.AddOrSetTeamStandByID(Team1.ID, TempStand1);
-  FState.AddOrSetTeamStandByID(Team2.ID, TempStand2);
+  // FCurrentGroup Sortieren, und hinzufügen
+  var TopTeams := clrUtils.SortHashMap.THashMapUtils.Sort(FState.GetTeamStand);
+
+  clrUtils.SortHashMap.THashMapUtils.Sort<Byte, TTeamStatistik>(
+    FState.TeamStands,
+    function(Left: TTeamStatistik; Right: TTeamStatistik): Boolean
+    begin
+      Result := (Left.Punkte - Right.Punkte) > 0;
+    end
+  );
+
+
 
 end;
 

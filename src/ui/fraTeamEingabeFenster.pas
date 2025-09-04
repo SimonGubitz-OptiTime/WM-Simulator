@@ -45,7 +45,7 @@ type
     SpielerListeEingabeButton: TButton;
     SpielerListeEntfernenButton: TButton;
 
-    constructor Create(var ADatabase: TDB<TTeam>);
+    constructor Create(var ADatabase: IDB<TTeam>);
 
     procedure BestaetigenButtonClick(Sender: TObject);
     procedure FIFACodeEingabeFeldChange(Sender: TObject);
@@ -64,7 +64,7 @@ type
       FSpielerListe: TList<String>;
 
     var
-      FDatabase: TDB<TTeam>;
+      FDatabase: IDB<TTeam>;
 
     const
       FTableName: ShortString = 'Teams';
@@ -74,16 +74,12 @@ implementation
 
 {$R *.dfm}
 
-constructor TTeamEingabeFenster.Create(var ADatabase: TDB<TTeam>);
+constructor TTeamEingabeFenster.Create(var ADatabase: IDB<TTeam>);
 begin
 
   inherited Create(nil);
-  
+
   FDatabase := ADatabase;
-  if not ( FDatabase.Initialized ) then
-  begin
-    FDatabase := TDB<TTeam>.Create(FTableName);
-  end;
 
   FSpielerListe := TList<String>.Create;
 
@@ -238,7 +234,7 @@ begin
   end;
 
   // Team in die Datenbank schreiben
-  FDatabase.ZeileHinzufuegenCSV(Team);
+  FDatabase.ZeileHinzufuegen(Team);
 
   // Fenster schließen
   Self.Close;
