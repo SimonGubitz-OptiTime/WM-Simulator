@@ -123,18 +123,10 @@ begin
     for Ndx := 0 to FState.Teams.Count - 1 do
     begin
       TempTeam := FState.Teams[Ndx];
+       // ID für jedes Team setzen
       TempTeam.ID := Ndx;
       FState.SetTeam(Ndx, TempTeam);
-       // ID für jedes Team setzen
     end;
-
-    // als debug showmessage mit jeder ID als neue Zeile
-    var Msg: String := '';
-    for TempTeam in FState.Teams do
-    begin
-      Msg := Msg + IntToStr(TempTeam.ID) + ': ' + TempTeam.Name + sLineBreak;
-    end;
-    ShowMessage(Msg);
 
 
     if ( (FUITeams.Count mod 4) <> 0 ) then

@@ -239,44 +239,13 @@ begin
     RoundOf32Teams.AddRange(TopTeams);
     RoundOf32Teams.AddRange([ThirdPlaceTeams[0], ThirdPlaceTeams[1], ThirdPlaceTeams[2], ThirdPlaceTeams[3], ThirdPlaceTeams[4], ThirdPlaceTeams[5], ThirdPlaceTeams[6], ThirdPlaceTeams[7]]);
 
-    // Show a dialog message (ShowMessage) with all of the different groups and their teams
-    var GroupInfoStr := 'Die Gruppen und ihre Teams sind wie folgt:'#13#10;
-    var index := 1;
-    for var grp in FState.Gruppen do
-    begin
-      GroupInfoStr := GroupInfoStr + 'Gruppe ' + IntToStr(index)  + ': '#13#10;
-      for var team in grp do
-      begin
-        GroupInfoStr := GroupInfoStr + '- ' + team.Name + #13#10;
-      end;
-      GroupInfoStr := GroupInfoStr + #13#10; // Extra line break between groups
-
-      Inc(index);
-    end;
-    ShowMessage(GroupInfoStr);
-
-
-
-    // Show a dialog message (ShowMessage) with all teams that qualified for the round of 32
-    var QualifiedTeamsStr := 'Folgende Teams haben sich für die Runde der letzten 32 qualifiziert:'#13#10;
-    for var TeamID in RoundOf32Teams do
-    begin
-      QualifiedTeamsStr := QualifiedTeamsStr + '- ' + FState.Teams[TeamID].Name + #13#10;
-    end;
-    ShowMessage(QualifiedTeamsStr);
-
 
     // Die jeweiligen top Einträge als Spiele für das Sechzehntelfinale eintragen
-    for var i := 0 to 15 do  // 16 matches
+    for var i := 0 to Floor(RoundOf32Teams.Count / 2) - 1 do
     begin
       var team1Index := i;
-      var team2Index := 31 - i;  // Creates 0vs31, 1vs30, 2vs29, etc.
+      var team2Index := 31 - i;
 
-      // Alternative pairing strategies:
-      // Sequential: team2Index := i + 16;  // Creates 0vs16, 1vs17, 2vs18, etc.
-      // Custom logic based on group positions
-
-      // Verify indices are valid and teams are different
       if (team1Index < RoundOf32Teams.Count) and
          (team2Index < RoundOf32Teams.Count) and
          (RoundOf32Teams[team1Index] <> RoundOf32Teams[team2Index]) then
@@ -290,6 +259,7 @@ begin
           );
 
           // TODO: Add teams to FState.SechzehntelFinale structure
+          // in a TArray<TPair<Byte, Byte>> datastructure
           // FState.SechzehntelFinale.Add(...);
         end;
       end
