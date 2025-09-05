@@ -174,6 +174,7 @@
         <DCCReference Include="ui\endspiele\clrEndspiele.pas"/>
         <DCCReference Include="db\csv\clrCSVDB.pas"/>
         <DCCReference Include="ui\ko-phase\clrKOPhase.pas"/>
+        <DCCReference Include="db\sql\clrSQLDB.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -201,6 +202,12 @@
             </Delphi.Personality>
             <Deployment Version="5">
                 <DeployFile LocalName="..\bin\Win32\Debug\WMSimulator.exe" Configuration="Debug" Class="ProjectOutput"/>
+                <DeployFile LocalName="..\bin\Win32\Debug\WMSimulator.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>WMSimulator.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployClass Name="AdditionalDebugSymbols">
                     <Platform Name="iOSSimulator">
                         <Operation>1</Operation>

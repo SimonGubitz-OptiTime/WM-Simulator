@@ -42,7 +42,7 @@ var
   NdxRows, NdxCols: Integer;
 begin
   AGrid.RowCount := ARows.Count;
-  AGrid.ColCount := ARows[0].Count;
+  AGrid.ColCount := ARows[0].Count + 1; // +1, um die Numerierung der Zeilen darzustellen
 
   for NdxRows := 0 to ARows.Count - 1 do
   begin

@@ -65,6 +65,12 @@ begin
   TempString := '';
   Result := TList<String>.Create;
 
+  // To read in the last value too
+  if ( CSVString[High(CSVString)] <> delimiter ) then
+  begin
+    CSVString := CSVString + delimiter;
+  end;
+
   for Ndx := 1 to Length(CSVString) do
   begin
 

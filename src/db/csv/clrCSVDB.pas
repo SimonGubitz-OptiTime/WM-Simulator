@@ -134,8 +134,6 @@ begin
   begin
 
     SW := TStreamWriter.Create(FFS);
-    FCachedCSV.Clear;
-    FCachedUnstructuredCSV.Clear;
 
     try
       SW.BaseStream.Position := FFS.size;
@@ -149,8 +147,8 @@ begin
       SW.WriteLine(WriterString);
 
       // Append to cache as well
-      FCachedCSV.Add(ARowValues);
-      FCachedUnstructuredCSV.Add(clrUtils.CSV.TCSVUtils<T>.ParseRowCSVToArray(ARowValues));
+      {FCachedCSV.Add(ARowValues);
+      FCachedUnstructuredCSV.Add(clrUtils.CSV.TCSVUtils<T>.ParseRowCSVToArray(ARowValues));}
 
     finally
       SW.Free;
@@ -234,12 +232,10 @@ begin
 
     try
       FFS.Position := 0;
-      // FCachedUnstructuredCSV.Clear; // fehler hier
       while not(SR.EndOfStream) do
       begin
         Line := SR.ReadLine();
         Temp := clrUtils.CSV.DeserializeCSV(Line);
-        // FCachedUnstructuredCSV.Add(Temp); // fehler hier
         Result.Add(Temp);
       end;
     finally

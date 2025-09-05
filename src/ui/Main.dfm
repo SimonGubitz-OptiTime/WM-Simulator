@@ -26,7 +26,7 @@ object MainForm: TMainForm
     Top = 0
     Width = 1309
     Height = 797
-    ActivePage = SpielSheet
+    ActivePage = GruppenstatistikenSheet
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 0
     OnChanging = PageControlChanging
@@ -272,7 +272,7 @@ object MainForm: TMainForm
         TabOrder = 6
       end
       object StringGrid6: TStringGrid
-        Left = 975
+        Left = 967
         Top = 54
         Width = 323
         Height = 120
@@ -284,7 +284,7 @@ object MainForm: TMainForm
         TabOrder = 7
       end
       object StringGrid7: TStringGrid
-        Left = 975
+        Left = 967
         Top = 203
         Width = 323
         Height = 120
@@ -296,8 +296,8 @@ object MainForm: TMainForm
         TabOrder = 8
       end
       object StringGrid8: TStringGrid
-        Left = 975
-        Top = 338
+        Left = 967
+        Top = 346
         Width = 323
         Height = 120
         Anchors = [akTop, akRight]
@@ -308,7 +308,7 @@ object MainForm: TMainForm
         TabOrder = 9
       end
       object StringGrid9: TStringGrid
-        Left = 975
+        Left = 967
         Top = 488
         Width = 323
         Height = 120
@@ -320,7 +320,7 @@ object MainForm: TMainForm
         TabOrder = 10
       end
       object StringGrid10: TStringGrid
-        Left = 975
+        Left = 967
         Top = 630
         Width = 323
         Height = 120
@@ -475,6 +475,163 @@ object MainForm: TMainForm
         RowCount = 4
         FixedRows = 0
         TabOrder = 2
+      end
+    end
+    object GruppenstatistikenSheet: TTabSheet
+      Caption = 'Gruppenstatistiken'
+      ImageIndex = 4
+      DesignSize = (
+        1301
+        767)
+      object Label4: TLabel
+        Left = 11
+        Top = 3
+        Width = 501
+        Height = 40
+        Caption = #220'bersicht der Gruppenstatistiken'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -35
+        Font.Name = 'Arial'
+        Font.Style = []
+        ParentFont = False
+      end
+      object StringGrid13: TStringGrid
+        Left = 3
+        Top = 54
+        Width = 320
+        Height = 120
+        ColCount = 4
+        FixedCols = 0
+        RowCount = 4
+        FixedRows = 0
+        TabOrder = 0
+      end
+      object StringGrid14: TStringGrid
+        Left = 3
+        Top = 203
+        Width = 320
+        Height = 120
+        ColCount = 4
+        FixedCols = 0
+        RowCount = 4
+        FixedRows = 0
+        TabOrder = 1
+      end
+      object StringGrid15: TStringGrid
+        Left = 3
+        Top = 346
+        Width = 320
+        Height = 120
+        ColCount = 4
+        FixedCols = 0
+        RowCount = 4
+        FixedRows = 0
+        TabOrder = 2
+      end
+      object StringGrid16: TStringGrid
+        Left = 3
+        Top = 488
+        Width = 320
+        Height = 120
+        ColCount = 4
+        FixedCols = 0
+        RowCount = 4
+        FixedRows = 0
+        TabOrder = 3
+      end
+      object StringGrid17: TStringGrid
+        Left = 507
+        Top = 488
+        Width = 320
+        Height = 120
+        ColCount = 4
+        FixedCols = 0
+        RowCount = 4
+        FixedRows = 0
+        TabOrder = 4
+      end
+      object StringGrid18: TStringGrid
+        Left = 975
+        Top = 488
+        Width = 323
+        Height = 120
+        Anchors = [akTop, akRight]
+        ColCount = 4
+        FixedCols = 0
+        RowCount = 4
+        FixedRows = 0
+        TabOrder = 5
+      end
+      object StringGrid19: TStringGrid
+        Left = 975
+        Top = 346
+        Width = 323
+        Height = 120
+        Anchors = [akTop, akRight]
+        ColCount = 4
+        FixedCols = 0
+        RowCount = 4
+        FixedRows = 0
+        TabOrder = 6
+      end
+      object StringGrid20: TStringGrid
+        Left = 975
+        Top = 203
+        Width = 323
+        Height = 120
+        Anchors = [akTop, akRight]
+        ColCount = 4
+        FixedCols = 0
+        RowCount = 4
+        FixedRows = 0
+        TabOrder = 7
+      end
+      object StringGrid21: TStringGrid
+        Left = 975
+        Top = 54
+        Width = 323
+        Height = 120
+        Anchors = [akTop, akRight]
+        ColCount = 4
+        FixedCols = 0
+        RowCount = 4
+        FixedRows = 0
+        TabOrder = 8
+      end
+      object StringGrid22: TStringGrid
+        Left = 3
+        Top = 630
+        Width = 320
+        Height = 120
+        ColCount = 4
+        FixedCols = 0
+        RowCount = 4
+        FixedRows = 0
+        TabOrder = 9
+      end
+      object StringGrid23: TStringGrid
+        Left = 507
+        Top = 630
+        Width = 320
+        Height = 120
+        ColCount = 4
+        FixedCols = 0
+        RowCount = 4
+        FixedRows = 0
+        TabOrder = 10
+      end
+      object StringGrid24: TStringGrid
+        Left = 975
+        Top = 630
+        Width = 323
+        Height = 120
+        Anchors = [akTop, akRight]
+        ColCount = 4
+        FixedCols = 0
+        RowCount = 4
+        FixedRows = 0
+        TabOrder = 11
       end
     end
     object SpielSheet: TTabSheet

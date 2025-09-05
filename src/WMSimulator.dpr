@@ -26,7 +26,8 @@ uses
   clrUtils.SortHashMap in 'utils\hash_map\clrUtils.SortHashMap.pas',
   clrEndspiele in 'ui\endspiele\clrEndspiele.pas',
   clrCSVDB in 'db\csv\clrCSVDB.pas',
-  clrKOPhase in 'ui\ko-phase\clrKOPhase.pas';
+  clrKOPhase in 'ui\ko-phase\clrKOPhase.pas',
+  clrSQLDB in 'db\sql\clrSQLDB.pas';
 
 {$R *.res}
 

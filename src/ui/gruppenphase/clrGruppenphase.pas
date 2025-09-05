@@ -230,9 +230,27 @@ begin
       ThirdPlaceTeams.Add(x[2].Key);
 
       // Das man die Chance hat etwas zu sehen
-      // Sleep(200);
+      Sleep(500);
+
+
+      // Das Team sortieren
+      var sorted_teams := clrUtils.SortHashMap.THashMapUtils.Sort<Byte, TTeamStatistik>(
+        FCurrentGroupStandings,
+        function(Left: TTeamStatistik; Right: TTeamStatistik): Boolean
+        begin
+          Result := (Left.Punkte - Right.Punkte) > 0;
+        end
+      );
+
+      // und in den dafür vorgesehenen Grid reinschreiben
+
+      
 
     end;
+
+    // Stillstand für die sortierten gruppn nach der Gruppenphase
+    // mit sortierten nach Punkten
+    // - Spaltenüberschriften
 
 
     // Compose round-of-32 teams
