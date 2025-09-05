@@ -87,8 +87,14 @@ type IState = interface
     procedure   AddSechzehntelFinalist(const SechzehntelFinalist: TPair<Byte, Byte>);
 
     procedure   SetAchtelFinalisten(const AchtelFinalisten: TList<TPair<Byte, Byte>>);
+    procedure   AddAchtelFinalist(const AchtelFinalist: TPair<Byte, Byte>);
+
     procedure   SetViertelFinalisten(const ViertelFinalisten: TList<TPair<Byte, Byte>>);
+    procedure   AddViertelFinalist(const ViertelFinalist: TPair<Byte, Byte>);
+
     procedure   SetHalbFinalisten(const HalbFinalisten: TList<TPair<Byte, Byte>>);
+    procedure   AddHalbFinalist(const HalbFinalist: TPair<Byte, Byte>);
+
     procedure   SetFinalisten(const Finalisten: TPair<Byte, Byte>);
     procedure   SetSpielUmPlatz3(const SpielUmPlatz3: TPair<Byte, Byte>);
 

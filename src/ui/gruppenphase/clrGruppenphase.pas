@@ -243,24 +243,24 @@ begin
     // Die jeweiligen top Einträge als Spiele für das Sechzehntelfinale eintragen
     for var i := 0 to Floor(RoundOf32Teams.Count / 2) - 1 do
     begin
-      var team1Index := i;
-      var team2Index := 31 - i;
+      var Team1Index := i;
+      var Team2Index := 31 - i;
 
-      if (team1Index < RoundOf32Teams.Count) and
-         (team2Index < RoundOf32Teams.Count) and
-         (RoundOf32Teams[team1Index] <> RoundOf32Teams[team2Index]) then
+      if (Team1Index < RoundOf32Teams.Count) and
+         (Team2Index < RoundOf32Teams.Count) and
+         (RoundOf32Teams[Team1Index] <> RoundOf32Teams[Team2Index]) then
       begin
         with ASechzehntelfinaleLabels[i] do
         begin
           Caption := clrUtils.StringFormating.FormatMatchString(
-            FState.Teams[RoundOf32Teams[team1Index]].Name,
-            FState.Teams[RoundOf32Teams[team2Index]].Name,
+            FState.Teams[RoundOf32Teams[Team1Index]].Name,
+            FState.Teams[RoundOf32Teams[Team2Index]].Name,
             0, 0
           );
 
           // TODO: Add teams to FState.SechzehntelFinale structure
           // in a TArray<TPair<Byte, Byte>> datastructure
-          FState.AddSechzehntelFinalist(TPair<Byte, Byte>.Create(RoundOf32Teams[team1Index], RoundOf32Teams[team2Index]));
+          FState.AddSechzehntelFinalist(TPair<Byte, Byte>.Create(RoundOf32Teams[Team1Index], RoundOf32Teams[Team2Index]));
         end;
       end
       else

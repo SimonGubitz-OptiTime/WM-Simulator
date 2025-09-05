@@ -56,10 +56,17 @@ type TWMState = class(TInterfacedObject, IState)
     procedure   AddSechzehntelFinalist(const SechzehntelFinalist: TPair<Byte, Byte>);
 
     procedure   SetAchtelFinalisten(const AchtelFinalisten: TList<TPair<Byte, Byte>>);
+    procedure   AddAchtelFinalist(const AchtelFinalist: TPair<Byte, Byte>);
+
     procedure   SetViertelFinalisten(const ViertelFinalisten: TList<TPair<Byte, Byte>>);
+    procedure   AddViertelFinalist(const ViertelFinalist: TPair<Byte, Byte>);
+
     procedure   SetHalbFinalisten(const HalbFinalisten: TList<TPair<Byte, Byte>>);
+    procedure   AddHalbFinalist(const HalbFinalist: TPair<Byte, Byte>);
+
     procedure   SetFinalisten(const Finalisten: TPair<Byte, Byte>);
     procedure   SetSpielUmPlatz3(const SpielUmPlatz3: TPair<Byte, Byte>);
+
 
     destructor  Destroy; override;
 
@@ -92,8 +99,6 @@ begin
   FAchtelFinalisten := TList<TPair<Byte, Byte>>.Create;
   FViertelFinalisten := TList<TPair<Byte, Byte>>.Create;
   FHalbFinalisten := TList<TPair<Byte, Byte>>.Create;
-  {FFinalisten := TPair<Byte, Byte>.Create;
-  FSpielUmPlatz3 := TPair<Byte, Byte>.Create;}
 end;
 
 destructor TWMState.Destroy;
@@ -236,14 +241,29 @@ begin
   FAchtelFinalisten := AchtelFinalisten;
 end;
 
+procedure TWMState.AddAchtelFinalist(const AchtelFinalist: TPair<Byte, Byte>);
+begin
+  FAchtelFinalisten.Add(AchtelFinalist);
+end;
+
 procedure TWMState.SetViertelFinalisten(const ViertelFinalisten: TList<TPair<Byte, Byte>>);
 begin
   FViertelFinalisten := ViertelFinalisten;
 end;
 
+procedure TWMState.AddViertelFinalist(const ViertelFinalist: TPair<Byte, Byte>);
+begin
+  FViertelFinalisten.Add(ViertelFinalist);
+end;
+
 procedure TWMState.SetHalbFinalisten(const HalbFinalisten: TList<TPair<Byte, Byte>>);
 begin
   FHalbFinalisten := HalbFinalisten;
+end;
+
+procedure TWMState.AddHalbFinalist(const HalbFinalist: TPair<Byte, Byte>);
+begin
+  FHalbFinalisten.Add(HalbFinalist);
 end;
 
 procedure TWMState.SetFinalisten(const Finalisten: TPair<Byte, Byte>);

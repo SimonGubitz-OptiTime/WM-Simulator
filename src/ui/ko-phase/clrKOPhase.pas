@@ -1,9 +1,10 @@
-unit clrKOPhase;
+﻿unit clrKOPhase;
 
 interface
 
 uses
   System.Generics.Collections,
+  System.Math,
   System.SysUtils,
   Vcl.StdCtrls,
   Vcl.Graphics,
@@ -27,6 +28,9 @@ type
 
     FCurrentTeams: TList<TPair<Byte, Byte>>;
     FCurrentLabels: TArray<TLabel>;
+    FNextStage: TList<Byte>;
+    FNextStageSpielUmPlatz3: TList<Byte>;
+    
 
 
     procedure KOPhaseCallback(Sender: TObject; ANdx: Integer; ATeam1Tore, ATeam2Tore: Integer);
@@ -37,6 +41,9 @@ type
 
     procedure KOPhaseStarten;
   end;
+
+const
+  SLEEP_DURATION: Byte = 250;
 
 implementation
 
@@ -49,11 +56,18 @@ begin
   FHalbfinaleLabels := AHalbfinaleLabels;
   FFinaleLabel := AFinaleLabel;
   FSpielUmPlatz3Label := ASpielUmPlatz3Label;
+
+  FNextStage := TList<Byte>.Create;
+  FNextStageSpielUmPlatz3 := TList<Byte>.Create;
+
   inherited Create;
 end;
 
 destructor TKOPhaseUI.Destroy;
 begin
+  FNextStage.Free;
+  FNextStageSpielUmPlatz3.Free;
+
   inherited Destroy;
 end;
 
@@ -67,7 +81,8 @@ begin
   // Sicherstellen, dass die Sechzehntelfinale-Teams vorhanden sind
   if FState.GetSechzehntelFinalisten.Count = 0 then
   begin
-    raise Exception.Create('Sechzehntelfinale teams are not set in the state.');
+    ShowMessage('Bitte erst Gruppenphase starten.');
+    Exit;
   end;
 
 
@@ -92,14 +107,24 @@ begin
     end;
 
     // Kurz warten
-    Sleep(250);
+    Sleep(SLEEP_DURATION);
+
+
+    Ndx := 0;
+    while Ndx < FNextStage.Count - 1 do
+    begin
+      FState.AddAchtelFinalist(TPair<Byte, Byte>.Create(FNextStage[Ndx], FNextStage[Ndx + 1]));
+      var debug := FState.GetAchtelFinalisten;
+      Ndx := Ndx + 2;
+    end;
+
+    FNextStage.Clear;
+
 
 
     // Achtelfinale
     for Ndx := 0 to FState.GetAchtelFinalisten.Count - 1 do
     begin
-
-      ShowMessage('ich bin m�de alter');
 
       FCurrentTeams := FState.GetAchtelFinalisten;
       FCurrentLabels := FAchtelfinaleLabels;
@@ -115,7 +140,18 @@ begin
     end;
 
     // Kurz warten
-    Sleep(250);
+    Sleep(SLEEP_DURATION);
+
+    Ndx := 0;
+    while Ndx < FNextStage.Count - 1 do
+    begin
+      FState.AddViertelFinalist(TPair<Byte, Byte>.Create(FNextStage[Ndx], FNextStage[Ndx + 1]));
+      var debug := FState.GetViertelFinalisten;
+      Ndx := Ndx + 2;
+    end;
+
+    FNextStage.Clear;
+
 
 
     // Viertelfinale
@@ -135,7 +171,17 @@ begin
     end;
 
     // Kurz warten
-    Sleep(250);
+    Sleep(SLEEP_DURATION);
+
+    Ndx := 0;
+    while Ndx < FNextStage.Count - 1 do
+    begin
+      FState.AddHalbFinalist(TPair<Byte, Byte>.Create(FNextStage[Ndx], FNextStage[Ndx + 1]));
+      Ndx := Ndx + 2;
+    end;
+
+    FNextStage.Clear;
+    FNextStageSpielUmPlatz3.Clear;
 
 
     // Halbfinale
@@ -155,8 +201,14 @@ begin
     end;
 
     // Kurz warten
-    Sleep(250);
+    Sleep(SLEEP_DURATION);
 
+    Ndx := 0;
+    while Ndx < FNextStage.Count do
+    begin
+      FState.SetSpielUmPlatz3(TPair<Byte, Byte>.Create(FNextStageSpielUmPlatz3[Ndx], FNextStageSpielUmPlatz3[Ndx + 1]));
+      Ndx := Ndx + 2;
+    end;
 
     // Spiel um Platz 3
     FCurrentTeams.Clear;
@@ -172,7 +224,15 @@ begin
     FCurrentLabels[0].Font.Color := clWindowText;
 
     // Kurz warten
-    Sleep(250);
+    Sleep(SLEEP_DURATION);
+
+    Ndx := 0;
+    while Ndx < FNextStage.Count - 1 do
+    begin
+      FState.SetFinalisten(TPair<Byte, Byte>.Create(FNextStage[Ndx], FNextStage[Ndx + 1]));
+      Ndx := Ndx + 2;
+    end;
+
 
 
     // Finale
@@ -189,7 +249,12 @@ begin
     FCurrentLabels[0].Font.Style := [];
     FCurrentLabels[0].Font.Color := clWindowText;
 
+
+    ShowMessage(FState.Teams[FNextStage[0]].Name + ' ist Gewinner der WM. 🏆');
+
   finally
+    FNextStage.Clear;
+    FCurrentTeams.Clear;
     Myself.Free;
   end;
 
@@ -205,6 +270,16 @@ begin
   FCurrentLabels[ANdx].Caption := clrUtils.StringFormating.FormatMatchString(Team1.Name, Team2.Name, ATeam1Tore, ATeam2Tore);
 
   // Update state
+  if ( ATeam1Tore > ATeam2Tore ) then
+  begin
+    FNextStage.Add(Team1.ID);
+    FNextStageSpielUmPlatz3.Add(Team2.ID);
+  end
+  else
+  begin
+    FNextStage.Add(Team2.ID);
+    FNextStageSpielUmPlatz3.Add(Team1.ID);
+  end;
 
 end;
 
