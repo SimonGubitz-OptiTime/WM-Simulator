@@ -4,6 +4,7 @@ interface
 
 uses
   System.Generics.Collections,
+  System.SysUtils,
   clrUtils.SortArray,
   damTypes;
 
@@ -19,18 +20,17 @@ type THashMapUtils = class
 
   // class function Sort<TKey, TValue>(HashMap: TDictionary<TKey, TValue>): TList<TPair<TKey, TValue>>; overload;
   class function Sort<TKey, TValue>(HashMap: TDictionary<TKey, TValue>; ConditionFn: clrUtils.SortArray.TConditionFn<TValue>): TList<TPair<TKey, TValue>>; overload;
+  class function Sort<TKey, TValue>(HashMap: TDictionary<TKey, TValue>; ConditionFn: clrUtils.SortArray.TConditionFn<TValue>; AAsArray: Boolean): TArray<TPair<TKey, TValue>>; overload;
+
 
 end;
 
 implementation
 
 function Sort(var HashMap: TDictionary<Byte, Integer>): TList<TPair<Byte, Integer>>;
-var
-  Ndx: Integer;
-  KeysArray: TArray<Byte>; //TArray<TKey>;
-  ValuesArray: TArray<Integer>; //TArray<TValue>;
 begin
-  Result := THashMapUtils.Sort<Byte, Integer>(HashMap,
+  Result := THashMapUtils.Sort<Byte, Integer>(
+    HashMap,
     function(Right: Integer; Left: Integer): Boolean
     begin
       Result := Left < Right;
@@ -38,83 +38,88 @@ begin
   );
 end;
 
-
 class function THashMapUtils.Sort(HashMap: TDictionary<Byte, TTeamStatistik>): TList<TPair<Byte, TTeamStatistik>>;
 var
-  Ndx: Integer;
-  KeysArray: TArray<Byte>;
-  ValuesArray: TArray<TTeamStatistik>;
-  Map: TDictionary<Byte, TTeamStatistik>;
+  key: TPair<Byte, TTeamStatistik>;
+  Ndx, j: Integer;
+  HashMapArray: TArray<TPair<Byte, TTeamStatistik>>;
 begin
+  HashMapArray := HashMap.ToArray;
 
-  KeysArray := HashMap.Keys.ToArray;
-  ValuesArray := HashMap.Values.ToArray;
-
-  Result := TList<TPair<Byte, TTeamStatistik>>.Create;
-
-  // Insertion sort
-  for Ndx := 1 to HashMap.Count - 1 do
+  // Insertion sort by Punkte
+  for Ndx := 1 to High(HashMapArray) do
   begin
-
-    var key := KeysArray[Ndx];
-    var val := ValuesArray[Ndx];
-    var j := Ndx - 1;
-
+    key := HashMapArray[Ndx];
+    j := Ndx - 1;
     while ( (j >= 0)
-      and (val.Punkte < ValuesArray[j].Punkte) ) do
+      and (key.Value.Punkte < HashMapArray[j].Value.Punkte) ) do
     begin
-      ValuesArray[j + 1] := ValuesArray[j];
-      KeysArray[j + 1] := KeysArray[j];
-      Result.Add(TPair<Byte, TTeamStatistik>.Create(KeysArray[j + 1], ValuesArray[j]));
+      HashMapArray[j + 1] := HashMapArray[j];
       j := j - 1;
     end;
-
-    KeysArray[j + 1] := key;
-    ValuesArray[j + 1] := val;
-    Result.Add(TPair<Byte, TTeamStatistik>.Create(KeysArray[j + 1], ValuesArray[j + 1]));
-
+    HashMapArray[j + 1] := key;
   end;
 
+  Result := TList<TPair<Byte, TTeamStatistik>>.Create;
+  for var Pair in HashMapArray do
+    Result.Add(Pair);
 end;
-
 
 class function THashMapUtils.Sort<TKey, TValue>(HashMap: TDictionary<TKey, TValue>; ConditionFn: clrUtils.SortArray.TConditionFn<TValue>): TList<TPair<TKey, TValue>>;
 var
-  Ndx: Integer;
-  KeysArray: TArray<TKey>;
-  ValuesArray: TArray<TValue>;
+  key: TPair<TKey, TValue>;
+  Ndx, j: Integer;
+  HashMapArray: TArray<TPair<TKey, TValue>>;
 begin
-
-  KeysArray := HashMap.Keys.ToArray;
-  ValuesArray := HashMap.Values.ToArray;
-
-  Result := TList<TPair<TKey, TValue>>.Create;
+  HashMapArray := HashMap.ToArray;
 
   // Insertion sort
-  for Ndx := 1 to HashMap.Count - 1 do
+  for Ndx := 1 to High(HashMapArray) do
   begin
-
-    var key := KeysArray[Ndx];
-    var val := ValuesArray[Ndx];
-    var j := Ndx - 1;
-
-    while ( (j >= 0)
-      and (ConditionFn(val, ValuesArray[j])) ) do
+    key := HashMapArray[Ndx];
+    j := Ndx - 1;
+    while (j >= 0) and ConditionFn(key.Value, HashMapArray[j].Value) do
     begin
-      ValuesArray[j + 1] := ValuesArray[j];
-      KeysArray[j + 1] := KeysArray[j];
-      Result.Add(TPair<TKey, TValue>.Create(KeysArray[j + 1], ValuesArray[j]));
-      j := j - 1;
+      HashMapArray[j + 1] := HashMapArray[j];
+      j := j -1;
     end;
-
-    KeysArray[j + 1] := key;
-    ValuesArray[j + 1] := val;
-    Result.Add(TPair<TKey, TValue>.Create(KeysArray[j + 1], ValuesArray[j + 1]));
-
+    HashMapArray[j + 1] := key;
   end;
 
-
+  Result := TList<TPair<TKey, TValue>>.Create;
+  for var Pair in HashMapArray do
+    Result.Add(Pair);
 end;
+
+
+class function THashMapUtils.Sort<TKey, TValue>(HashMap: TDictionary<TKey, TValue>; ConditionFn: clrUtils.SortArray.TConditionFn<TValue>; AAsArray: Boolean): TArray<TPair<TKey, TValue>>;
+var
+  key: TPair<TKey, TValue>;
+  Ndx, j: Integer;
+  HashMapArray: TArray<TPair<TKey, TValue>>;
+begin
+  if not AAsArray then
+    raise Exception.Create('clrUtils.SortHashMap.pas Error: maybe you meant to call the overload with TList');
+
+  HashMapArray := HashMap.ToArray;
+
+  // Insertion sort
+  for Ndx := 1 to High(HashMapArray) do
+  begin
+    key := HashMapArray[Ndx];
+    j := Ndx - 1;
+    while ( (j >= 0)
+      and ConditionFn(key.Value, HashMapArray[j].Value)) do
+    begin
+      HashMapArray[j + 1] := HashMapArray[j];
+      j := j -1;
+    end;
+    HashMapArray[j + 1] := key;
+  end;
+
+  Result := HashMapArray;
+end;
+
 
 
 end.

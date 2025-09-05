@@ -20,14 +20,17 @@ uses
   Winapi.Messages,
   Winapi.Windows,
   clrDB,
+  clrCSVDB,
   damTypes,
   clrState,
   clrVerlosung,
   clrGruppenphase,
+  clrKOPhase,
   fraTeamEingabeFenster,
   fraStadionEingabeFenster,
   clrUtils.Routing,
-  clrUtils.TableFormating, Vcl.Outline, Vcl.ToolWin;
+  clrUtils.TableFormating,
+  Vcl.ToolWin;
 
 type  TMainForm = class(TForm)
     PageControl: TPageControl;
@@ -75,41 +78,41 @@ type  TMainForm = class(TForm)
     Spiel4Label: TLabel;
     Spiel5Label: TLabel;
     Spiel6Label: TLabel;
-    FinaleMatchLabel: TLabel;
     FinaleLabel: TLabel;
+    Label179: TLabel;
     Platz3Label: TLabel;
-    Platz3MatchLabel: TLabel;
+    SpielUmPlatz3Label: TLabel;
     Label1: TLabel;
     Label2: TLabel;
     Label10: TLabel;
-    Label12: TLabel;
+    HalbfinaleLabel1: TLabel;
     Label13: TLabel;
-    Label20: TLabel;
-    Label21: TLabel;
+    ViertelfinaleLabel4: TLabel;
+    ViertelfinaleLabel3: TLabel;
     Label22: TLabel;
     Label23: TLabel;
     StatusBar1: TStatusBar;
     Label3: TLabel;
-    Label4: TLabel;
+    HalbfinaleLabel2: TLabel;
     Label5: TLabel;
     Label6: TLabel;
     Label7: TLabel;
     Label8: TLabel;
-    Label9: TLabel;
-    Label14: TLabel;
+    ViertelfinaleLabel2: TLabel;
+    ViertelfinaleLabel1: TLabel;
     Label15: TLabel;
     Label18: TLabel;
     Label19: TLabel;
     Label24: TLabel;
     Label25: TLabel;
-    Label26: TLabel;
-    Label27: TLabel;
-    Label28: TLabel;
-    Label29: TLabel;
-    Label31: TLabel;
-    Label32: TLabel;
-    Label33: TLabel;
-    Label34: TLabel;
+    AchtelfinaleLabel7: TLabel;
+    AchtelfinaleLabel8: TLabel;
+    AchtelfinaleLabel6: TLabel;
+    AchtelfinaleLabel5: TLabel;
+    AchtelfinaleLabel4: TLabel;
+    AchtelfinaleLabel3: TLabel;
+    AchtelfinaleLabel1: TLabel;
+    AchtelfinaleLabel2: TLabel;
     Label35: TLabel;
     Label36: TLabel;
     Label37: TLabel;
@@ -157,6 +160,7 @@ type  TMainForm = class(TForm)
     SechzehntelfinaleLabel15: TLabel;
     SechzehntelfinaleLabel16: TLabel;
     Label77: TLabel;
+    kophaseStartenButton: TButton;
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure GruppenphaseStartenButtonClick(Sender: TObject);
@@ -167,21 +171,22 @@ type  TMainForm = class(TForm)
     procedure ZumSpielButtonClick(Sender: TObject);
     procedure ZurGruppenphaseButtonClick(Sender: TObject);
     procedure ZurVerlosungButtonClick(Sender: TObject);
+    procedure kophaseStartenButtonClick(Sender: TObject);
 
   private
 
     TeamEingabe: TTeamEingabeFenster;
     StadionEingabe: TStadionEingabeFenster;
 
-    FTeamDB: TDB<TTeam>;
-    FStadionDB: TDB<TStadion>;
+    FTeamDB: IDB<TTeam>;
+    FStadionDB: IDB<TStadion>;
 
     FTeamAnzahl: Integer;
     FStadionAnzahl: Integer;
 
     FVerlosung: TVerlosungUI;
     FGruppenphase: TGruppenphaseUI;
-    // FSpiel: TSpielUI;
+    FKOPhase: TKOPhaseUI;
 
     FVerlosungFertig: Boolean;
     FGruppenphaseFertig: Boolean;
@@ -216,26 +221,34 @@ begin
 
   FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12], FState);
   FGruppenphase := TGruppenphaseUI.Create(GruppenphaseStringGrid, FState);
-  // FSpiel := nil;
+  FKOPhase := TKOPhaseUI.Create(
+    [ SechzehntelfinaleLabel1, SechzehntelfinaleLabel2, SechzehntelfinaleLabel3, SechzehntelfinaleLabel4, SechzehntelfinaleLabel5, SechzehntelfinaleLabel6, SechzehntelfinaleLabel7, SechzehntelfinaleLabel8, SechzehntelfinaleLabel9, SechzehntelfinaleLabel10, SechzehntelfinaleLabel11, SechzehntelfinaleLabel12, SechzehntelfinaleLabel13, SechzehntelfinaleLabel14, SechzehntelfinaleLabel15, SechzehntelfinaleLabel16 ],
+    [ AchtelfinaleLabel1, AchtelfinaleLabel2, AchtelfinaleLabel3, AchtelfinaleLabel4, AchtelfinaleLabel5, AchtelfinaleLabel6, AchtelfinaleLabel7, AchtelfinaleLabel8 ],
+    [ ViertelfinaleLabel1, ViertelfinaleLabel2, ViertelfinaleLabel3, ViertelfinaleLabel4 ],
+    [ HalbfinaleLabel1, HalbfinaleLabel2 ],
+    FinaleLabel,
+    SpielUmPlatz3Label,
+    FState
+  );
 
   TeamGewollteAnzahlLabel.Caption := IntToStr(FGewollteTeamAnzahl);
   StadionGewollteAnzahlLabel.Caption := IntToStr(FGewollteStadionAnzahl);
 
-  FTeamDB := TDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
-  FStadionDB := TDB<TStadion>.Create(TStadionEingabeFenster.GetTableName);
+  FTeamDB := TCSVDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
+  FStadionDB := TCSVDB<TStadion>.Create(TStadionEingabeFenster.GetTableName);
 
   TeamEingabe := TTeamEingabeFenster.Create(FTeamDB);
   StadionEingabe := TStadionEingabeFenster.Create(FStadionDB);
 
   // Teams laden
-  if ( FTeamDB.Initialized ) then
+  if ( FTeamDB.Initialisiert ) then
   begin
     TeamDBUpdate;
   end;
   FTeamDB.AddDBUpdateEventListener(TeamDBUpdate);
 
   // Stadien laden
-  if ( FStadionDB.Initialized ) then
+  if ( FStadionDB.Initialisiert ) then
   begin
     StadionDBUpdate;
   end;
@@ -248,11 +261,9 @@ begin
 
   FState.Destroy;
 
-  FStadionDB.Destroy;
-  FTeamDB.Destroy;
-
   FVerlosung.Free;
   FGruppenphase.Free;
+  FKOPhase.Free;
 
   StadionEingabe.Free;
   TeamEingabe.Free;
@@ -263,7 +274,7 @@ var
   Rows: TObjectList<TList<String>>;
 begin
 
-  Rows := FTeamDB.UnstrukturierteTabelleErhaltenCSV();
+  Rows := FTeamDB.UnstrukturierteTabelleErhalten();
   FTeamAnzahl := Rows.Count - 1; // Header
 
   TeamAnzahlLabel.Caption := '0' + IntToStr(FTeamAnzahl);
@@ -285,7 +296,7 @@ begin
     TeamHinzufuegenButton.Enabled := false;
   end;
 
-  // Hierdrin wird UnstrukturierteTabelleErhaltenCSV aufgerufen also vorher StrukturierteTabelleErhaltenCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
+  // Hierdrin wird UnstrukturierteTabelleErhalten aufgerufen also vorher StrukturierteTabelleErhalten aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
   TeamZeileZeichnen(Rows);
 
   Rows.Free;
@@ -305,7 +316,7 @@ var
   Rows: TObjectList<TList<String>>;
 begin
 
-  Rows := FStadionDB.UnstrukturierteTabelleErhaltenCSV();
+  Rows := FStadionDB.UnstrukturierteTabelleErhalten();
   FStadionAnzahl := Rows.Count - 1; // Header
 
   StadionAnzahlLabel.Caption := '0' + IntToStr(FStadionAnzahl);
@@ -327,7 +338,7 @@ begin
     StadionHinzufuegenButton.Enabled := false;
   end;
 
-  // Hierdrin wird UnstrukturierteTabelleErhaltenCSV aufgerufen also vorher StrukturierteTabelleErhaltenCSV aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
+  // Hierdrin wird UnstrukturierteTabelleErhalten aufgerufen also vorher StrukturierteTabelleErhalten aufrufen, um damit nicht nur die Daten zu laden, sonder auch die Daten zu cachen
   StadionTabelleZeichnen(Rows);
 
   Rows.Free;
@@ -369,6 +380,11 @@ begin
   // Gruppenphase Labels und Sechzehntelfinale Labels
   FGruppenphase.GruppenphaseStarten([ Spiel1Label, Spiel2Label, Spiel3Label, Spiel4Label, Spiel5Label, Spiel6Label ], [ SechzehntelfinaleLabel1, SechzehntelfinaleLabel2, SechzehntelfinaleLabel3, SechzehntelfinaleLabel4, SechzehntelfinaleLabel5, SechzehntelfinaleLabel6, SechzehntelfinaleLabel7, SechzehntelfinaleLabel8, SechzehntelfinaleLabel9, SechzehntelfinaleLabel10, SechzehntelfinaleLabel11, SechzehntelfinaleLabel12, SechzehntelfinaleLabel13, SechzehntelfinaleLabel14, SechzehntelfinaleLabel15, SechzehntelfinaleLabel16 ]);
 
+end;
+
+procedure TMainForm.kophaseStartenButtonClick(Sender: TObject);
+begin
+  FKOPhase.KOPhaseStarten;
 end;
 
 procedure TMainForm.ZurVerlosungButtonClick(Sender: TObject);

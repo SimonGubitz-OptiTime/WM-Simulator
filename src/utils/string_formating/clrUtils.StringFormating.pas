@@ -7,7 +7,7 @@ uses
   System.SysUtils;
 
 function FormatSpielerListe(AList: TList<String>): String;
-function FormatMatchString(Team1Name: String; Team2Name: String; Team1Score: Integer; Team2Score: Integer): String;
+function FormatMatchString(Team1Name: String; Team2Name: String; Team1Score: Integer; Team2Score: Integer): String; inline;
 
 implementation
 

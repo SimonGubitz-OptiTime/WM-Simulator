@@ -24,7 +24,9 @@ uses
   clrUtils.UpdateStandings in 'utils\match_standings\clrUtils.UpdateStandings.pas',
   clrUtils.SortArray in 'utils\arrays\clrUtils.SortArray.pas',
   clrUtils.SortHashMap in 'utils\hash_map\clrUtils.SortHashMap.pas',
-  clrEndspiele in 'ui\endspiele\clrEndspiele.pas';
+  clrEndspiele in 'ui\endspiele\clrEndspiele.pas',
+  clrCSVDB in 'db\csv\clrCSVDB.pas',
+  clrKOPhase in 'ui\ko-phase\clrKOPhase.pas';
 
 {$R *.res}
 

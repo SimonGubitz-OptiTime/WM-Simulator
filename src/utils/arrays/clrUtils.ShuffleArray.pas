@@ -6,7 +6,8 @@ uses
   System.Generics.Collections;
 
 type
-  TShuffleArrayUtils<T> = class
+  // record, da es auf dem Stack lebt und keinen State braucht
+  TShuffleArrayUtils<T> = record
   public
     class procedure Shuffle(var ArrayToShuffle: TList<T>); static;
   end;

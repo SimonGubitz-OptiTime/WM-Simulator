@@ -8,15 +8,14 @@ uses
   Vcl.Dialogs;
 
 type
+  // record, da es auf dem Stack lebt und keinen State braucht
   TRttiUtils<T> = record
   private const
     ArrayDelimiter: Char = ',';
 
   public
-    class function StrToT(ToConvert: TRttiField; ConvertValue: String)
-      : TValue; static;
-    class function TToStr(TempRes: Pointer; ConvertField: TRttiField)
-      : String; static;
+    class function StrToT(ToConvert: TRttiField; ConvertValue: String): TValue; static;
+    class function TToStr(TempRes: Pointer; ConvertField: TRttiField): String; static;
   end;
 
 const
@@ -25,8 +24,7 @@ const
 
 implementation
 
-class function TRttiUtils<T>.StrToT(ToConvert: TRttiField;
-  ConvertValue: String): TValue;
+class function TRttiUtils<T>.StrToT(ToConvert: TRttiField; ConvertValue: String): TValue;
 var
   EnumType: TRttiEnumerationType;
   Ndx: Integer;

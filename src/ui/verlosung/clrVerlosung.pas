@@ -27,7 +27,7 @@ type TVerlosungUI = class
 
     FState: TWMState;
 
-    FInitialized: Boolean;
+    FInitialisiert: Boolean;
     FUITeams: TList<TTeam>; // ist eine reine Kopie, welche verändert wird, um visuelle Veränderung zu erstellen
 
     // array due to multiple Grids → meistens nur 12 Grids
@@ -37,11 +37,11 @@ type TVerlosungUI = class
     procedure AnimationCallbackFn(Count: Integer; SecondCount: Integer; ThirdCount: Integer);
 
   public
-    property Initialized: Boolean read FInitialized;
+    property Initialisiert: Boolean read FInitialisiert;
 
     constructor Create(AGrids: array of TStringGrid; AState: TWMState);
 
-    function VerlosungStarten(var ATeamDB: TDB<TTeam>; AOwner: TControl): Boolean;
+    function VerlosungStarten(ATeamDB: IDB<TTeam>; AOwner: TControl): Boolean;
 
     destructor Destroy; override;
   end;
@@ -81,7 +81,7 @@ begin
     FGrids.Add(AGrids[i]);
   end;
 
-  FInitialized := true;
+  FInitialisiert := true;
 
 end;
 
@@ -93,7 +93,7 @@ begin
   inherited Destroy;
 end;
 
-function TVerlosungUI.VerlosungStarten(var ATeamDB: TDB<TTeam>; AOwner: TControl): Boolean;
+function TVerlosungUI.VerlosungStarten(ATeamDB: IDB<TTeam>; AOwner: TControl): Boolean;
 var
   Grid: TStringGrid;
   TempList: TList<TTeam>;
@@ -114,18 +114,18 @@ begin
   try
     AnimationList := TObjectList<TAnimations>.Create(true);
 
-    // `StrukturierteTabelleErhaltenCSV` erstellt für jeden Aufruf ein komplett neues Element/Objekt
-    FUITeams := ATeamDB.StrukturierteTabelleErhaltenCSV();
-    FState.SetTeams(ATeamDB.StrukturierteTabelleErhaltenCSV());
+    // `StrukturierteTabelleErhalten` erstellt für jeden Aufruf ein komplett neues Element/Objekt
+    FUITeams := ATeamDB.StrukturierteTabelleErhalten();
+    FState.SetTeams(ATeamDB.StrukturierteTabelleErhalten());
     FState.ClearGruppen();
 
     // potenziell ineffizient
     for Ndx := 0 to FState.Teams.Count - 1 do
     begin
       TempTeam := FState.Teams[Ndx];
+       // ID für jedes Team setzen
       TempTeam.ID := Ndx;
       FState.SetTeam(Ndx, TempTeam);
-       // ID für jedes Team setzen
     end;
 
 
@@ -187,7 +187,7 @@ begin
 
 
       FUITeams.Clear;
-      
+
       for Ndx := 0 to SehrStarkeTeams.Count - 1 do
       begin
         // Jedes Sehr starke Team wird mit den anderen Stärken in eine Gruppe gepackt
@@ -241,6 +241,8 @@ begin
         end;
         Inc(GridNdx);
       end;
+
+      ShowMessage('Die Verlosung ist abgeschlossen.');
     finally
       AnimationList.Free;
 

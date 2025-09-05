@@ -45,28 +45,27 @@ type
     SpielerListeEingabeButton: TButton;
     SpielerListeEntfernenButton: TButton;
 
-    constructor Create(var ADatabase: TDB<TTeam>);
+    constructor Create(var ADatabase: IDB<TTeam>);
 
     procedure BestaetigenButtonClick(Sender: TObject);
     procedure FIFACodeEingabeFeldChange(Sender: TObject);
     procedure EingabeDerListeHinzufuegen;
     procedure EingabeDerListeEntfernen;
     procedure SpielerListeEingabeButtonClick(Sender: TObject);
-    procedure SpielerListeEingabeFeldKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
+    procedure SpielerListeEingabeFeldKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure SpielerListeEntfernenButtonClick(Sender: TObject);
+
     class function GetTableName: ShortString;
 
     destructor Destroy; override;
 
   private
     var
+      FDatabase: IDB<TTeam>;
       FSpielerListe: TList<String>;
 
-    var
-      FDatabase: TDB<TTeam>;
-
     const
+      // ShortString, weil ich einen Value-Type für const brauche
       FTableName: ShortString = 'Teams';
   end;
 
@@ -74,16 +73,12 @@ implementation
 
 {$R *.dfm}
 
-constructor TTeamEingabeFenster.Create(var ADatabase: TDB<TTeam>);
+constructor TTeamEingabeFenster.Create(var ADatabase: IDB<TTeam>);
 begin
 
   inherited Create(nil);
-  
+
   FDatabase := ADatabase;
-  if not ( FDatabase.Initialized ) then
-  begin
-    FDatabase := TDB<TTeam>.Create(FTableName);
-  end;
 
   FSpielerListe := TList<String>.Create;
 
@@ -238,7 +233,7 @@ begin
   end;
 
   // Team in die Datenbank schreiben
-  FDatabase.ZeileHinzufuegenCSV(Team);
+  FDatabase.ZeileHinzufuegen(Team);
 
   // Fenster schließen
   Self.Close;
