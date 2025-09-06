@@ -17,10 +17,15 @@ uses
 
 type
   TTeamEntfernenFenster = class(TForm)
+    Label1: TLabel;
+    Label2: TLabel;
+    BestaetigenButton: TButton;
+    StadionNameEdit: TEdit;
 
     constructor Create(var ADatabase: IDB<TTeam>);
-
     destructor Destroy; override;
+
+    procedure TTeamEntfernenFenster.BestaetigenButtonClick(Sender: TObject);
 
   private
 
@@ -45,6 +50,32 @@ end;
 destructor TTeamEntfernenFenster.Destroy;
 begin
   inherited Destroy;
+end;
+
+procedure TTeamEntfernenFenster.BestaetigenButtonClick(Sender: TObject);
+var
+  Row: TStadion;
+  HasRow: Boolean;
+begin
+
+  HasRow := FDatabase.ZeileFinden(
+    function(Param: TStadion): Boolean
+    begin
+       Result := Param.Name = TeamNameEdit.Text;
+    end,
+    Row
+  );
+
+  if ( not(HasRow) ) then
+  begin
+    ShowMessage('Dieses Stadion existiert in der Datenbank nicht. Bitte versuche es erneut.');
+    Exit;
+  end
+  else
+  begin
+    FDatabase.ZeileEntfernen(Row);
+    Self.Close;
+  end;
 end;
 
 

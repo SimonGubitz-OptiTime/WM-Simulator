@@ -182,6 +182,7 @@ end;
 procedure TTeamEingabeFenster.BestaetigenButtonClick(Sender: TObject);
 var
   placeholder: Integer;
+  placeholderRow: TTeam;
   Team: TTeam;
 begin
 
@@ -213,12 +214,34 @@ begin
     Exit;
   end;
 
+  // Keine Duplikate erlauben
+  if ( FDatabase.ZeileFinden(
+    function(Param: TTeam): Boolean
+    begin
+      // Alles außer ID, weil dies erst in clrVerlosung gesetzt wird
+      // und Spieler Liste, da Array nicht verglichen werden können
+      Result := (
+            (Param.Name = NameEingabeFeld.Text)
+        and (Param.FIFACode = FIFACodeEingabeFeld.Text)
+        and (Param.TeamVerband = TTeamVerband(TeamVerbandEingabeBox.ItemIndex))
+        and (Param.HistorischeWMSiege = StrToInt(HistorischeSiegeEingabeFeld.Text))
+        and (Param.HeimstadionName = HeimstadionEingabeFeld.Text)
+        and (Param.TeamRanking = TTeamRanking(TeamRankingEingabeBox.ItemIndex))
+       );
+    end,
+    placeholderRow
+  ) ) then
+  begin
+    ShowMessage('Bitte tragen Sie kein Duplikat ein.');
+    Exit;
+  end;
+
   Team := Default (TTeam);
   Team.Name := NameEingabeFeld.Text;
   Team.FIFACode := FIFACodeEingabeFeld.Text;
   Team.TeamVerband := TTeamVerband(TeamVerbandEingabeBox.ItemIndex);
   Team.HistorischeWMSiege := StrToInt(HistorischeSiegeEingabeFeld.Text);
-  Team.HeimstadionName := HeimstadionEingabeFeld.Text; // record ???
+  Team.HeimstadionName := HeimstadionEingabeFeld.Text;
   Team.Flagge := 0; // TODO: Flagge setzen
   Team.TeamRanking := TTeamRanking(TeamRankingEingabeBox.ItemIndex);
 

@@ -15,7 +15,8 @@ uses
   clrDB,
   clrUtils.DB,
   clrUtils.CSV,
-  clrUtils.RTTI;
+  clrUtils.RTTI,
+  clrUtils.StreamPosition;
 
 type
   TCSVDB<T: record> = class(TInterfacedObject, IDB<T>)
@@ -45,7 +46,8 @@ type
       procedure   AddDBUpdateEventListener(ACallbackFunction: TDBUpdateEvent);
 
       procedure   ZeileHinzufuegen(ARowValues: T);
-      procedure   ZeileEntfernen(ARow: T);
+      procedure   ZeileEntfernen(ARow: T); overload;
+      procedure   ZeileEntfernen(ARowString: String); overload;
       function    ZeileFinden(AFinderFunction: TDBFinderFunction<T>; out ReturnValue: T): Boolean;
 
       function   GetInitialisiert: Boolean;
@@ -303,24 +305,46 @@ end;
 
 procedure TCSVDB<T>.ZeileEntfernen(ARow: T);
 var
-  ZeileZuEntfernen: T;
-  SW: TStreamWriter;
+  RowString: String;
 begin
 
-  SW := TStreamWriter.Create(FFS);
-
-  try
-
-
-
-
-  finally
-    SW.Free;
-  end;
-
+  RowString := clrUtils.CSV.TCSVUtils<T>.SerializeRowCSV(ARow);
+  ZeileEntfernen(RowString);
 
 end;
 
+procedure TCSVDB<T>.ZeileEntfernen(ARowString: String);
+var
+  ZeileZuEntfernen: T;
+  SW: TStreamWriter;
+  SR: TStreamReader;
+begin
+
+
+  SW := TStreamWriter.Create(FFS);
+  SR := TStreamReader.Create(FFS);
+
+  try
+
+    // ignore headline
+    SR.ReadLine();
+
+    while not(SR.EndOfStream) do
+    begin
+      RowStartPosition := clrUtils.StreamPosition.GetStreamPositionInChars(SR);
+      if (SR.ReadLine() = ARowString) then
+      begin
+        // Nur diese Zeile löschen
+        //   nichts, von             , bis biherige länge     - Anfang
+        SW.Write([], RowStartPosition, SR.BaseStream.Position - RowStartPosition);
+        Exit;
+      end;
+    end;
+  finally
+    SW.Free;
+    SR.Free;
+  end;
+end;
 
 function TCSVDB<T>.ZeileFinden(AFinderFunction: TDBFinderFunction<T>; out ReturnValue: T): Boolean;
 var

@@ -202,6 +202,10 @@ begin
         AGruppenphaseLabels[Ndx].Font.Color := clGreen;
 
 
+        Spiel := Default(TSpiel);
+        Spiel.Team1 := @FState.Teams[FMatches[Ndx].Key];
+        Spiel.Team1 := @FState.Teams[FMatches[Ndx].Value];
+
         FSimulationList := TObjectList<TSimulation>.Create;
         try
           FSimulationList.Add(TSimulation.Create);

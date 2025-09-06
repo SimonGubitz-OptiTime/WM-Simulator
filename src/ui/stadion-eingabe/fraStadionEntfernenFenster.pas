@@ -18,13 +18,13 @@ uses
 type
   TStadionEntfernenFenster = class(TForm)
     Label1: TLabel;
-    BestaetigenButton: TButton;
     Label2: TLabel;
+    BestaetigenButton: TButton;
     StadionNameEdit: TEdit;
 
     constructor Create(var ADatabase: IDB<TStadion>);
-
     destructor Destroy; override;
+
     procedure BestaetigenButtonClick(Sender: TObject);
 
   private
@@ -57,7 +57,6 @@ var
   Row: TStadion;
   HasRow: Boolean;
 begin
-  //
 
   HasRow := FDatabase.ZeileFinden(
     function(Param: TStadion): Boolean
@@ -69,18 +68,14 @@ begin
 
   if ( not(HasRow) ) then
   begin
-    ShowMessage('Dieses Stadion existiert in der Datenbank nicht. Versuche es erneut.');
+    ShowMessage('Dieses Stadion existiert in der Datenbank nicht. Bitte versuche es erneut.');
     Exit;
   end
   else
   begin
-    ShowMessage(IntToStr(Row.ZuschauerKapazitaet));
+    FDatabase.ZeileEntfernen(Row);
+    Self.Close;
   end;
-
-  FDatabase.ZeileEntfernen(Row);
-
-  Self.Close;
-
 end;
 
 end.

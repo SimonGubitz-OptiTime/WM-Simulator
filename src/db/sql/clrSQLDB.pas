@@ -25,7 +25,8 @@ type
       procedure   AddDBUpdateEventListener(ACallbackFunction: TDBUpdateEvent);
 
       procedure   ZeileHinzufuegen(ARow: T);
-      procedure   ZeileEntfernen(ARow: T);
+      procedure   ZeileEntfernen(ARow: T); overload;
+      procedure   ZeileEntfernen(ARowString: String); overload;
       function    ZeileFinden(AFinderFunction: TDBFinderFunction<T>; out ReturlVal: T): Boolean;
 
       function   GetInitialisiert: Boolean;
