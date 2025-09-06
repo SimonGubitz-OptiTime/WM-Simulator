@@ -39,7 +39,11 @@ type
     destructor Destroy; override;
 
   const
-    FTimerInterval: Byte = 100;
+    {$IFDEF DEBUG}
+      FTimerInterval: Byte = 100;
+    {$ELSE}
+      FTimerInterval: Byte = 10;
+    {$ENDIF}
 
     procedure ObjektBewegenTick(ASender: TObject);
 

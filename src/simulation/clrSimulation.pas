@@ -45,6 +45,8 @@ begin
   FTimer.Enabled := false;
   {$IFDEF DEBUG}
     FTimer.Interval := 25;
+  {$ELSE}
+    FTimer.Interval := 250;
   {$ENDIF}
 
   // FTimer.Interval := 250; // 250 ms

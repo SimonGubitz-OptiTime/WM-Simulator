@@ -146,11 +146,17 @@
             <Form>Form1</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="ui\fraTeamEingabeFenster.pas">
-            <Form>Form2</Form>
+        <DCCReference Include="ui\team-eingabe\fraTeamEingabeFenster.pas">
+            <Form>TeamEingabeFenster</Form>
         </DCCReference>
-        <DCCReference Include="ui\fraStadionEingabeFenster.pas">
+        <DCCReference Include="ui\stadion-eingabe\fraStadionEingabeFenster.pas">
+            <Form>StadionEingabeFenster</Form>
+        </DCCReference>
+        <DCCReference Include="ui\team-eingabe\fraTeamEntfernenFenster.pas">
             <Form>Form3</Form>
+        </DCCReference>
+        <DCCReference Include="ui\stadion-eingabe\fraStadionEntfernenFenster.pas">
+            <Form>Form2</Form>
         </DCCReference>
         <DCCReference Include="ui\verlosung\clrVerlosung.pas"/>
         <DCCReference Include="ui\animations\clrAnimation.pas"/>
@@ -200,7 +206,7 @@
                     <Excluded_Packages Name="$(BDSBIN)\dclofficexp290.bpl">Microsoft Office XP Beispiele für gekapselte Komponenten für Automation Server</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
-            <Deployment Version="5">
+            <Deployment Version="4">
                 <DeployFile LocalName="..\bin\Win32\Debug\WMSimulator.exe" Configuration="Debug" Class="ProjectOutput"/>
                 <DeployFile LocalName="..\bin\Win32\Debug\WMSimulator.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
@@ -218,6 +224,16 @@
                     </Platform>
                     <Platform Name="Win32">
                         <Operation>0</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidClasses">
+                    <Platform Name="Android">
+                        <RemoteDir>classes</RemoteDir>
+                        <Operation>64</Operation>
+                    </Platform>
+                    <Platform Name="Android64">
+                        <RemoteDir>classes</RemoteDir>
+                        <Operation>64</Operation>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="AndroidFileProvider">

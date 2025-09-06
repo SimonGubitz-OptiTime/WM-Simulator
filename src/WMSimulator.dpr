@@ -3,8 +3,10 @@ program WMSimulator;
 uses
   Vcl.Forms,
   Main in 'ui\Main.pas' {Form1},
-  fraTeamEingabeFenster in 'ui\fraTeamEingabeFenster.pas' {Form2},
-  fraStadionEingabeFenster in 'ui\fraStadionEingabeFenster.pas' {Form3},
+  fraTeamEingabeFenster in 'ui\team-eingabe\fraTeamEingabeFenster.pas' {TeamEingabeFenster},
+  fraStadionEingabeFenster in 'ui\stadion-eingabe\fraStadionEingabeFenster.pas' {StadionEingabeFenster},
+  fraTeamEntfernenFenster in 'ui\team-eingabe\fraTeamEntfernenFenster.pas' {Form3},
+  fraStadionEntfernenFenster in 'ui\stadion-eingabe\fraStadionEntfernenFenster.pas' {Form2},
   clrVerlosung in 'ui\verlosung\clrVerlosung.pas',
   clrAnimation in 'ui\animations\clrAnimation.pas',
   clrDB in 'db\clrDB.pas',
@@ -32,7 +34,9 @@ uses
 {$R *.res}
 
 begin
-  // ReportMemoryLeaksOnShutdown := True;
+  {$IFDEF DEBUG}
+    ReportMemoryLeaksOnShutdown := True;
+  {$ENDIF}
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TMainForm, MainForm);

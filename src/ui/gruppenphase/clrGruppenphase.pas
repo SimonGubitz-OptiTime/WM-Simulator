@@ -74,7 +74,7 @@ end;
 
 destructor TGruppenphaseUI.Destroy;
 begin
-  // FTopTeams.Destroy;
+  FMatches.Free;
   FSimulation.Destroy;
   FCurrentGroupStandings.Destroy;
 
@@ -95,7 +95,8 @@ var
   Ndx: Integer;
 begin
 
-  // ShowMessage('Sizeof TTeam is: ' + IntToStr(SizeOf(TTeam))); // 28 - 32bit 56 - 64bit
+  // ShowMessage('Sizeof TTeam is: ' + IntToStr(SizeOf(TTeam))); // 28 - 32bit
+                                                                 // 56 - 64bit
 
   FGameDict := TDictionary<Byte, TList<Byte>>.Create;
 
@@ -243,8 +244,6 @@ begin
       );
 
       // und in den dafür vorgesehenen Grid reinschreiben
-
-      
 
     end;
 

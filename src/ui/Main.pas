@@ -28,6 +28,8 @@ uses
   clrKOPhase,
   fraTeamEingabeFenster,
   fraStadionEingabeFenster,
+  fraTeamEntfernenFenster,
+  fraStadionEntfernenFenster,
   clrUtils.Routing,
   clrUtils.TableFormating,
   Vcl.ToolWin;
@@ -38,16 +40,13 @@ type  TMainForm = class(TForm)
     TeamHinzufuegenButton: TButton;
     StadionHinzufuegenButton: TButton;
     Stammdaten: TTabSheet;
-    VerlosungSheet: TTabSheet;
     GruppenphaseSheet: TTabSheet;
     SpielSheet: TTabSheet;
 
     SymbolImageList: TImageList;
     StadienStringGrid: TStringGrid;
     TeamsStringGrid: TStringGrid;
-    UeberschriftVerlosung: TLabel;
     UeberschriftGruppenphase: TLabel;
-    ZurGruppenphaseButton: TButton;
     ZurVerlosungButton: TButton;
     ZumSpielButton: TButton;
     StadionAnzahlLabel: TLabel;
@@ -56,19 +55,6 @@ type  TMainForm = class(TForm)
     TeamAnzahlLabel: TLabel;
     TeamVergleichsLabel: TLabel;
     TeamGewollteAnzahlLabel: TLabel;
-    StringGrid1: TStringGrid;
-    StringGrid2: TStringGrid;
-    StringGrid3: TStringGrid;
-    StringGrid4: TStringGrid;
-    StringGrid5: TStringGrid;
-    StringGrid6: TStringGrid;
-    StringGrid7: TStringGrid;
-    StringGrid8: TStringGrid;
-    StringGrid9: TStringGrid;
-    StringGrid10: TStringGrid;
-    StringGrid11: TStringGrid;
-    StringGrid12: TStringGrid;
-    VerlosungStartenButton: TButton;
     Timer1: TTimer;
     GruppenphaseStartenButton: TButton;
     GruppenphaseStringGrid: TStringGrid;
@@ -175,6 +161,48 @@ type  TMainForm = class(TForm)
     StringGrid22: TStringGrid;
     StringGrid23: TStringGrid;
     StringGrid24: TStringGrid;
+    TeamEntfernenButton: TButton;
+    StadionEntfernenButton: TButton;
+    VerlosungSheet: TTabSheet;
+    UeberschriftVerlosung: TLabel;
+    Label9: TLabel;
+    Label11: TLabel;
+    Label14: TLabel;
+    Label12: TLabel;
+    Label26: TLabel;
+    Label27: TLabel;
+    Label28: TLabel;
+    Label29: TLabel;
+    ZurGruppenphaseButton: TButton;
+    StringGrid1: TStringGrid;
+    StringGrid2: TStringGrid;
+    StringGrid3: TStringGrid;
+    StringGrid4: TStringGrid;
+    StringGrid5: TStringGrid;
+    StringGrid6: TStringGrid;
+    StringGrid7: TStringGrid;
+    StringGrid8: TStringGrid;
+    StringGrid9: TStringGrid;
+    StringGrid10: TStringGrid;
+    VerlosungStartenButton: TButton;
+    StringGrid11: TStringGrid;
+    StringGrid12: TStringGrid;
+    Label16: TLabel;
+    Label17: TLabel;
+    Label20: TLabel;
+    Label21: TLabel;
+    Label31: TLabel;
+    Label32: TLabel;
+    Label33: TLabel;
+    Label34: TLabel;
+    Label51: TLabel;
+    Label52: TLabel;
+    Label55: TLabel;
+    Label57: TLabel;
+    Label59: TLabel;
+    Label62: TLabel;
+    Label65: TLabel;
+    Label66: TLabel;
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure GruppenphaseStartenButtonClick(Sender: TObject);
@@ -186,11 +214,16 @@ type  TMainForm = class(TForm)
     procedure ZurGruppenphaseButtonClick(Sender: TObject);
     procedure ZurVerlosungButtonClick(Sender: TObject);
     procedure kophaseStartenButtonClick(Sender: TObject);
+    procedure TeamEntfernenButtonClick(Sender: TObject);
+    procedure StadionEntfernenButtonClick(Sender: TObject);
 
   private
 
-    TeamEingabe: TTeamEingabeFenster;
-    StadionEingabe: TStadionEingabeFenster;
+    FTeamEingabeFenster: TTeamEingabeFenster;
+    FStadionEingabeFenster: TStadionEingabeFenster;
+
+    FTeamEntfernenFenster: TTeamEntfernenFenster;
+    FStadionEntfernenFenster: TStadionEntfernenFenster;
 
     FTeamDB: IDB<TTeam>;
     FStadionDB: IDB<TStadion>;
@@ -251,8 +284,10 @@ begin
   FTeamDB := TCSVDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
   FStadionDB := TCSVDB<TStadion>.Create(TStadionEingabeFenster.GetTableName);
 
-  TeamEingabe := TTeamEingabeFenster.Create(FTeamDB);
-  StadionEingabe := TStadionEingabeFenster.Create(FStadionDB);
+  FTeamEingabeFenster := TTeamEingabeFenster.Create(FTeamDB);
+  FStadionEingabeFenster := TStadionEingabeFenster.Create(FStadionDB);
+  FTeamEntfernenFenster := TTeamEntfernenFenster.Create(FTeamDB);
+  FStadionEntfernenFenster := TStadionEntfernenFenster.Create(FStadionDB);
 
   // Teams laden
   if ( FTeamDB.Initialisiert ) then
@@ -279,8 +314,10 @@ begin
   FGruppenphase.Free;
   FKOPhase.Free;
 
-  StadionEingabe.Free;
-  TeamEingabe.Free;
+  FStadionEingabeFenster.Free;
+  FTeamEingabeFenster.Free;
+  FTeamEntfernenFenster.Free;
+  FStadionEntfernenFenster.Free;
 end;
 
 procedure TMainForm.TeamDBUpdate;
@@ -369,12 +406,23 @@ end;
 
 procedure TMainForm.TeamHinzufuegenButtonClick(Sender: TObject);
 begin
-  TeamEingabe.Show; // ShowModal;
+  FTeamEingabeFenster.Show;
 end;
 
 procedure TMainForm.StadionHinzufuegenButtonClick(Sender: TObject);
 begin
-  StadionEingabe.Show; // ShowModal;
+  FStadionEingabeFenster.Show;
+end;
+
+
+procedure TMainForm.TeamEntfernenButtonClick(Sender: TObject);
+begin
+  FTeamEntfernenFenster.Show;
+end;
+
+procedure TMainForm.StadionEntfernenButtonClick(Sender: TObject);
+begin
+  FStadionEntfernenFenster.Show;
 end;
 
 procedure TMainForm.VerlosungStartenButtonClick(Sender: TObject);
@@ -402,6 +450,7 @@ begin
 end;
 
 procedure TMainForm.ZurVerlosungButtonClick(Sender: TObject);
+
 begin
   // Gültigkeitsprüfung
   if not ( clrUtils.Routing.OnVerlosungChanging((FTeamAnzahl = FGewollteTeamAnzahl)

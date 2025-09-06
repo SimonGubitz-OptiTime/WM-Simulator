@@ -19,40 +19,38 @@ uses
 
 type
   TCSVDB<T: record> = class(TInterfacedObject, IDB<T>)
-  private
-    FFS: TFileStream;
-    FDBUpdateEventListeners: TList<TDBUpdateEvent>;
-    FTabellenName: String;
+    private
+      FFS: TFileStream;
+      FDBUpdateEventListeners: TList<TDBUpdateEvent>;
+      FTabellenName: String;
 
-    /// Gibt an, ob die Datei bereit ist geöffnet und beschrieben zu werden
-    FInitialisiert: Boolean;
-    FDateiName: String;
-    FOrdnerPfad: String;
+      /// Gibt an, ob die Datei bereit ist geöffnet und beschrieben zu werden
+      FInitialisiert: Boolean;
+      FDateiName: String;
+      FOrdnerPfad: String;
 
-    FCachedCSV: TList<T>;
-    FCachedUnstructuredCSV: TObjectList<TList<String>>;
+      FCachedCSV: TList<T>;
+      FCachedUnstructuredCSV: TObjectList<TList<String>>;
 
-    procedure CallDBUpdateEventListeners();
-    procedure AddCSVTableToDB(CSVObject: T);
+      procedure CallDBUpdateEventListeners();
+      procedure AddCSVTableToDB(CSVObject: T);
 
-  public
-    property Initialisiert: Boolean read FInitialisiert;
+    public
+      constructor Create(ATableName: String);
+      destructor  Destroy; override;
 
-    constructor Create(ATableName: String);
+      function    StrukturierteTabelleErhalten(): TList<T>;
+      function    UnstrukturierteTabelleErhalten(): TObjectList<TList<String>>;
 
-    procedure   ZeileHinzufuegen(ARowValues: T);
+      procedure   AddDBUpdateEventListener(ACallbackFunction: TDBUpdateEvent);
 
-    function    StrukturierteTabelleErhalten(): TList<T>;
-    function    UnstrukturierteTabelleErhalten(): TObjectList<TList<String>>;
+      procedure   ZeileHinzufuegen(ARowValues: T);
+      procedure   ZeileEntfernen(ARow: T);
+      function    ZeileFinden(AFinderFunction: TDBFinderFunction<T>; out ReturnValue: T): Boolean;
 
-    //procedure   DBAktuallisierungEventRueckrufHinzufuegen(ACallbackFunction: TDBUpdateEvent);
-    procedure   AddDBUpdateEventListener(ACallbackFunction: TDBUpdateEvent);
+      function   GetInitialisiert: Boolean;
 
-    destructor  Destroy; override;
-
-
-    function   GetInitialisiert: Boolean;
-
+      property Initialisiert: Boolean read FInitialisiert;
   end;
 
 implementation
@@ -115,48 +113,6 @@ end;
 function TCSVDB<T>.GetInitialisiert: Boolean;
 begin
   Result := FInitialisiert;
-end;
-
-procedure TCSVDB<T>.ZeileHinzufuegen(ARowValues: T);
-var
-  SW: TStreamWriter;
-  WriterString: String;
-begin
-
-  if ( not(FileExists(FDateiName))
-       or (FFS.size = 0)
-  ) then
-  begin
-    AddCSVTableToDB(ARowValues);
-    Exit;
-  end
-  else
-  begin
-
-    SW := TStreamWriter.Create(FFS);
-
-    try
-      SW.BaseStream.Position := FFS.size;
-      // Position in Bytes in the Stream
-      if SW.Encoding = TEncoding.Unicode then
-      begin
-        SW.BaseStream.Position := Floor(FFS.size / 2); // 2 byte pro character
-      end;
-
-      WriterString := clrUtils.CSV.TCSVUtils<T>.SerializeRowCSV(ARowValues);
-      SW.WriteLine(WriterString);
-
-      // Append to cache as well
-      {FCachedCSV.Add(ARowValues);
-      FCachedUnstructuredCSV.Add(clrUtils.CSV.TCSVUtils<T>.ParseRowCSVToArray(ARowValues));}
-
-    finally
-      SW.Free;
-    end;
-  end;
-
-  // Call the event listeners
-  CallDBUpdateEventListeners();
 end;
 
 // Returns a structured table from the CSV file
@@ -303,4 +259,89 @@ begin
   // ShowMessage('DB Update Event Listener called: ' + IntToStr(FDBUpdateEventListeners.Count) + ' listeners.');
 end;
 
+procedure TCSVDB<T>.ZeileHinzufuegen(ARowValues: T);
+var
+  SW: TStreamWriter;
+  WriterString: String;
+begin
+
+  if ( not(FileExists(FDateiName))
+       or (FFS.size = 0)
+  ) then
+  begin
+    AddCSVTableToDB(ARowValues);
+    Exit;
+  end
+  else
+  begin
+
+    SW := TStreamWriter.Create(FFS);
+
+    try
+      SW.BaseStream.Position := FFS.size;
+      // Position in Bytes in the Stream
+      if SW.Encoding = TEncoding.Unicode then
+      begin
+        SW.BaseStream.Position := Floor(FFS.size / 2); // 2 byte pro character
+      end;
+
+      WriterString := clrUtils.CSV.TCSVUtils<T>.SerializeRowCSV(ARowValues);
+      SW.WriteLine(WriterString);
+
+      // Append to cache as well
+      {FCachedCSV.Add(ARowValues);
+      FCachedUnstructuredCSV.Add(clrUtils.CSV.TCSVUtils<T>.ParseRowCSVToArray(ARowValues));}
+
+    finally
+      SW.Free;
+    end;
+  end;
+
+  // Call the event listeners
+  CallDBUpdateEventListeners();
+end;
+
+procedure TCSVDB<T>.ZeileEntfernen(ARow: T);
+var
+  ZeileZuEntfernen: T;
+  SW: TStreamWriter;
+begin
+
+  SW := TStreamWriter.Create(FFS);
+
+  try
+
+
+
+
+  finally
+    SW.Free;
+  end;
+
+
+end;
+
+
+function TCSVDB<T>.ZeileFinden(AFinderFunction: TDBFinderFunction<T>; out ReturnValue: T): Boolean;
+var
+  Row: T;
+begin
+
+  ReturnValue := Default(T);
+  Result := false;
+
+  for Row in StrukturierteTabelleErhalten do
+  begin
+    if AFinderFunction(Row) then
+    begin
+      ReturnValue := Row;
+      Result := true;
+      Exit;
+    end;
+  end;
+
+end;
+
+
 end.
+
