@@ -248,12 +248,13 @@ begin
       );
 
       // und in den dafür vorgesehenen Grid reinschreiben
+      
 
     end;
 
-    // Stillstand für die sortierten gruppn nach der Gruppenphase
-    // mit sortierten nach Punkten
-    // - Spaltenüberschriften
+    // [x] Spaltenüberschriften
+    // [x] Stillstand für die sortierten gruppen nach der Gruppenphase
+    // [ ] mit sortierten nach Punkten
 
 
     // Compose round-of-32 teams
@@ -319,6 +320,7 @@ begin
   FCurrentGroupStandings.AddOrSetValue(Team2.ID, TempStand2);
 
   // Also write it in the global FState.Stands to have a non scoped saved state
+  // pull this into clrSimulation ???
   FState.AddOrSetTeamStandByID(Team1.ID, TempStand1);
   FState.AddOrSetTeamStandByID(Team2.ID, TempStand2);
 

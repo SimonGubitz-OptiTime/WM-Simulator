@@ -58,10 +58,22 @@ function    UnstrukturierteTabelleErhalten(): TObjectList<TList<String>>;
 procedure   AddDBUpdateEventListener(ACallbackFunction: TDBUpdateEvent);
 
 procedure   ZeileHinzufuegen(ARow: T);
+begin
+  // INSERT INTO :table_name ()
+  // VALUES
+end;
 
 procedure   ZeileEntfernen(ARow: T);
+begin
+  // DELETE FROM table_name
+  // WHERE RTTI.forEach((FieldName) => )
+end;
 
 function    ZeileFinden(AFinderFunction: TDBFinderFunction<T>; out ReturlVal: T): Boolean;
+begin
+  // SELECT FROM table_name
+  // WHERE 
+end;
 }
 
 end.
