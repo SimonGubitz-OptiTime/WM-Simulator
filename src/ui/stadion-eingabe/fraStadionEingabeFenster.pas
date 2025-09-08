@@ -90,6 +90,25 @@ begin
     Exit;
   end;
 
+  // Keine Duplikate erlauben
+  if ( FDatabase.ZeileFinden(
+    function(Param: TStadion): Boolean
+    begin
+      // Alles außer ID, weil dies erst in clrVerlosung gesetzt wird
+      // und Spieler Liste, da Array nicht verglichen werden können
+      Result := (
+            (Param.Name = NameEingabeFeld.Text)
+        and (Param.Ort = OrtEingabeFeld.Text)
+        and (Param.Ort = StrToInt(ZuschauerKapazitaetEingabeFeld.Text))
+       );
+    end,
+    placeholderRow
+  ) ) then
+  begin
+    ShowMessage('Bitte tragen Sie kein Duplikat ein.');
+    Exit;
+  end;
+
   // if ( StrToInt(ZuschauerkapazitaetEingabeFeld.Text) > High(UInt32) ) then
   // begin
   //  ShowMessage('Diese Zahl ist zu groß - bitte tragen sie eine gültige Zahl ein.');

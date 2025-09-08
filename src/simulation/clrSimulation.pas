@@ -15,6 +15,7 @@ type TSimulation = class
 
     FTotalGoals: Integer;
     FNdx: Integer;
+    FSpiel: TSpiel;
     FCallbackFn: TSimulationCallbackFn;
     FTeam1Tore, FTeam2Tore: Integer;
 
@@ -30,8 +31,12 @@ end;
 
 // Die pause zwischen den Toren in ms
 const
-  PauseBetweenGoals = 500;
+  // PauseBetweenGoals = 50; // ms
   HeimspielSiegchancen = 5;
+  SehrStarkSiegchancen = 20;
+  StarkSiegchancen = 10;
+  MittelStarkSiegchancen = 0;
+  SchwachSiegchancen = -10;
 
 
 implementation
@@ -44,10 +49,10 @@ begin
   FTimer := TTimer.Create(nil);
   FTimer.Enabled := false;
   {$IFDEF DEBUG}
-    FTimer.Interval := 25;
+    FTimer.Interval := 5;
+  {$ELSE}
+    FTimer.Interval := 250;
   {$ENDIF}
-
-  // FTimer.Interval := 250; // 250 ms
 
   FPossibleMaxGoals := PossibleMaxGoals;
 
@@ -61,7 +66,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TSimulation.SpielSimulieren(ACallbackFn: TSimulationCallbackFn; ANdx: Integer);
+procedure TSimulation.SpielSimulieren(ACallbackFn: TSimulationCallbackFn; ANdx: Integer; ASpiel: TSpiel);
 begin
   FTeam1Tore := 0;
   FTeam2Tore := 0;
@@ -70,6 +75,7 @@ begin
   FSimulationFinished := false;
 
   FNdx := ANdx;
+  FSpiel := ASpiel;
   FCallbackFn := ACallbackFn;
 
   FTimer.OnTimer := TimerEvent;
@@ -82,6 +88,8 @@ begin
 end;
 
 procedure TSimulation.TimerEvent(Sender: TObject);
+var
+  SiegchancenTeam1: Byte;
 begin
 
   if ( FTimerCount >= FTotalGoals ) then
@@ -94,10 +102,36 @@ begin
     Exit;
   end;
 
+  SiegchancenTeam1 := 50;
+
+  // switch statt if, da es schneller ist
+  case FSpiel.Team1^.TeamRanking of
+    TTeamRanking.SehrStark: Inc(SiegchancenTeam1, SehrStarkSiegchancen)
+    TTeamRanking.Stark: Inc(SiegchancenTeam1, StarkSiegchancen)
+    TTeamRanking.MittelStark: Inc(SiegchancenTeam1, MittelStarkSiegchancen)
+    TTeamRanking.Schwach: Inc(SiegchancenTeam1, SchwachSiegchancen)
+  end;
+
+  case FSpiel.Team2^.TeamRanking of
+    TTeamRanking.SehrStark: Dec(SiegchancenTeam1, SehrStarkSiegchancen)
+    TTeamRanking.Stark: Dec(SiegchancenTeam1, StarkSiegchancen)
+    TTeamRanking.MittelStark: Dec(SiegchancenTeam1, MittelStarkSiegchancen)
+    TTeamRanking.Schwach: Dec(SiegchancenTeam1, SchwachSiegchancen)
+  end;
+
+  if ( FSpiel.Stadion^.Name = FSpiel.Team1^.HeimstadionName ) then
+  begin
+    Inc(SiegchancenTeam1, HeimspielSiegchancen);
+  end;
+
+  if ( FSpiel.Stadion^.Name = FSpiel.Team2^.HeimstadionName ) then
+  begin
+    Dec(SiegchancenTeam1, HeimspielSiegchancen);
+  end;
+
+
   // Random Tore generieren
-  // Hier kann noch eine Logik rein, die die Stärke der Teams berücksichtigt und auch ob es im Heimstadion gespielt wird
-  // Basierend auf TTeamRanking
-  if ( Random(100) < 50 ) then
+  if ( Random(100) < SiegchancenTeam1 ) then
   begin
     Inc(FTeam1Tore);
   end

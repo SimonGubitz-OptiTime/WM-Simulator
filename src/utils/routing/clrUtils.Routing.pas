@@ -20,14 +20,13 @@ begin
   // Gültigkeitsüberprüfung
   {if not ( ACondition ) then
     begin
-        ShowMessage
-              ('Es gibt unvollständige oder falsche Eingaben. Du musst zurück und alles richtig ausfüllen.');
-                  Exit;
-                    end
-                      else
-                        begin
-                            // Der Nutzer darf weiter
-                              end;}
+      ShowMessage('Es gibt unvollständige oder falsche Eingaben. Du musst zurück und alles richtig ausfüllen.');
+      Exit;
+    end
+    else
+    begin
+      // Der Nutzer darf weiter
+    end;}
 end;
 
 function OnVerlosungChanging(ACondtion: Boolean): Boolean;
@@ -74,15 +73,14 @@ begin
   // Gültigkeitsüberprüfung
   {if not ( ACondition ) then
     begin
-        ShowMessage
-              ('Es gibt unvollständige oder falsche Eingaben. Du musst zurück und alles richtig ausfüllen.');
-                  Exit;
-                    end
-                      else
-                        begin
-                            // Der Nutzer darf weiter
-                                // MainForm.PageControl.ActivePageIndex := 3;
-                                  end;}
+      ShowMessage('Es gibt unvollständige oder falsche Eingaben. Du musst zurück und alles richtig ausfüllen.');
+      Exit;
+    end
+    else
+    begin
+      // Der Nutzer darf weiter
+      // MainForm.PageControl.ActivePageIndex := 3;
+    end;}
 end;
 
 end.
