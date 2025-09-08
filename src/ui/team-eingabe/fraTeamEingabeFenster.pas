@@ -218,7 +218,7 @@ begin
   if ( FDatabase.ZeileFinden(
     function(Param: TTeam): Boolean
     begin
-      // Alles außer ID, weil dies erst in clrVerlosung gesetzt wird
+      // Alles außer ID, weil dies erst in clrVerlosungUI gesetzt wird
       // und Spieler Liste, da Array nicht verglichen werden können
       Result := (
             (Param.Name = NameEingabeFeld.Text)

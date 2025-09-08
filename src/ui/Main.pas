@@ -23,7 +23,7 @@ uses
   clrCSVDB,
   damTypes,
   clrState,
-  clrVerlosung,
+  clrVerlosungUI,
   clrGruppenphase,
   clrKOPhase,
   fraTeamEingabeFenster,
@@ -460,6 +460,8 @@ begin
   end;
 
   // Verlosung starten
+  FVerlosungLogic.Starten();
+
   FVerlosungFertig := FVerlosung.VerlosungStarten(FTeamDB, VerlosungSheet);
 end;
 

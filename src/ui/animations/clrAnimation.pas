@@ -6,7 +6,6 @@ uses
   System.Classes, System.SysUtils,
   Vcl.Controls, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Forms, Vcl.StdCtrls;
 
-// Optional count for when used in a indexed loop
 type
   TAnimationCallback = procedure(ACount: Integer = -1; ASecondCount: Integer = -1;
     AThirdCount: Integer = -1) of object;
@@ -152,7 +151,6 @@ begin
   begin
     raise Exception.Create('TAnimations.ObjektBewegenTick Error: Sender is not a TControl.');
   end;
-  
 end;
 
 

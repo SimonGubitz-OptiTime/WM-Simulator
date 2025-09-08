@@ -158,7 +158,7 @@
         <DCCReference Include="ui\stadion-eingabe\fraStadionEntfernenFenster.pas">
             <Form>Form2</Form>
         </DCCReference>
-        <DCCReference Include="ui\verlosung\clrVerlosung.pas"/>
+        <DCCReference Include="ui\verlosung\clrVerlosungUI.pas"/>
         <DCCReference Include="ui\animations\clrAnimation.pas"/>
         <DCCReference Include="db\clrDB.pas"/>
         <DCCReference Include="types\damTypes.pas"/>

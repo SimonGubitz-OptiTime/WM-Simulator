@@ -69,7 +69,7 @@ begin
       TTeamRanking.MittelStark:
         Cells[1, ARow] := 'Mittel Stark';
       TTeamRanking.Schwach:
-        Cells[1, ARow] := 'Schwach Stark';
+        Cells[1, ARow] := 'Schwach';
     end;
 
     Cells[2, ARow] := IntToStr(ATeam.HistorischeWMSiege);
