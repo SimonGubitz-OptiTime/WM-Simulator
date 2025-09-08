@@ -96,15 +96,28 @@ begin
 end;
 
 procedure TSQLDB<T>.ZeileEntfernen(ARow: T);
+var
+  Ndx: Integer;
+  SQLWhereQuery: String;
 begin
-  where_query: string
+  SQLWhereQuery: string
 
   (TRttiUtils<T>.NamesAsArray)
   (TRttiUtils<T>.Values)
 
+  if ( .Count <> .Count ) then
+  begin
+    raise Exception.Create('Error: ');
+  end;
+
+  for Ndx := 0 to .Count do
+  begin
+    SQLWhereQuery := SQLWhereQuery + sLineBreak + NamesAsArray[Ndx] + '=' + Values[Ndx];
+  end;
+
 
   // DELETE FROM :table_name (TRttiUtils<T>.TNamesAsString)
-  // WHERE 
+  // WHERE SQLWhereQuery
 end;
 
 function TSQLDB<T>.ZeileFinden(AFinderFunction: TDBFinderFunction<T>; out ReturlVal: T): Boolean;
