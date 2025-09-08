@@ -3,19 +3,25 @@
 interface
 
 uses
-  SysUtils, System.RTTI, System.Generics.Collections,
+  System.Generics.Collections,
+  System.RTTI,
+  System.SysUtils,
   TypInfo,
   Vcl.Dialogs;
 
 type
   // record, da es auf dem Stack lebt und keinen State braucht
-  TRttiUtils<T> = record
+  TRttiUtils<T: record> = record
   private const
     ArrayDelimiter: Char = ',';
 
   public
     class function StrToT(ToConvert: TRttiField; ConvertValue: String): TValue; static;
     class function TToStr(TempRes: Pointer; ConvertField: TRttiField): String; static;
+    class function NamesAsArray(): TList<String>; static;
+    class function NamesAsString(): String; static;
+    class function ValuesAsArray(Values: T): TList<String>; static;
+    class function ValuesAsString(Values: T): String; static;
   end;
 
 const
@@ -133,5 +139,139 @@ begin
     Result := tempField.ToString;
   end;
 end;
+
+class function TRttiUtils<T>.NamesAsArray(): TList<String>;
+var
+  RttiContext: TRttiContext;
+  RttiType: TRttiType;
+  RttiFields: TObjectList<TRttiField>;
+  Ndx: Integer;
+begin
+
+  Result := TList<String>.Create;
+
+  RttiFields := TObjectList<TRttiField>.Create;
+
+  try
+
+    RttiType := RttiContext.GetType(TypeInfo(T));
+    RttiContext := TRttiContext.Create;
+
+    try
+      RttiFields.AddRange(RttiType.GetFields);
+      for Ndx := 0 to RttiFields.Count - 1 do
+      begin
+        Result.Add(RttiFields[Ndx].Name);
+      end;
+    finally
+      RttiContext.Free;
+    end;
+  finally
+    RttiFields.Free;
+  end;
+
+end;
+
+class function TRttiUtils<T>.NamesAsString(): String;
+var
+  RttiContext: TRttiContext;
+  RttiType: TRttiType;
+  RttiFields: TObjectList<TRttiField>;
+  Ndx: Integer;
+begin
+  RttiContext := TRttiContext.Create;
+
+  try
+
+    RttiType := RttiContext.GetType(TypeInfo(T));
+    RttiFields := TObjectList<TRttiField>.Create;
+
+    try
+      RttiFields.AddRange(RttiType.GetFields);
+
+      Result := '';
+      for Ndx := 0 to RttiFields.Count - 1 do
+      begin
+        if ( Ndx > 0 ) then
+        begin
+          Result := Result + ArrayDelimiter;
+        end;
+
+        Result := Result + RttiFields[Ndx].Name;
+      end;
+    finally
+      // RttiFields.Free;
+    end;
+  finally
+    RttiContext.Free;
+  end;
+
+end;
+
+class function TRttiUtils<T>.ValuesAsString(Values: T): String;
+var
+  RttiContext: TRttiContext;
+  RttiType: TRttiType;
+  RttiFields: TObjectList<TRttiField>;
+  Ndx: Integer;
+  Row: T;
+begin
+  RttiContext := TRttiContext.Create;
+
+  try
+    RttiFields := TObjectList<TRttiField>.Create(false);
+
+    try
+      RttiType := RttiContext.GetType(TypeInfo(T));
+      RttiFields.AddRange(RttiType.GetFields);
+
+      for Ndx := 0 to RttiFields.Count - 1 do
+      begin
+        if ( Ndx > 0 ) then
+        begin
+          Result := Result + ArrayDelimiter;
+        end;
+
+        Result := Result + TToStr(@Row, RttiFields[Ndx]);
+
+      end;
+    finally
+      RttiFields.Free;
+    end;
+  finally
+    RttiContext.Free;
+  end;
+end;
+
+class function TRttiUtils<T>.ValuesAsArray(Values: T): TList<String>;
+var
+  RttiContext: TRttiContext;
+  RttiType: TRttiType;
+  RttiFields: TObjectList<TRttiField>;
+  Ndx: Integer;
+begin
+
+  Result := TList<String>.Create;
+
+  RttiContext := TRttiContext.Create;
+  try
+    RttiFields := TObjectList<TRttiField>.Create(false);
+
+    try
+      RttiType := RttiContext.GetType(TypeInfo(T));
+      RttiFields.AddRange(RttiType.GetFields);
+
+      for Ndx := 0 to RttiFields.Count - 1 do
+      begin
+        Result.Add(TToStr(@Values, RttiFields[Ndx]));
+      end;
+    finally
+      RttiFields.Free;
+    end;
+  finally
+    RttiContext.Free;
+  end;
+end;
+
 
 end.

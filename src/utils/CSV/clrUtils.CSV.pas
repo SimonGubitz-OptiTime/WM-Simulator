@@ -273,6 +273,8 @@ begin
 
 end;
 
+
+
 class function TCSVUtils<T>.GetCSVHeaderAsArray(): TList<String>;
 var
   RttiContext: TRttiContext;
@@ -312,12 +314,13 @@ var
   RttiFields: TObjectList<TRttiField>;
   Ndx: Integer;
 begin
-  RttiContext := TRttiContext.Create;
+
+  RttiFields := TObjectList<TRttiField>.Create;
 
   try
-
+  
+    RttiContext := TRttiContext.Create;
     RttiType := RttiContext.GetType(TypeInfo(T));
-    RttiFields := TObjectList<TRttiField>.Create;
 
     try
       RttiFields.AddRange(RttiType.GetFields);
@@ -333,12 +336,13 @@ begin
         Result := Result + RttiFields[Ndx].Name;
       end;
     finally
-      // RttiFields.Free;
+      RttiContext.Free;
     end;
   finally
-    RttiContext.Free;
+    RttiFields.Free;
   end;
 
 end;
+
 
 end.

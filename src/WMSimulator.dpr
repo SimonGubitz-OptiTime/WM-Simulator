@@ -1,11 +1,6 @@
 program WMSimulator;
 
 uses
-  madExcept,
-  madLinkDisAsm,
-  madListHardware,
-  madListProcesses,
-  madListModules,
   Vcl.Forms,
   Main in 'ui\Main.pas' {Form1},
   fraTeamEingabeFenster in 'ui\team-eingabe\fraTeamEingabeFenster.pas' {TeamEingabeFenster},

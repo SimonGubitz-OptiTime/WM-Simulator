@@ -134,6 +134,7 @@ end;
 
 procedure TWMState.SetTeams(const ATeams: TList<TTeam>);
 begin
+  FTeams.Destroy;
   FTeams := ATeams;
 end;
 
@@ -234,6 +235,7 @@ end;
 
 procedure TWMState.SetSechzehntelFinalisten(const SechzehntelFinalisten: TList<TPair<Byte, Byte>>);
 begin
+  FSechzehntelFinalisten.Destroy;
   FSechzehntelFinalisten := SechzehntelFinalisten;
 end;
 
@@ -244,6 +246,7 @@ end;
 
 procedure TWMState.SetAchtelFinalisten(const AchtelFinalisten: TList<TPair<Byte, Byte>>);
 begin
+  FAchtelFinalisten.Destroy;
   FAchtelFinalisten := AchtelFinalisten;
 end;
 
@@ -254,6 +257,7 @@ end;
 
 procedure TWMState.SetViertelFinalisten(const ViertelFinalisten: TList<TPair<Byte, Byte>>);
 begin
+  FViertelFinalisten.Destroy;
   FViertelFinalisten := ViertelFinalisten;
 end;
 
@@ -264,6 +268,7 @@ end;
 
 procedure TWMState.SetHalbFinalisten(const HalbFinalisten: TList<TPair<Byte, Byte>>);
 begin
+  FHalbFinalisten.Destroy;
   FHalbFinalisten := HalbFinalisten;
 end;
 

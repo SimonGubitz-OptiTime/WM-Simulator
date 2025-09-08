@@ -245,14 +245,14 @@ begin
   Team.Flagge := 0; // TODO: Flagge setzen
   Team.TeamRanking := TTeamRanking(TeamRankingEingabeBox.ItemIndex);
 
-  SetLength(Team.FSpielerListe, 11);
-  for placeholder := Low(Team.FSpielerListe) to High(Team.FSpielerListe) do
+  SetLength(Team.SpielerListe, 11);
+  for placeholder := Low(Team.SpielerListe) to High(Team.SpielerListe) do
   begin
     var
-    s := Team.FSpielerListe[placeholder];
+    s := Team.SpielerListe[placeholder];
     var
     y := FSpielerListe[placeholder];
-    Team.FSpielerListe[placeholder] := FSpielerListe[placeholder];
+    Team.SpielerListe[placeholder] := FSpielerListe[placeholder];
   end;
 
   // Team in die Datenbank schreiben

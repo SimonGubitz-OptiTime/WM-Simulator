@@ -2,14 +2,15 @@ unit clrSQLDB;
 
 interface
 
+{
 uses
   System.Generics.Collections,
+  SqlExpr,
   damTypes,
-  clrDB;
-  // U_Global_Database;
+  clrDB,
+  u_global_database;
 
 
-{
 type
   TSQLDB<T: record> = class(TInterfacedObject, IDB<T>)
     private
@@ -32,17 +33,22 @@ type
       function   GetInitialisiert: Boolean;
 
       property Initialisiert: Boolean read FInitialisiert;
-  end;}
-
+  end;
+// }
 implementation
 
-{constructor TSQLDB<T>.Create(ATableName: String);
+{
+constructor TSQLDB<T>.Create(ATableName: String);
 begin
   inherited Create;
+
+  FDBUpdateEventListeners := TList<TDBUpdateEvent>.Create();
 end;
 
 destructor TSQLDB<T>.Destroy;
 begin
+  FDBUpdateEventListeners.Free;
+
   inherited Destroy;
 end;
 
@@ -51,29 +57,61 @@ begin
   Result := FInitialisiert;
 end;
 
-function    StrukturierteTabelleErhalten(): TList<T>;
+function TSQLDB<T>.StrukturierteTabelleErhalten(): TList<T>;
+begin
+end;
 
-function    UnstrukturierteTabelleErhalten(): TObjectList<TList<String>>;
+function TSQLDB<T>.UnstrukturierteTabelleErhalten(): TObjectList<TList<String>>;
+begin
+end;
 
-procedure   AddDBUpdateEventListener(ACallbackFunction: TDBUpdateEvent);
+procedure TSQLDB<T>.AddDBUpdateEventListener(ACallbackFunction: TDBUpdateEvent);
+begin
+  FDBUpdateEventListeners.Add(ACallbackFunction);
+end;
 
-procedure   ZeileHinzufuegen(ARow: T);
+procedure TSQLDB<T>.CallDBUpdateEventListeners();
+var
+  Ndx: Integer;
+begin
+  for Ndx := 0 to FDBUpdateEventListeners.Count - 1 do
+  begin
+    try
+      FDBUpdateEventListeners[Ndx]();
+    except
+      on E: Exception do
+      begin
+        ShowMessage('Error in DB Update Event Listener' + IntToStr(Ndx) + ': ' + E.Message);
+        continue;
+      end;
+    end;
+  end;
+  // ShowMessage('DB Update Event Listener called: ' + IntToStr(FDBUpdateEventListeners.Count) + ' listeners.');
+end;
+
+procedure TSQLDB<T>.ZeileHinzufuegen(ARow: T);
 begin
   // INSERT INTO :table_name ()
   // VALUES
 end;
 
-procedure   ZeileEntfernen(ARow: T);
+procedure TSQLDB<T>.ZeileEntfernen(ARow: T);
 begin
-  // DELETE FROM table_name
-  // WHERE RTTI.forEach((FieldName) => )
-end;
+  where_query: string
 
-function    ZeileFinden(AFinderFunction: TDBFinderFunction<T>; out ReturlVal: T): Boolean;
-begin
-  // SELECT FROM table_name
+  (TRttiUtils<T>.NamesAsArray)
+  (TRttiUtils<T>.Values)
+
+
+  // DELETE FROM :table_name (TRttiUtils<T>.TNamesAsString)
   // WHERE 
 end;
-}
+
+function TSQLDB<T>.ZeileFinden(AFinderFunction: TDBFinderFunction<T>; out ReturlVal: T): Boolean;
+begin
+  // SELECT FROM :table_name (TRttiUtils<T>.TNamesAsString)
+  // WHERE 
+end;
+// }
 
 end.

@@ -34,7 +34,7 @@ type
     HistorischeWMSiege: Byte;
     HeimstadionName: String; // in der Simulation vielleicht +5% Siegchancen
     Flagge: Byte; // als index für eine TImageList
-    FSpielerListe: array of String; // ← Nur Namen, muss um Simplizität in der Rtti array bleiben, kein TList<string>
+    SpielerListe: array of String; // ← Nur Namen, muss um Simplizität in der Rtti array bleiben, kein TList<string>
     TeamRanking: TTeamRanking;
 
     ID: Byte;

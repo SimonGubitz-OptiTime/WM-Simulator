@@ -16,9 +16,9 @@ type TVerlosungLogik = class
     FState: IState;
     FDB: IDB<TTeam>;
 
-
     procedure IDSVergeben;
     procedure CreateTeams;
+
   public
 
     constructor Create(AState: IState; ADB: IDB<TTeam>);
