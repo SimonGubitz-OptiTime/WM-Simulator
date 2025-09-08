@@ -67,6 +67,7 @@ end;
 procedure TStadionEingabeFenster.BestaetigenButtonClick(Sender: TObject);
 var
   placeholder: Integer;
+  placeholderRow: TStadion;
   Stadion: TStadion;
 begin
 
@@ -99,7 +100,7 @@ begin
       Result := (
             (Param.Name = NameEingabeFeld.Text)
         and (Param.Ort = OrtEingabeFeld.Text)
-        and (Param.Ort = StrToInt(ZuschauerKapazitaetEingabeFeld.Text))
+        and (Param.ZuschauerKapazitaet = StrToInt(ZuschauerKapazitaetEingabeFeld.Text))
        );
     end,
     placeholderRow

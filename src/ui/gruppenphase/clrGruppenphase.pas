@@ -22,7 +22,7 @@ uses
 type TGruppenphaseUI = class
   private
 
-    FState: TWMState;
+    FState: IState;
     FSimulation: TSimulation;
     FGrid: TStringGrid;
     FMatches: TList<TPair<Byte, Byte>>; // sortierbare TDictionary implementierung, mit mehreren gleichen Keys
@@ -39,7 +39,7 @@ type TGruppenphaseUI = class
     procedure CallbackSimulation(Sender: TObject; AMatchNdx: Integer; ATeam1Tore, ATeam2Tore: Integer);
 
   public
-    constructor Create(AGruppenphaseGrid: TStringGrid; const AState: TWMState);
+    constructor Create(AGruppenphaseGrid: TStringGrid; const AState: IState);
 
     procedure GruppenphaseStarten(AGruppenphaseLabels: TArray<TLabel>; ASechzehntelfinaleLabels: TArray<TLabel>);
 
@@ -50,7 +50,7 @@ end;
 
 implementation
 
-constructor TGruppenphaseUI.Create(AGruppenphaseGrid: TStringGrid; const AState: TWMState);
+constructor TGruppenphaseUI.Create(AGruppenphaseGrid: TStringGrid; const AState: IState);
 var
   j: Integer;
 begin
@@ -94,9 +94,6 @@ var
   ArrVal: TPair<Byte, Byte>;
   Ndx: Integer;
 begin
-
-  // ShowMessage('Sizeof TTeam is: ' + IntToStr(SizeOf(TTeam))); // 28 - 32bit
-                                                                 // 56 - 64bit
 
   FGameDict := TDictionary<Byte, TList<Byte>>.Create;
 
@@ -202,14 +199,15 @@ begin
         AGruppenphaseLabels[Ndx].Font.Color := clGreen;
 
 
-        Spiel := Default(TSpiel);
-        Spiel.Team1 := @FState.Teams[FMatches[Ndx].Key];
-        Spiel.Team1 := @FState.Teams[FMatches[Ndx].Value];
+        var Spiel := Default(TSpiel);
+        Spiel.Team1 := FState.Teams[FMatches[Ndx].Key];
+        Spiel.Team1 := FState.Teams[FMatches[Ndx].Value];
+        Spiel.Stadion := Default(TStadion);
 
         FSimulationList := TObjectList<TSimulation>.Create;
         try
           FSimulationList.Add(TSimulation.Create);
-          FSimulationList.Last.SpielSimulieren(CallbackSimulation, Ndx);
+          FSimulationList.Last.SpielSimulieren(CallbackSimulation, Ndx, Spiel);
 
         finally
           FSimulationList.Free;

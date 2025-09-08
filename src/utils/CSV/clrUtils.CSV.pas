@@ -256,8 +256,7 @@ begin
         for j := 0 to RttiFields.Count - 1 do // columns / fields
         begin
           // convert string to x
-          TempValue := clrUtils.RTTI.TRttiUtils<T>.StrToT(RttiFields[j],
-            TempFieldArray[j]);
+          TempValue := clrUtils.RTTI.TRttiUtils<T>.StrToT(RttiFields[j], TempFieldArray[j]);
           RttiFields[j].SetValue(@TempRes, TempValue);
         end;
       finally

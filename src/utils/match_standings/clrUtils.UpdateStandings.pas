@@ -9,12 +9,12 @@ uses
 
 
 
-procedure GetUpdatedStandings(AState: TWMState; Team1Tore, Team2Tore, Team1ID, Team2ID: Integer; out AOut1: TTeamStatistik; out AOut2: TTeamStatistik);
+procedure GetUpdatedStandings(AState: IState; Team1Tore, Team2Tore, Team1ID, Team2ID: Integer; out AOut1: TTeamStatistik; out AOut2: TTeamStatistik);
 
 
 implementation
 
-procedure GetUpdatedStandings(AState: TWMState; Team1Tore, Team2Tore, Team1ID, Team2ID: Integer; out AOut1: TTeamStatistik; out AOut2: TTeamStatistik);
+procedure GetUpdatedStandings(AState: IState; Team1Tore, Team2Tore, Team1ID, Team2ID: Integer; out AOut1: TTeamStatistik; out AOut2: TTeamStatistik);
 var
   HasStand: Boolean;
 begin

@@ -18,7 +18,7 @@ uses
 type
   TKOPhaseUI = class
   private
-    FState: TWMState;
+    FState: IState;
     FSechzehntelfinaleLabels: TArray<TLabel>;
     FAchtelfinaleLabels: TArray<TLabel>;
     FViertelfinaleLabels: TArray<TLabel>;
@@ -31,12 +31,11 @@ type
     FNextStage: TList<Byte>;
     FNextStageSpielUmPlatz3: TList<Byte>;
     
-
-
     procedure KOPhaseCallback(Sender: TObject; ANdx: Integer; ATeam1Tore, ATeam2Tore: Integer);
+
   public
 
-    constructor Create(ASechzehntelfinaleLabels: TArray<TLabel>; AAchtelfinaleLabels: TArray<TLabel>; AViertelfinaleLabels: TArray<TLabel>; AHalbfinaleLabels: TArray<TLabel>; AFinaleLabel: TLabel; ASpielUmPlatz3Label: TLabel; const AState: TWMState);
+    constructor Create(ASechzehntelfinaleLabels: TArray<TLabel>; AAchtelfinaleLabels: TArray<TLabel>; AViertelfinaleLabels: TArray<TLabel>; AHalbfinaleLabels: TArray<TLabel>; AFinaleLabel: TLabel; ASpielUmPlatz3Label: TLabel; const AState: IState);
     destructor Destroy; override;
 
     procedure KOPhaseStarten;
@@ -47,7 +46,7 @@ const
 
 implementation
 
-constructor TKOPhaseUI.Create(ASechzehntelfinaleLabels: TArray<TLabel>; AAchtelfinaleLabels: TArray<TLabel>; AViertelfinaleLabels: TArray<TLabel>; AHalbfinaleLabels: TArray<TLabel>; AFinaleLabel: TLabel; ASpielUmPlatz3Label: TLabel; const AState: TWMState);
+constructor TKOPhaseUI.Create(ASechzehntelfinaleLabels: TArray<TLabel>; AAchtelfinaleLabels: TArray<TLabel>; AViertelfinaleLabels: TArray<TLabel>; AHalbfinaleLabels: TArray<TLabel>; AFinaleLabel: TLabel; ASpielUmPlatz3Label: TLabel; const AState: IState);
 begin
   FState := AState;
   FSechzehntelfinaleLabels := ASechzehntelfinaleLabels;
@@ -77,6 +76,7 @@ var
   Ndx: Integer;
   Team1, Team2: TTeam;
   TempTeam: TTeam;
+  Spiel: TSpiel;
 begin
   // Sicherstellen, dass die Sechzehntelfinale-Teams vorhanden sind
   if FState.GetSechzehntelFinalisten.Count = 0 then
@@ -99,8 +99,14 @@ begin
       FCurrentLabels[Ndx].Font.Color := clGreen;
 
 
+
+      Spiel := Default(TSpiel);
+      Spiel.Team1 := FState.GetTeams.Items[FCurrentTeams.Items[Ndx].Key];
+      Spiel.Team2 := FState.GetTeams.Items[FCurrentTeams.Items[Ndx].Value];
+      Spiel.Stadion := Default(TStadion);
+
       Myself.Add(TSimulation.Create(6));
-      Myself.Last.SpielSimulieren(KOPhaseCallback, Ndx);
+      Myself.Last.SpielSimulieren(KOPhaseCallback, Ndx, Spiel);
 
       FCurrentLabels[Ndx].Font.Style := [];
       FCurrentLabels[Ndx].Font.Color := clWindowText;
@@ -132,8 +138,15 @@ begin
       FCurrentLabels[Ndx].Font.Style := [fsBold];
       FCurrentLabels[Ndx].Font.Color := clGreen;
 
+
+
+      Spiel := Default(TSpiel);
+      Spiel.Team1 := FState.GetTeams.Items[FCurrentTeams.Items[Ndx].Key];
+      Spiel.Team2 := FState.GetTeams.Items[FCurrentTeams.Items[Ndx].Value];
+      Spiel.Stadion := Default(TStadion);
+
       Myself.Add(TSimulation.Create(5)); // immer einen weniger, da es ja theoritisch immer schwieriger wird
-      Myself.Last.SpielSimulieren(KOPhaseCallback, Ndx);
+      Myself.Last.SpielSimulieren(KOPhaseCallback, Ndx, Spiel);
 
       FCurrentLabels[Ndx].Font.Style := [];
       FCurrentLabels[Ndx].Font.Color := clWindowText;
@@ -163,8 +176,15 @@ begin
       FCurrentLabels[Ndx].Font.Style := [fsBold];
       FCurrentLabels[Ndx].Font.Color := clGreen;
 
+
+
+      Spiel := Default(TSpiel);
+      Spiel.Team1 := FState.GetTeams.Items[FCurrentTeams.Items[Ndx].Key];
+      Spiel.Team2 := FState.GetTeams.Items[FCurrentTeams.Items[Ndx].Value];
+      Spiel.Stadion := Default(TStadion);
+
       Myself.Add(TSimulation.Create(5));
-      Myself.Last.SpielSimulieren(KOPhaseCallback, Ndx);
+      Myself.Last.SpielSimulieren(KOPhaseCallback, Ndx, Spiel);
 
       FCurrentLabels[Ndx].Font.Style := [];
       FCurrentLabels[Ndx].Font.Color := clWindowText;
@@ -194,7 +214,7 @@ begin
       FCurrentLabels[Ndx].Font.Color := clGreen;
 
       Myself.Add(TSimulation.Create(5));
-      Myself.Last.SpielSimulieren(KOPhaseCallback, Ndx);
+      Myself.Last.SpielSimulieren(KOPhaseCallback, Ndx, Spiel);
 
       FCurrentLabels[Ndx].Font.Style := [];
       FCurrentLabels[Ndx].Font.Color := clWindowText;
@@ -218,7 +238,7 @@ begin
     FCurrentLabels[0].Font.Color := clGreen;
 
     Myself.Add(TSimulation.Create(5));
-    Myself.Last.SpielSimulieren(KOPhaseCallback, 0);
+    Myself.Last.SpielSimulieren(KOPhaseCallback, 0, Spiel);
 
     FCurrentLabels[0].Font.Style := [];
     FCurrentLabels[0].Font.Color := clWindowText;
@@ -244,7 +264,7 @@ begin
     FCurrentLabels[0].Font.Color := clGreen;
 
     Myself.Add(TSimulation.Create(5));
-    Myself.Last.SpielSimulieren(KOPhaseCallback, 0);
+    Myself.Last.SpielSimulieren(KOPhaseCallback, 0, Spiel);
 
     FCurrentLabels[0].Font.Style := [];
     FCurrentLabels[0].Font.Color := clWindowText;

@@ -1,11 +1,14 @@
-unit clrVerlosung;
+﻿unit clrVerlosung;
 
 interface
 
 uses
+  System.Generics.Collections,
   clrDB,
   damTypes,
-  clrState;
+  clrState,
+  clrUtils.FilterArray,
+  clrUtils.ShuffleArray;
 
 
 type TVerlosungLogik = class
@@ -14,13 +17,14 @@ type TVerlosungLogik = class
     FDB: IDB<TTeam>;
 
 
-    procedure IDSVergeben();
+    procedure IDSVergeben;
+    procedure CreateTeams;
   public
 
     constructor Create(AState: IState; ADB: IDB<TTeam>);
     destructor Destroy; override;
 
-    procedure Starten();
+    procedure Starten;
   end;
 
 implementation
@@ -43,6 +47,7 @@ end;
 procedure TVerlosungLogik.IDSVergeben;
 var
   TempTeam: TTeam;
+  Ndx: Integer;
 begin
   for Ndx := 0 to FState.Teams.Count - 1 do
   begin
@@ -54,10 +59,16 @@ begin
 end;
 
 procedure TVerlosungLogik.CreateTeams;
+var
+  Ndx: Integer;
+  TempList: TList<TTeam>;
+  SehrStarkeTeams, StarkeTeams, MittelStarkeTeams, SchwacheTeams: TList<TTeam>;
 begin
 
-  FState.SetTeams(ATeamDB.StrukturierteTabelleErhalten());
+  FState.SetTeams(FDB.StrukturierteTabelleErhalten());
   FState.ClearGruppen();
+
+  IDSVergeben;
 
   // Nur die sehr starken Teams nehmen
   SehrStarkeTeams := clrUtils.FilterArray.TFilterArrayUtils.Filter2<TTeam>(FState.Teams,
@@ -97,7 +108,8 @@ begin
       or (MittelStarkeTeams.Count <> SchwacheTeams.Count)
   ) then
   begin
-    ShowMessage('Die Anzahl der Teams in den Lostöpfen ist nicht gleich.');
+    // custom error
+    // raise E
     Exit;
   end;
 
@@ -114,6 +126,11 @@ begin
     TempList.AddRange([ SehrStarkeTeams[Ndx], StarkeTeams[Ndx], MittelStarkeTeams[Ndx], SchwacheTeams[Ndx] ]);
     FState.AddGruppe(TempList);
   end;
+end;
+
+procedure TVerlosungLogik.Starten;
+begin
+  CreateTeams;
 end;
 
 end.

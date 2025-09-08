@@ -23,6 +23,7 @@ uses
   clrCSVDB,
   damTypes,
   clrState,
+  clrVerlosung,
   clrVerlosungUI,
   clrGruppenphase,
   clrKOPhase,
@@ -231,14 +232,16 @@ type  TMainForm = class(TForm)
     FTeamAnzahl: Integer;
     FStadionAnzahl: Integer;
 
-    FVerlosung: TVerlosungUI;
+    FVerlosungFertig: Boolean;
+    FVerlosungUI: TVerlosungUI;
+    FVerlosungLogik: TVerlosungLogik;
+
     FGruppenphase: TGruppenphaseUI;
     FKOPhase: TKOPhaseUI;
 
-    FVerlosungFertig: Boolean;
     FGruppenphaseFertig: Boolean;
 
-    FState: TWMState;
+    FState: IState;
 
   const
     FGewollteTeamAnzahl: Integer = 48;
@@ -264,9 +267,13 @@ procedure TMainForm.FormCreate(Sender: TObject);
 begin
 
   // Globaler State, wodrin alle Teams, Gruppen und Auskommen nach und nach gespeichert werden
-  FState := TWMState.Create;
 
-  FVerlosung := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12], FState);
+  FState := TWMState.Create;
+  FTeamDB := TCSVDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
+  FStadionDB := TCSVDB<TStadion>.Create(TStadionEingabeFenster.GetTableName);
+
+  FVerlosungLogik := TVerlosungLogik.Create(FState, FTeamDB);
+  FVerlosungUI := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12], FState);
   FGruppenphase := TGruppenphaseUI.Create(GruppenphaseStringGrid, FState);
   FKOPhase := TKOPhaseUI.Create(
     [ SechzehntelfinaleLabel1, SechzehntelfinaleLabel2, SechzehntelfinaleLabel3, SechzehntelfinaleLabel4, SechzehntelfinaleLabel5, SechzehntelfinaleLabel6, SechzehntelfinaleLabel7, SechzehntelfinaleLabel8, SechzehntelfinaleLabel9, SechzehntelfinaleLabel10, SechzehntelfinaleLabel11, SechzehntelfinaleLabel12, SechzehntelfinaleLabel13, SechzehntelfinaleLabel14, SechzehntelfinaleLabel15, SechzehntelfinaleLabel16 ],
@@ -280,9 +287,6 @@ begin
 
   TeamGewollteAnzahlLabel.Caption := IntToStr(FGewollteTeamAnzahl);
   StadionGewollteAnzahlLabel.Caption := IntToStr(FGewollteStadionAnzahl);
-
-  FTeamDB := TCSVDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
-  FStadionDB := TCSVDB<TStadion>.Create(TStadionEingabeFenster.GetTableName);
 
   FTeamEingabeFenster := TTeamEingabeFenster.Create(FTeamDB);
   FStadionEingabeFenster := TStadionEingabeFenster.Create(FStadionDB);
@@ -308,9 +312,9 @@ end;
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
 
-  FState.Destroy;
 
-  FVerlosung.Free;
+  FVerlosungLogik.Free;
+  FVerlosungUI.Free;
   FGruppenphase.Free;
   FKOPhase.Free;
 
@@ -427,7 +431,9 @@ end;
 
 procedure TMainForm.VerlosungStartenButtonClick(Sender: TObject);
 begin
-  FVerlosungFertig := FVerlosung.VerlosungStarten(FTeamDB, VerlosungSheet);
+
+  FVerlosungLogik.Starten();
+  FVerlosungFertig := FVerlosungUI.VerlosungStarten(VerlosungSheet);
 
   // Wenn es genügend Gruppen gibt
   if ( FState.GetGruppen.Count = 12 ) then
@@ -460,9 +466,9 @@ begin
   end;
 
   // Verlosung starten
-  FVerlosungLogic.Starten();
+//  FVerlosungLogik.Starten();
 
-  FVerlosungFertig := FVerlosung.VerlosungStarten(FTeamDB, VerlosungSheet);
+  FVerlosungFertig := FVerlosungUI.VerlosungStarten(VerlosungSheet);
 end;
 
 procedure TMainForm.ZurGruppenphaseButtonClick(Sender: TObject);

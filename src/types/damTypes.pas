@@ -1,4 +1,4 @@
-﻿unit dams;
+﻿unit damTypes;
 
 interface
 
@@ -8,8 +8,6 @@ uses
 
 type
   TTeamVerband = (AFC, CAF, CONCACAF, CONMEBOL, OFC, UEFA);
-
-
   TTeamRanking = (SehrStark, Stark, MittelStark, Schwach);
 
   TStadion = record
@@ -17,8 +15,6 @@ type
     Ort: String;
     ZuschauerKapazitaet: UInt32;
   end;
-
-  PStadion = ^Stadion;
 
   TTeamStatistik = record
     Punkte: Byte;
@@ -44,12 +40,10 @@ type
     ID: Byte;
   end;
 
-  PTeam = ^TTeam;
-
   TSpiel = record
-    Team1: PTeam;
-    Team2: PTeam;
-    Stadion: PStadion;
+    Team1: TTeam;
+    Team2: TTeam;
+    Stadion: TStadion;
   end;
 
   TGruppe = TList<TTeam>;
@@ -110,7 +104,7 @@ type
       property SpielUmPlatz3: TPair<Byte, Byte> read GetSpielUmPlatz3 write SetSpielUmPlatz3;
   end;
 
+implementation
 
-  implementation
 
-  end.
+end.

@@ -14,7 +14,7 @@ object TeamEntfernenFenster: TTeamEntfernenFenster
   object Label1: TLabel
     Left = 8
     Top = 8
-    Width = 277
+    Width = 240
     Height = 47
     Caption = 'Team entfernen'
     Font.Charset = DEFAULT_CHARSET

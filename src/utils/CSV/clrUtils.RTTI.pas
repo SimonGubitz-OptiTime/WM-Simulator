@@ -117,8 +117,6 @@ begin
   if ( tempField.IsArray ) then
   begin
     Result := '[';
-    var
-    l := tempField.GetArrayLength();
     for Ndx := 0 to tempField.GetArrayLength() - 1 do
     begin
       if ( Ndx > 0 ) then

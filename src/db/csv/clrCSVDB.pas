@@ -318,6 +318,7 @@ var
   ZeileZuEntfernen: T;
   SW: TStreamWriter;
   SR: TStreamReader;
+  RowStartPosition: Integer;
 begin
 
 
@@ -327,7 +328,9 @@ begin
   try
 
     // ignore headline
-    SR.ReadLine();
+    var headline: String;
+    headline :=    SR.ReadLine();
+    ShowMessage(headline);
 
     while not(SR.EndOfStream) do
     begin
@@ -344,6 +347,8 @@ begin
     SW.Free;
     SR.Free;
   end;
+
+  CallDBUpdateEventListeners();
 end;
 
 function TCSVDB<T>.ZeileFinden(AFinderFunction: TDBFinderFunction<T>; out ReturnValue: T): Boolean;

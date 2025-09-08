@@ -103,6 +103,12 @@ end;
 
 destructor TWMState.Destroy;
 begin
+  FSechzehntelFinalisten.Free;
+  FAchtelFinalisten.Free;
+  FViertelFinalisten.Free;
+  FHalbFinalisten.Free;
+
+
   FTeams.Free;
   FStadien.Free;
   FGruppen.Free;

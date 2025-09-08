@@ -1,6 +1,11 @@
 program WMSimulator;
 
 uses
+  madExcept,
+  madLinkDisAsm,
+  madListHardware,
+  madListProcesses,
+  madListModules,
   Vcl.Forms,
   Main in 'ui\Main.pas' {Form1},
   fraTeamEingabeFenster in 'ui\team-eingabe\fraTeamEingabeFenster.pas' {TeamEingabeFenster},
@@ -30,7 +35,8 @@ uses
   clrCSVDB in 'db\csv\clrCSVDB.pas',
   clrKOPhase in 'ui\ko-phase\clrKOPhase.pas',
   clrSQLDB in 'db\sql\clrSQLDB.pas',
-  clrUtils.StreamPosition in 'utils\streams\clrUtils.StreamPosition.pas';
+  clrUtils.StreamPosition in 'utils\streams\clrUtils.StreamPosition.pas',
+  clrVerlosung in 'verlosung\clrVerlosung.pas';
 
 {$R *.res}
 

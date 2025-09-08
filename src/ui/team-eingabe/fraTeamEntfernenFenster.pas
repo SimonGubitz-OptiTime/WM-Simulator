@@ -13,19 +13,19 @@ uses
   Winapi.Windows,
   Winapi.Messages,
   damTypes,
-  clrDB;
+  clrDB, Vcl.StdCtrls;
 
 type
   TTeamEntfernenFenster = class(TForm)
     Label1: TLabel;
     Label2: TLabel;
     BestaetigenButton: TButton;
-    StadionNameEdit: TEdit;
+    TeamNameEdit: TEdit;
 
     constructor Create(var ADatabase: IDB<TTeam>);
     destructor Destroy; override;
 
-    procedure TTeamEntfernenFenster.BestaetigenButtonClick(Sender: TObject);
+    procedure BestaetigenButtonClick(Sender: TObject);
 
   private
 
@@ -54,12 +54,12 @@ end;
 
 procedure TTeamEntfernenFenster.BestaetigenButtonClick(Sender: TObject);
 var
-  Row: TStadion;
+  Row: TTeam;
   HasRow: Boolean;
 begin
 
   HasRow := FDatabase.ZeileFinden(
-    function(Param: TStadion): Boolean
+    function(Param: TTeam): Boolean
     begin
        Result := Param.Name = TeamNameEdit.Text;
     end,

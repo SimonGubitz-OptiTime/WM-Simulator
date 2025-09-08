@@ -13,6 +13,8 @@ uses
   Vcl.Forms,
   Vcl.Grids,
   Vcl.StdCtrls,
+  damTypes,
+  clrState,
   clrAnimation,
   clrUtils.ShuffleArray,
   clrUtils.FilterArray,
@@ -24,6 +26,7 @@ type TVerlosungUI = class
 
     FInitialisiert: Boolean;
 
+    FState: IState;
     FGrids: TObjectList<TStringGrid>;
     // array due to multiple Grids → meistens nur 12 Grids
     FColSize: array [0 .. 11] of Integer;
@@ -36,7 +39,7 @@ type TVerlosungUI = class
   public
     property Initialisiert: Boolean read FInitialisiert;
 
-    constructor Create(AGrids: array of TStringGrid; AState: TWMState);
+    constructor Create(AGrids: array of TStringGrid; AState: IState);
     destructor Destroy; override;
 
     function VerlosungStarten(AOwner: TControl): Boolean;
@@ -45,20 +48,19 @@ type TVerlosungUI = class
 
 implementation
 
-constructor TVerlosungUI.Create(AGrids: array of TStringGrid; AState: TWMState);
-var
-  i, j: Integer;
+constructor TVerlosungUI.Create(AGrids: array of TStringGrid; AState: IState);
 begin
 
   inherited Create;
 
   FState := AState;
 
-  if ( Length(Grid) <> 12 ) then
+  if ( Length(AGrids) <> 12 ) then
   begin
     raise Exception.Create('TVerlosungUI.Create Error: There must be exactly 12 Grids.');
   end;
-  FGrids := AGrids;
+  FGrids := TObjectList<TStringGrid>.Create(false);
+  FGrids.AddRange(AGrids);
   ResizeGrids;
 
 
@@ -75,37 +77,33 @@ end;
 
 procedure TVerlosungUI.ResizeGrids;
 var
-  Grid: TStringGrid1;
-  RowNdx, ColNdx: Integer;
+  GridNdx, RowNdx, ColNdx: Integer;
 begin
-  for Grid in FGrids do
+  for GridNdx := 0 to FGrids.Count - 1 do
   begin
 
-    FColSize[GridNdx] := Floor(Grid[GridNdx].Width / Grid[GridNdx].ColCount) - 2;
-    FRowSize[GridNdx] := Floor(Grid[GridNdx].Height / Grid[GridNdx].RowCount) - 2;
+    FColSize[GridNdx] := Floor(FGrids[GridNdx].Width / FGrids[GridNdx].ColCount) - 2;
+    FRowSize[GridNdx] := Floor(FGrids[GridNdx].Height / FGrids[GridNdx].RowCount) - 2;
 
-    for RowNdx := 0 to Grid[GridNdx].ColCount - 1 do
+    for RowNdx := 0 to FGrids[GridNdx].ColCount - 1 do
     begin
-      Grid[GridNdx].ColWidths[RowNdx] := FColSize[GridNdx];
+      FGrids[GridNdx].ColWidths[RowNdx] := FColSize[GridNdx];
     end;
 
-    for ColNdx := 0 to Grid[GridNdx].RowCount - 1 do
+    for ColNdx := 0 to FGrids[GridNdx].RowCount - 1 do
     begin
-      Grid[GridNdx].RowHeights[RowNdx] := FRowSize[GridNdx];
+      FGrids[GridNdx].RowHeights[ColNdx] := FRowSize[GridNdx];
     end;
 
   end;
 end;
 
-function TVerlosungUI.VerlosungStarten(ATeamName: String): Boolean;
+function TVerlosungUI.VerlosungStarten(AOwner: TControl): Boolean;
 var
   Grid: TStringGrid;
-  TempList: TList<TTeam>;
   TempLabel: TStaticText;
-  ShuffledTeamsItem: TTeam;
-  RowNdx, GridNdx, TeamNdx, Ndx: Integer;
+  RowNdx, GridNdx, TeamNdx: Integer;
   AnimationList: TObjectList<TAnimations>;
-  SehrStarkeTeams, StarkeTeams, MittelStarkeTeams, SchwacheTeams: TList<TTeam>;
 begin
 
   for Grid in FGrids do
@@ -133,7 +131,7 @@ begin
           TempLabel := TStaticText.Create(nil);
 
           TempLabel.Parent := AOwner as TWinControl;
-          TempLabel.Caption := ATeamName;
+          TempLabel.Caption := FState.Teams[TeamNdx].Name;
           TempLabel.Top := Round((AOwner.Height / 2) - (TempLabel.Height / 2));
           // Middle
           TempLabel.Left := Round((AOwner.Width / 2) - (TempLabel.Width / 2)); // Middle
@@ -164,7 +162,7 @@ end;
 procedure TVerlosungUI.AnimationCallbackFn(Count: Integer; SecondCount: Integer; ThirdCount: Integer);
 begin
 
-  clrUtils.TableFormating.TeamZeileZeichnen(FGrids[SecondCount], FState.Teams[ThirdCount], Count);
+  clrUtils.TableFormating.TeamZeileZeichnen(FGrids[SecondCount], FState.Gruppen[SecondCount][Count], Count);
 
 end;
 

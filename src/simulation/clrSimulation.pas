@@ -26,8 +26,10 @@ type TSimulation = class
     procedure TimerEvent(Sender: TObject);
   public
     constructor Create(PossibleMaxGoals: Byte = 6);
-    procedure SpielSimulieren(ACallbackFn: TSimulationCallbackFn; ANdx: Integer);
     destructor Destroy; override;
+
+    procedure SpielSimulieren(ACallbackFn: TSimulationCallbackFn; ANdx: Integer; ASpiel: TSpiel);
+
 end;
 
 // Die pause zwischen den Toren in ms
@@ -90,7 +92,7 @@ end;
 
 procedure TSimulation.TimerEvent(Sender: TObject);
 var
-  SiegchancenTeam1: Byte;
+  SiegchancenTeam1: ShortInt; // ShortInt, weil Byte durch das hinzufügen von negativen Zahlen nicht funktioniert, und ich trotzdem keinen Wert > 100 brauche
 begin
 
   if ( FTimerCount >= FTotalGoals ) then
@@ -106,26 +108,26 @@ begin
   SiegchancenTeam1 := 50;
 
   // switch statt if, da es schneller ist
-  case FSpiel.Team1^.TeamRanking of
-    TTeamRanking.SehrStark: Inc(SiegchancenTeam1, SehrStarkSiegchancen)
-    TTeamRanking.Stark: Inc(SiegchancenTeam1, StarkSiegchancen)
-    TTeamRanking.MittelStark: Inc(SiegchancenTeam1, MittelStarkSiegchancen)
-    TTeamRanking.Schwach: Inc(SiegchancenTeam1, SchwachSiegchancen)
+  case FSpiel.Team1.TeamRanking of
+    TTeamRanking.SehrStark: Inc(SiegchancenTeam1, SehrStarkSiegchancen);
+    TTeamRanking.Stark: Inc(SiegchancenTeam1, StarkSiegchancen);
+    TTeamRanking.MittelStark: Inc(SiegchancenTeam1, MittelStarkSiegchancen);
+    TTeamRanking.Schwach: Inc(SiegchancenTeam1, SchwachSiegchancen);
   end;
 
-  case FSpiel.Team2^.TeamRanking of
-    TTeamRanking.SehrStark: Dec(SiegchancenTeam1, SehrStarkSiegchancen)
-    TTeamRanking.Stark: Dec(SiegchancenTeam1, StarkSiegchancen)
-    TTeamRanking.MittelStark: Dec(SiegchancenTeam1, MittelStarkSiegchancen)
-    TTeamRanking.Schwach: Dec(SiegchancenTeam1, SchwachSiegchancen)
+  case FSpiel.Team2.TeamRanking of
+    TTeamRanking.SehrStark: Dec(SiegchancenTeam1, SehrStarkSiegchancen);
+    TTeamRanking.Stark: Dec(SiegchancenTeam1, StarkSiegchancen);
+    TTeamRanking.MittelStark: Dec(SiegchancenTeam1, MittelStarkSiegchancen);
+    TTeamRanking.Schwach: Dec(SiegchancenTeam1, SchwachSiegchancen);
   end;
 
-  if ( FSpiel.Stadion^.Name = FSpiel.Team1^.HeimstadionName ) then
+  if ( FSpiel.Stadion.Name = FSpiel.Team1.HeimstadionName ) then
   begin
     Inc(SiegchancenTeam1, HeimspielSiegchancen);
   end;
 
-  if ( FSpiel.Stadion^.Name = FSpiel.Team2^.HeimstadionName ) then
+  if ( FSpiel.Stadion.Name = FSpiel.Team2.HeimstadionName ) then
   begin
     Dec(SiegchancenTeam1, HeimspielSiegchancen);
   end;
