@@ -7,7 +7,7 @@ uses
   fraStadionEingabeFenster in 'ui\stadion-eingabe\fraStadionEingabeFenster.pas' {StadionEingabeFenster},
   fraTeamEntfernenFenster in 'ui\team-eingabe\fraTeamEntfernenFenster.pas' {Form3},
   fraStadionEntfernenFenster in 'ui\stadion-eingabe\fraStadionEntfernenFenster.pas' {Form2},
-  clrVerlosung in 'ui\verlosung\clrVerlosung.pas',
+  clrVerlosungUI in 'ui\verlosung\clrVerlosungUI.pas',
   clrAnimation in 'ui\animations\clrAnimation.pas',
   clrDB in 'db\clrDB.pas',
   damTypes in 'types\damTypes.pas',

@@ -4,7 +4,8 @@ interface
 
 uses
   Vcl.ExtCtrls,
-  Vcl.Forms;
+  Vcl.Forms,
+  damTypes;
 
 type TSimulationCallbackFn = procedure(Sender: TObject; ANdx: Integer; ATeam1Tore, ATeam2Tore: Integer) of object;
 

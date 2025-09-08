@@ -3,6 +3,7 @@ unit clrUtils.StreamPosition;
 interface
 
 uses
+  System.Classes,
   System.SysUtils;
 
 /// <summary>
