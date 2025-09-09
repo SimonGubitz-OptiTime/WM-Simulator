@@ -79,10 +79,10 @@ type
         SQLDBName: ShortString = 'WM-Simulator-Test';
 
   end;
-// }
+
 implementation
 
-// {
+
 constructor TSQLDB<T>.Create(ATableName: String);
 begin
   inherited Create;
@@ -96,7 +96,7 @@ begin
   FDQuery1 := TFDQuery.Create(nil);
 
   // Versuchen zu verbinden
-  try 
+  try
     FDConnection1.LoginPrompt := false;
 
     with FDConnection1.Params do
@@ -143,7 +143,7 @@ begin
     AQuery.SQL.Clear;
     AQuery.SQL.Add(ASql);
     AQuery.Open;
-    if not AQuery.Eof then
+    if not AQuery.EOF then
     begin
       AQuery.First;
     end;
@@ -162,7 +162,7 @@ begin
     AQuery.SQL.Clear;
     AQuery.SQL.Add(ASql);
     AQuery.ExecSQL;
-    if not AQuery.Eof then
+    if not AQuery.EOF then
     begin
       AQuery.First;
     end;
@@ -176,11 +176,75 @@ begin
 end;
 
 function TSQLDB<T>.StrukturierteTabelleErhalten(): TList<T>;
+var
+  Names: TList<String>;
+  Name: String;
+
+  TempValue: TValue;
+  TempRes: T;
+
+  RttiContext: TRttiContext;
+  RttiType: TRttiType;
+  RttiFields: TArray<TRttiField>;
 begin
+
+  Result := TList<T>.Create;
+
+  Names := clrUtils.Rtti.TRttiUtils<T>.NamesAsArray();
+  while not FDQuery1.EOF do
+  begin
+
+
+    RttiContext := TRttiContext.Create;
+    try
+
+      RttiType := RttiContext.GetType(TypeInfo(T));
+      RttiFields := RttiType.GetFields;
+
+      if ( Names.Count <> Length(RttiFields) ) then
+      begin
+        raise Exception.Create('clrSQLDB.pas Error: Amount of Columns and Fields in Type do not match.');
+      end;
+
+      for Ndx := 0 to Names.Count - 1 do
+      begin
+        TempValue := clrUtils.RTTI.TRttiUtils<T>.StrToT(RttiFields[Ndx], FDQuery1.FieldByName(Name).AsString);
+
+        RttiFields[Ndx].SetValue(@TempRes, TempValue);
+      end;
+
+      Result.Add(TempRes);
+    finally
+      RttiContext.Free;
+    end;
+
+    FDQuery1.Next;
+  end;
 end;
 
 function TSQLDB<T>.UnstrukturierteTabelleErhalten(): TObjectList<TList<String>>;
+var
+  TempList: TList<String>;
 begin
+
+  Result := TObjectList<TList<String>>.Create;
+
+  Names := clrUtils.Rtti.TRttiUtils<T>.NamesAsArray();
+  while not FDQuery1.EOF do
+  begin
+
+    TempList := TList<String>.Create;
+
+    for Name in Names do
+    begin
+      TempList.Add(FDQuery1.FieldByName(Name).AsString);
+    end;
+
+    Result.Add(TempList);
+
+    FDQuery1.Next;
+
+  end;
 end;
 
 procedure TSQLDB<T>.AddDBUpdateEventListener(ACallbackFunction: TDBUpdateEvent);
@@ -218,7 +282,6 @@ var
 begin
 
   ColValues := TList<String>.Create;
-
   ColNames := clrUtils.Rtti.TRttiUtils<T>.NamesAsArray();
   ColVariables := clrUtils.Rtti.TRttiUtils<T>.VariablesAsArray(ARow);
 
@@ -234,7 +297,10 @@ begin
 
 
   Clipboard.AsText := SQLQuery;
-  
+
+
+  InitialisiereQuery(FDQuery1, FDConnection1, SQLQuery);
+
   // INSERT INTO :table_name ()
   // VALUES
 end;
