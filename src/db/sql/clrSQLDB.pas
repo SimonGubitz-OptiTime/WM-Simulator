@@ -4,23 +4,41 @@ interface
 
 // {
 uses
+  ClipBrd,
+  Data.DB,
+  FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client,
+  FireDAC.DatS,
+  FireDAC.DApt.Intf,
+  FireDAC.DApt,
+  FireDAC.Phys,
+  FireDAC.Phys.Intf,
+  FireDAC.Phys.MSSQL,
+  FireDAC.Phys.MSSQLDef,
+  FireDAC.Stan.Async,
+  FireDAC.Stan.Error,
+  FireDAC.Stan.Def,
+  FireDAC.Stan.Intf,
+  FireDAC.Stan.Option,
+  FireDAC.Stan.Param,
+  FireDAC.Stan.Pool,
+  FireDAC.UI.Intf,
+  FireDAC.VCLUI.Wait,
+  IniFiles,
+  SqlExpr,
   System.Classes,
   System.Generics.Collections,
   System.SysUtils,
-  SqlExpr,
+  System.RTTI,
+  Vcl.Dialogs,
+
+
   damTypes,
   clrDB,
   clrUtils.DB,
   clrUtils.Rtti,
-  //u_global_database,
-  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error,
-  FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool,
-  FireDAC.Stan.Async, FireDAC.Phys, FireDAC.VCLUI.Wait, FireDAC.Stan.Param,
-  FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, IniFiles,
-  FireDAC.Phys.MSSQL,
-  FireDAC.Phys.MSSQLDef,
-  Vcl.Dialogs;
+  clrUtils.SQL,
+  clrUtils.ArrToStr;
 
 
 type
@@ -32,6 +50,10 @@ type
       FSQLTabellenName: String;
       FDConnection1: TFDConnection;
       FDQuery1: TFDQuery;
+
+      function InitialisiereQuery(AQuery: TFDQuery; AFDConnection: TFDConnection; ASql: String): Boolean;
+      function InitialisiereQueryInsert(AQuery: TFDQuery; AFDConnection: TFDConnection; ASql: String): Boolean;
+
     public
       constructor Create(ATableName: String);
       destructor  Destroy; override;
@@ -71,6 +93,7 @@ begin
   // SQL
   FSQLTabellenName := clrUtils.DB.GetSQLDBName(ATableName);
   FDConnection1 := TFDConnection.Create(nil);
+  FDQuery1 := TFDQuery.Create(nil);
 
   // Versuchen zu verbinden
   try 
@@ -87,7 +110,7 @@ begin
 
     FDConnection1.Connected := true;
 
-    ShowMessage('Verbindung erfolgreich');
+    //ShowMessage('Verbindung erfolgreich');
   except
     ShowMessage('Verbindung zur Datenbank konnte nicht hergestellt werden.');
   end;
@@ -101,6 +124,7 @@ destructor TSQLDB<T>.Destroy;
 begin
   FDConnection1.Free;
   FDBUpdateEventListeners.Free;
+  FDQuery1.Free;
 
   inherited Destroy;
 end;
@@ -108,6 +132,47 @@ end;
 function TSQLDB<T>.GetInitialisiert: Boolean;
 begin
   Result := FInitialisiert;
+end;
+
+function TSQLDB<T>.InitialisiereQuery(AQuery: TFDQuery; AFDConnection: TFDConnection; ASql: string): boolean;
+begin
+  Result := True;
+  try
+    AQuery.Close;
+    AQuery.Connection := AFDConnection;
+    AQuery.SQL.Clear;
+    AQuery.SQL.Add(ASql);
+    AQuery.Open;
+    if not AQuery.Eof then
+    begin
+      AQuery.First;
+    end;
+  except
+    Result := False;
+    showMessage('Abfrage fehlgeschlagen.');
+  end;
+end;
+
+function TSQLDB<T>.InitialisiereQueryInsert(AQuery: TFDQuery; AFDConnection: TFDConnection; ASql: string): boolean;
+begin
+  Result := True;
+  try
+    AQuery.Close;
+    AQuery.Connection := AFDConnection;
+    AQuery.SQL.Clear;
+    AQuery.SQL.Add(ASql);
+    AQuery.ExecSQL;
+    if not AQuery.Eof then
+    begin
+      AQuery.First;
+    end;
+  except
+    on E: Exception do
+    begin
+      Result := False;
+     showMessage(E.Message + 'Abfrage fehlgeschlagen.');
+    end;
+  end;
 end;
 
 function TSQLDB<T>.StrukturierteTabelleErhalten(): TList<T>;
@@ -143,7 +208,33 @@ begin
 end;
 
 procedure TSQLDB<T>.ZeileHinzufuegen(ARow: T);
+var
+  Ndx: Integer;
+  SQLQuery: String;
+
+  ColNames: TList<String>;
+  ColValues: TList<String>;
+  ColVariables: TList<TValue>;
 begin
+
+  ColValues := TList<String>.Create;
+
+  ColNames := clrUtils.Rtti.TRttiUtils<T>.NamesAsArray();
+  ColVariables := clrUtils.Rtti.TRttiUtils<T>.VariablesAsArray(ARow);
+
+  for Ndx := 0 to ColVariables.Count - 1 do
+  begin
+    ColValues.Add(clrUtils.SQL.TSQLUtils.FormatVarToSQL(ColVariables[Ndx]));
+  end;
+
+  SQLQuery := '';
+  SQLQuery := SQLQuery + 'INSERT INTO ' + FSQLTabellenName + ' (' + clrUtils.ArrToStr.TArrToStrUtils<String>.FormatArrToStrSeparator(ColNames, ',') + ')' + sLineBreak;
+  SQLQuery := SQLQuery + 'VALUES (' + clrUtils.ArrToStr.TArrToStrUtils<String>.FormatArrToStrSeparator(ColValues, ',') + ')';
+  SQLQuery := SQLQuery + ';';
+
+
+  Clipboard.AsText := SQLQuery;
+  
   // INSERT INTO :table_name ()
   // VALUES
 end;
@@ -165,7 +256,10 @@ begin
     raise Exception.Create('Error: ColNames and ColValues not the same length.');
   end;
 
-  for Ndx := 0 to ColValues.Count do
+
+  SQLWhereQuery := 'WHERE';
+
+  for Ndx := 0 to ColValues.Count - 1 do
   begin
     SQLWhereQuery := SQLWhereQuery + sLineBreak + ColNames[Ndx] + '=' + ColValues[Ndx];
   end;
@@ -183,18 +277,14 @@ begin
 end;
 
 function TSQLDB<T>.ZeileFinden(AFinderFunction: TDBFinderFunction<T>; out ReturlVal: T): Boolean;
+var
+  SQLWhereQuery: String;
 begin
-  // SELECT * FROM :table_name (TRttiUtils<T>.TNamesAsString)
-  // WHERE
 
-  {
-  InitialisiereQuery(FDQuery1, FDConnection1, 'SELECT * FROM' +
-    FSQLTabellenName +
-    'WHERE x==1'
-  );
-  //}
 
+  // SQLWhereQuery := 'WHERE' + #13#10 + clrUtils.SQL.TSQLUtils<T>.FormatSQLCondition(ARow, '%s=%s AND');
+  Result := false;
 end;
-// }
+
 
 end.

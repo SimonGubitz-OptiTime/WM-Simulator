@@ -336,8 +336,6 @@ begin
         if ( Line <> ARowString ) then
         begin
           SL.Add(Line);
-          ShowMessage(ARowString);
-          ShowMessage(Line);
         end;
       end;
     finally

@@ -18,10 +18,14 @@ type
   public
     class function StrToT(ToConvert: TRttiField; ConvertValue: String): TValue; static;
     class function TToStr(TempRes: Pointer; ConvertField: TRttiField): String; static;
-    class function NamesAsArray(): TList<String>; static;
+
+    class function NamesAsArray(AsArray: Boolean = true): TList<String>; static;
     class function NamesAsString(): String; static;
-    class function ValuesAsArray(Values: T): TList<String>; static;
+
+    class function ValuesAsArray(Values: T; AsArray: Boolean = true): TList<String>; static;
     class function ValuesAsString(Values: T): String; static;
+
+    class function VariablesAsArray(Values: T): TList<TValue>; static;
   end;
 
 const
@@ -111,8 +115,7 @@ begin
   end;
 end;
 
-class function TRttiUtils<T>.TToStr(TempRes: Pointer;
-  ConvertField: TRttiField): String;
+class function TRttiUtils<T>.TToStr(TempRes: Pointer; ConvertField: TRttiField): String;
 var
   tempField: TValue;
   Ndx: Integer;
@@ -133,6 +136,8 @@ begin
       Result := Result + tempField.GetArrayElement(Ndx).ToString();
     end;
     Result := Result + ']';
+
+    ShowMessage(Result);
   end
   else
   begin
@@ -140,7 +145,7 @@ begin
   end;
 end;
 
-class function TRttiUtils<T>.NamesAsArray(): TList<String>;
+class function TRttiUtils<T>.NamesAsArray(AsArray: Boolean = true): TList<String>;
 var
   RttiContext: TRttiContext;
   RttiType: TRttiType;
@@ -150,8 +155,7 @@ begin
 
   Result := TList<String>.Create;
 
-  RttiFields := TObjectList<TRttiField>.Create;
-
+  RttiFields := TObjectList<TRttiField>.Create(false);
   try
 
     RttiType := RttiContext.GetType(TypeInfo(T));
@@ -243,7 +247,7 @@ begin
   end;
 end;
 
-class function TRttiUtils<T>.ValuesAsArray(Values: T): TList<String>;
+class function TRttiUtils<T>.ValuesAsArray(Values: T; AsArray: Boolean = true): TList<String>;
 var
   RttiContext: TRttiContext;
   RttiType: TRttiType;
@@ -268,6 +272,35 @@ begin
     finally
       RttiFields.Free;
     end;
+  finally
+    RttiContext.Free;
+  end;
+end;
+
+
+class function TRttiUtils<T>.VariablesAsArray(Values: T): TList<TValue>;
+var
+  RttiContext: TRttiContext;
+  RttiType: TRttiType;
+  RttiFields: TArray<TRttiField>;
+  Ndx: Integer;
+begin
+
+  Result := TList<TValue>.Create;
+
+  RttiContext := TRttiContext.Create;
+  try
+
+    RttiType := RttiContext.GetType(TypeInfo(T));
+    RttiFields := RttiType.GetFields;
+
+    for Ndx := 0 to Length(RttiFields) - 1 do
+    begin
+      Result.Add(RttiFields[Ndx].GetValue(@Values));
+      ShowMessage(RttiFields[Ndx].FieldType.Name); // string, string, cardinal
+      ShowMessage(Result[Ndx].ToString);
+    end;
+    
   finally
     RttiContext.Free;
   end;

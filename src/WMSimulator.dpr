@@ -31,7 +31,9 @@ uses
   clrKOPhase in 'ui\ko-phase\clrKOPhase.pas',
   clrSQLDB in 'db\sql\clrSQLDB.pas',
   clrUtils.StreamPosition in 'utils\streams\clrUtils.StreamPosition.pas',
-  clrVerlosung in 'verlosung\clrVerlosung.pas';
+  clrVerlosung in 'verlosung\clrVerlosung.pas',
+  clrUtils.SQL in 'utils\SQL\clrUtils.SQL.pas',
+  clrUtils.ArrToStr in 'utils\arrays\clrUtils.ArrToStr.pas';
 
 {$R *.res}
 

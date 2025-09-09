@@ -186,6 +186,8 @@
         <DCCReference Include="db\sql\clrSQLDB.pas"/>
         <DCCReference Include="utils\streams\clrUtils.StreamPosition.pas"/>
         <DCCReference Include="verlosung\clrVerlosung.pas"/>
+        <DCCReference Include="utils\SQL\clrUtils.SQL.pas"/>
+        <DCCReference Include="utils\arrays\clrUtils.ArrToStr.pas"/>
         <None Include="ModelSupport_WMSimulator\default.txaPackage"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
