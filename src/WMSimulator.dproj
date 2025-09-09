@@ -174,7 +174,7 @@
         <DCCReference Include="utils\arrays\clrUtils.FilterArray.pas"/>
         <DCCReference Include="utils\arrays\clrUtils.FixedArrays.pas"/>
         <DCCReference Include="state\clrState.pas"/>
-        <DCCReference Include="ui\gruppenphase\clrGruppenphase.pas"/>
+        <DCCReference Include="ui\gruppenphase\clrGruppenphaseUI.pas"/>
         <DCCReference Include="simulation\clrSimulation.pas"/>
         <DCCReference Include="utils\arrays\clrUtils.ShuffleArray.pas"/>
         <DCCReference Include="utils\match_standings\clrUtils.UpdateStandings.pas"/>
