@@ -111,8 +111,6 @@ begin
       FCurrentGroup := CurrentGroup;
       FCurrentGroupStandings.Clear;
 
-      FMatches := CreateUniqueMatches(FCurrentGroup);
-
       for Ndx := 0 to FMatches.Count - 1 do
       begin
 
