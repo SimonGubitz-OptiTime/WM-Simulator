@@ -20,7 +20,7 @@ uses
   clrUtils.FilterArray in 'utils\arrays\clrUtils.FilterArray.pas',
   clrUtils.FixedArrays in 'utils\arrays\clrUtils.FixedArrays.pas',
   clrState in 'state\clrState.pas',
-  clrGruppenphase in 'ui\gruppenphase\clrGruppenphase.pas',
+  clrGruppenphaseUI in 'ui\gruppenphase\clrGruppenphaseUI.pas',
   clrSimulation in 'simulation\clrSimulation.pas',
   clrUtils.ShuffleArray in 'utils\arrays\clrUtils.ShuffleArray.pas',
   clrUtils.UpdateStandings in 'utils\match_standings\clrUtils.UpdateStandings.pas',

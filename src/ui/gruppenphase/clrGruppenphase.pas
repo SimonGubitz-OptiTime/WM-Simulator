@@ -1,4 +1,4 @@
-﻿unit clrGruppenphase;
+﻿unit clrGruppenphaseUI;
 
 interface
 
@@ -31,11 +31,6 @@ type TGruppenphaseUI = class
     FCurrentGroupStandings: TDictionary<Byte, TTeamStatistik>;
 
 
-
-    /// <summary>
-    ///   Algorithmisch Spiele verteilen
-    /// </summary>
-    function CreateUniqueMatches(AGroup: TGruppe): TList<TPair<Byte, Byte>>;
     procedure CallbackSimulation(Sender: TObject; AMatchNdx: Integer; ATeam1Tore, ATeam2Tore: Integer);
 
   public
@@ -79,70 +74,6 @@ begin
   FCurrentGroupStandings.Destroy;
 
   inherited Destroy;
-end;
-
-/// .ID nutzen, da es schneller ist in Lookups, als ein TTeam mit SizeOf() ≈ 28 Bytes vs .ID 1Byte
-/// Nachteil -> man muss das Objekt in Gruppenphase wieder per Array Lookup finden, da ID fest zu dem globalen Array steht
-function TGruppenphaseUI.CreateUniqueMatches(AGroup: TGruppe): TList<TPair<Byte, Byte>>;
-var
-  Team: TTeam;
-  Team2: TTeam;
-  IDList: TList<Byte>;
-  FGameDict: TDictionary<Byte, TList<Byte>>;
-
-  AsArray: TArray<TPair<Byte, TList<Byte>>>;
-  ArrVal: TPair<Byte, Byte>;
-  Ndx: Integer;
-begin
-
-  FGameDict := TDictionary<Byte, TList<Byte>>.Create;
-
-  for Team in AGroup do
-  begin
-    for Team2 in AGroup do
-    begin
-      // wenn es den Wert bereits als Schlüssels gibt
-      if ( (FGameDict.ContainsKey(Team.ID)
-          and (FGameDict[Team.ID].Contains(Team2.ID)))  // ← TList.Contains
-        or (FGameDict.ContainsKey(Team2.ID))            // if the enemy has its own key already
-        or (Team.ID = Team2.ID)                         // if it is the same team
-      ) then
-      begin
-        continue;
-      end
-      else
-      begin
-        if ( FGameDict.ContainsKey(Team.ID) ) then
-        begin
-          IDList := FGameDict[Team.ID];
-        end
-        else
-        begin
-          IDList := TList<Byte>.Create;
-        end;
-
-        IDList.Add(Team2.ID);
-
-        FGameDict.AddOrSetValue(Team.ID, IDList);
-      end;
-    end;
-  end;
-
-  AsArray := FGameDict.ToArray;
-  Result := TList<TPair<Byte, Byte>>.Create;
-
-  for Ndx := 0 to Length(AsArray) - 1 do
-  begin
-    for var Value in AsArray[Ndx].Value do
-    begin
-      // ShowMessage(Format('Team %d spielt gegen Team %d', [AsArray[Ndx].Key, Value]));
-      ArrVal := TPair<Byte, Byte>.Create(AsArray[Ndx].Key, Value);
-      Result.Add(ArrVal); // ungültiger Zugriff
-    end;
-  end;
-
-  FGameDict.Free;
-
 end;
 
 procedure TGruppenphaseUI.GruppenphaseStarten(AGruppenphaseLabels: TArray<TLabel>; ASechzehntelfinaleLabels: TArray<TLabel>);
@@ -218,6 +149,14 @@ begin
       end;
 
 
+      {
+
+       ALLES HIERDRUNTER MUSS REFACTORED WERDEN
+
+       - Callback in Main.pas, wo Logic and UI may meet?
+
+      }
+
       // Extract the top 2 teams
       var x := clrUtils.SortHashMap.THashMapUtils.Sort<Byte, TTeamStatistik>(
         FCurrentGroupStandings,
@@ -246,7 +185,6 @@ begin
       );
 
       // und in den dafür vorgesehenen Grid reinschreiben
-      
 
     end;
 
@@ -313,12 +251,13 @@ begin
   clrUtils.UpdateStandings.GetUpdatedStandings(FState, ATeam1Tore, ATeam2Tore, Team1.ID, Team2.ID, TempStand1, TempStand2);
 
 
+  // ↓ pull this into clrSimulation ???
+
   // Update the CurrentGroup
   FCurrentGroupStandings.AddOrSetValue(Team1.ID, TempStand1);
   FCurrentGroupStandings.AddOrSetValue(Team2.ID, TempStand2);
 
   // Also write it in the global FState.Stands to have a non scoped saved state
-  // pull this into clrSimulation ???
   FState.AddOrSetTeamStandByID(Team1.ID, TempStand1);
   FState.AddOrSetTeamStandByID(Team2.ID, TempStand2);
 

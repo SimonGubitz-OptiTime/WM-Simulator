@@ -26,7 +26,7 @@ uses
   clrState,
   clrVerlosung,
   clrVerlosungUI,
-  clrGruppenphase,
+  clrGruppenphaseUI,
   clrKOPhase,
   fraTeamEingabeFenster,
   fraStadionEingabeFenster,
