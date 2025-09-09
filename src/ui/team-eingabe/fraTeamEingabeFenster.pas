@@ -220,14 +220,7 @@ begin
     begin
       // Alles außer ID, weil dies erst in clrVerlosungUI gesetzt wird
       // und Spieler Liste, da Array nicht verglichen werden können
-      Result := (
-            (Param.Name = NameEingabeFeld.Text)
-        and (Param.FIFACode = FIFACodeEingabeFeld.Text)
-        and (Param.TeamVerband = TTeamVerband(TeamVerbandEingabeBox.ItemIndex))
-        and (Param.HistorischeWMSiege = StrToInt(HistorischeSiegeEingabeFeld.Text))
-        and (Param.HeimstadionName = HeimstadionEingabeFeld.Text)
-        and (Param.TeamRanking = TTeamRanking(TeamRankingEingabeBox.ItemIndex))
-       );
+      Result := (Param.Name = NameEingabeFeld.Text);
     end,
     placeholderRow
   ) ) then

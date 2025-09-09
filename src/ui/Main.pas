@@ -21,6 +21,7 @@ uses
   Winapi.Windows,
   clrDB,
   clrCSVDB,
+  clrSQLDB,
   damTypes,
   clrState,
   clrVerlosung,
@@ -269,8 +270,14 @@ begin
   // Globaler State, wodrin alle Teams, Gruppen und Auskommen nach und nach gespeichert werden
 
   FState := TWMState.Create;
+  //{
   FTeamDB := TCSVDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
   FStadionDB := TCSVDB<TStadion>.Create(TStadionEingabeFenster.GetTableName);
+  // }
+  {
+  FTeamDB := TSQLDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
+  FStadionDB := TSQLDB<TStadion>.Create(TStadionEingabeFenster.GetTableName);
+  // }
 
   FVerlosungLogik := TVerlosungLogik.Create(FState, FTeamDB);
   FVerlosungUI := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12], FState);

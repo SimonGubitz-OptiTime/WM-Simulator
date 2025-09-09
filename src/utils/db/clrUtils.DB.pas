@@ -7,6 +7,7 @@ uses
 
 function GetTablesFilePath(AName: String): String; inline;
 function GetTablesDirPath: String; inline;
+function GetSQLDBName(AName: String): String;
 
 implementation
 
@@ -20,5 +21,11 @@ function GetTablesDirPath: String;
 begin
   Result := ExtractFilePath(Application.ExeName) + '..\..\..\database\';
 end;
+
+function GetSQLDBName(AName: String): String;
+begin
+  Result := 'dbo.WMSimulation' + AName;
+end;
+
 
 end.

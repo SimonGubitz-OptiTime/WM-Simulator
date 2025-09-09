@@ -23,7 +23,6 @@ type
     private
       FFS: TFileStream;
       FDBUpdateEventListeners: TList<TDBUpdateEvent>;
-      FTabellenName: String;
 
       /// Gibt an, ob die Datei bereit ist geöffnet und beschrieben zu werden
       FInitialisiert: Boolean;
@@ -63,10 +62,9 @@ begin
   inherited Create;
 
   FInitialisiert := false;
-  FTabellenName := ATableName;
 
   // Dateien
-  FDateiName := clrUtils.DB.GetTablesFilePath(FTabellenName);
+  FDateiName := clrUtils.DB.GetTablesFilePath(ATableName);
   FOrdnerPfad := clrUtils.DB.GetTablesDirPath();
   if not ( TDirectory.Exists(FOrdnerPfad) ) then
   begin
@@ -79,6 +77,7 @@ begin
   end;
 
   FFS := TFileStream.Create(FDateiName, fmOpenReadWrite or fmShareDenyNone); // or fmShareDenyWrite
+  FFS.Position := 0;
 
   FDBUpdateEventListeners := TList<TDBUpdateEvent>.Create();
 
@@ -145,8 +144,6 @@ begin
     SR := TStreamReader.Create(FFS);
 
     try
-      FFS.Position := 0;
-
       // headline ignorieren
       Line := SR.ReadLine();
 
@@ -160,6 +157,7 @@ begin
       end;
     finally
       SR.Free;
+      FFS.Position := 0;
     end;
   end;
 end;
@@ -198,6 +196,7 @@ begin
       end;
     finally
       SR.Free;
+      FFS.Position := 0;
     end;
   end;
 end;
@@ -225,6 +224,7 @@ begin
 
   finally
     SW.Free;
+    FFS.Position := 0;
   end;
 
   // Call the event listeners
@@ -296,6 +296,7 @@ begin
 
     finally
       SW.Free;
+      FFS.Position := 0;
     end;
   end;
 
@@ -315,37 +316,47 @@ end;
 
 procedure TCSVDB<T>.ZeileEntfernen(ARowString: String);
 var
-  ZeileZuEntfernen: T;
   SW: TStreamWriter;
   SR: TStreamReader;
-  RowStartPosition: Integer;
+  SL: TStringList;
+  Ndx: Integer;
+  Line: String;
 begin
 
-
-  SW := TStreamWriter.Create(FFS);
-  SR := TStreamReader.Create(FFS);
-
+  SL := TStringList.Create;
   try
+    SR := TStreamReader.Create(FFS);
 
-    // ignore headline
-    var headline: String;
-    headline :=    SR.ReadLine();
-    ShowMessage(headline);
+    try
+      SR.ReadLine();
 
-    while not(SR.EndOfStream) do
-    begin
-      RowStartPosition := clrUtils.StreamPosition.GetStreamPositionInChars(SR);
-      if (SR.ReadLine() = ARowString) then
+      while not(SR.EndOfStream) do
       begin
-        // Nur diese Zeile löschen
-        //   nichts, von             , bis biherige länge     - Anfang
-        SW.Write([], RowStartPosition, SR.BaseStream.Position - RowStartPosition);
-        Exit;
+        Line := SR.ReadLine();
+        if ( Line <> ARowString ) then
+        begin
+          SL.Add(Line);
+          ShowMessage(ARowString);
+          ShowMessage(Line);
+        end;
       end;
+    finally
+      SR.Free;
+      FFS.Position := 0;
+    end;
+
+
+    SW := TStreamWriter.Create(FFS);
+    try
+      for Ndx := 0 to SL.Count - 1 do
+      begin
+        SW.WriteLine(SL[Ndx]);
+      end;
+    finally
+      SW.Free;
     end;
   finally
-    SW.Free;
-    SR.Free;
+    SL.Free;
   end;
 
   CallDBUpdateEventListeners();
