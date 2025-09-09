@@ -12,7 +12,6 @@ uses
   clrDB,
   clrUtils.DB,
   clrUtils.Rtti,
-  //u_global_database,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error,
   FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool,
   FireDAC.Stan.Async, FireDAC.Phys, FireDAC.VCLUI.Wait, FireDAC.Stan.Param,
@@ -32,6 +31,10 @@ type
       FSQLTabellenName: String;
       FDConnection1: TFDConnection;
       FDQuery1: TFDQuery;
+
+      function InitialisiereQuery(AQuery: TFDQuery; AFDConnection: TFDConnection; ASql: String): Boolean;
+      function InitialisiereQueryInsert(AQuery: TFDQuery; AFDConnection: TFDConnection; ASql: String): Boolean;
+
     public
       constructor Create(ATableName: String);
       destructor  Destroy; override;
@@ -71,6 +74,7 @@ begin
   // SQL
   FSQLTabellenName := clrUtils.DB.GetSQLDBName(ATableName);
   FDConnection1 := TFDConnection.Create(nil);
+  FDQuery1 := TFDQuery.Create(nil);
 
   // Versuchen zu verbinden
   try 
@@ -87,7 +91,7 @@ begin
 
     FDConnection1.Connected := true;
 
-    ShowMessage('Verbindung erfolgreich');
+    //ShowMessage('Verbindung erfolgreich');
   except
     ShowMessage('Verbindung zur Datenbank konnte nicht hergestellt werden.');
   end;
@@ -108,6 +112,47 @@ end;
 function TSQLDB<T>.GetInitialisiert: Boolean;
 begin
   Result := FInitialisiert;
+end;
+
+function TSQLDB<T>.InitialisiereQuery(AQuery: TFDQuery; AFDConnection: TFDConnection; ASql: string): boolean;
+begin
+  Result := True;
+  try
+    AQuery.Close;
+    AQuery.Connection := AFDConnection;
+    AQuery.SQL.Clear;
+    AQuery.SQL.Add(ASql);
+    AQuery.Open;
+    if not AQuery.Eof then
+    begin
+      AQuery.First;
+    end;
+  except
+    Result := False;
+    showMessage('Abfrage fehlgeschlagen.');
+  end;
+end;
+
+function TSQLDB<T>.InitialisiereQueryInsert(AQuery: TFDQuery; AFDConnection: TFDConnection; ASql: string): boolean;
+begin
+  Result := True;
+  try
+    AQuery.Close;
+    AQuery.Connection := AFDConnection;
+    AQuery.SQL.Clear;
+    AQuery.SQL.Add(ASql);
+    AQuery.ExecSQL;
+    if not AQuery.Eof then
+    begin
+      AQuery.First;
+    end;
+  except
+    on E: Exception do
+    begin
+      Result := False;
+     showMessage(E.Message + 'Abfrage fehlgeschlagen.');
+    end;
+  end;
 end;
 
 function TSQLDB<T>.StrukturierteTabelleErhalten(): TList<T>;
@@ -183,15 +228,16 @@ begin
 end;
 
 function TSQLDB<T>.ZeileFinden(AFinderFunction: TDBFinderFunction<T>; out ReturlVal: T): Boolean;
+var
+  SQLQuery: String;
 begin
   // SELECT * FROM :table_name (TRttiUtils<T>.TNamesAsString)
   // WHERE
 
-  {
-  InitialisiereQuery(FDQuery1, FDConnection1, 'SELECT * FROM' +
-    FSQLTabellenName +
-    'WHERE x==1'
-  );
+  SQLQuery := 'SELECT * FROM ' + FSQLTabellenName + ' WHERE x==1';
+
+  // {
+  InitialisiereQuery(FDQuery1, FDConnection1, SQLQuery);
   //}
 
 end;

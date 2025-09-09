@@ -133,6 +133,8 @@ begin
       Result := Result + tempField.GetArrayElement(Ndx).ToString();
     end;
     Result := Result + ']';
+
+    ShowMessage(Result);
   end
   else
   begin
