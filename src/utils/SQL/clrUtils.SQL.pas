@@ -109,6 +109,21 @@ begin
     tkString, tkUString: Result := '''' + AVar.AsType<String> + '''';
     tkEnumeration: Result := '''' + AVar.ToString + '''';
     tkArray, tkDynArray: begin
+
+      //
+      {$IFDEF DEBUG}
+        ShowMessage(IntToStr(AVar.GetArrayLength));
+        var msg: String;
+        for var i := 0 to AVar.GetArrayLength() - 1 do
+        begin
+          ShowMessage(AVar.GetArrayElement(i).ToString);
+
+          if AVar.GetArrayElement(i).IsEmpty then
+            ShowMessage('Empty');
+        end;
+
+      {$ENDIF}
+
       Result := '''' + '[' + clrUtils.ArrToStr.TArrToStrUtils<TValue>.FormatArrToStr(
         function(Ndx: Integer): String
         begin
