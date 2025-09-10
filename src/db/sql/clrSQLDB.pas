@@ -328,7 +328,6 @@ begin
 
   Clipboard.AsText := SQLQuery;
 
-
   InitialisiereQueryInsert(FDQuery1, FDConnection1, SQLQuery);
 
   CallDBUpdateEventListeners();
