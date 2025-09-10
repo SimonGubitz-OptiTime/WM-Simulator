@@ -7,15 +7,25 @@ uses
   System.Rtti,
   System.SysUtils;
 
-type TArrToStrUtils<T> = class
+
+type
+  TItemProcessor<T> = reference to function(Item: T; Ndx: Integer);
+
+  TArrToStrUtils<T> = class
   public
     class function ArrToStr(AList: TList<T>): String; overload;
     class function FormatArrToStr(AList: TList<T>; AFormatString: String): String; overload;
+    class function FormatArrToStr(ItemPreProcessorFunc: TItemProcessor<T>; AList: TList<T>; AFormatString: String): String; overload;
     class function FormatArrToStrSeparator(AList: TList<T>; ASeparator: String): String; overload;
 
     class function ArrToStr(AArray: TArray<T>): String; overload;
     class function FormatArrToStr(AArray: TArray<T>; AFormatString: String): String; overload;
+    class function FormatArrToStr(ItemPreProcessorFunc: TItemProcessor<T>; AArray: TArray<T>; AFormatString: String): String; overload;
     class function FormatArrToStrSeparator(AArray: TArray<T>; ASeparator: String): String; overload;
+
+    // class function ArrToStr(AArray: TVarRec): String; overload;
+    // class function FormatArrToStr(AArray: TVarRec; AFormatString: String): String; overload;
+    // class function FormatArrToStrSeparator(AArray: TVarRec; ASeparator: String): String; overload;
 
 end;
 
@@ -89,6 +99,26 @@ begin
   end;
 end;
 
+// class function TArrToStrUtils<T>.ArrToStr(AArray: TVarRec): String;
+// var
+//   Ndx: Integer;
+// begin
+//   Result := Result + TValue.FromVarRec(AArray).AsType<String>;
+// end;
+
+// class function TArrToStrUtils<T>.FormatArrToStr(AArray: TVarRec; AFormatString: String): String;
+// var
+//   Ndx: Integer;
+// begin
+//   Result := Result + Format(AFormatString, [TValue.FromVarRec(AArray).AsType<String>]);
+// end;
+
+// class function TArrToStrUtils<T>.FormatArrToStrSeparator(AArray: TVarRec; ASeparator: String): String;
+// var
+//   Ndx: Integer;
+// begin
+//   Result := Result + TValue.FromVarRec(AArray).AsType<String>;
+// end;
 
 
 end.

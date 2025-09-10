@@ -67,7 +67,7 @@ type
       procedure   ZeileHinzufuegen(ARow: T);
       procedure   ZeileEntfernen(ARow: T); overload;
       procedure   ZeileEntfernen(ARowString: String); overload;
-      function    ZeileFinden(AFinderFunction: TDBFinderFunction<T>; out ReturlVal: T): Boolean;
+      function    ZeileFinden(AFinderFunction: TDBFinderFunction<T>; out ReturnValue: T): Boolean;
 
       function   GetInitialisiert: Boolean;
 
@@ -79,6 +79,19 @@ type
         SQLDBName: ShortString = 'WM-Simulator-Test';
 
   end;
+
+// ↓ move to utils somewhere
+{
+const
+  DelphiToSQLTypeDict<String, String>
+
+  "String": "varchar"
+  "Integer": "int"
+
+
+// }
+
+
 
 implementation
 
@@ -117,6 +130,8 @@ begin
 
 
   FDBUpdateEventListeners := TList<TDBUpdateEvent>.Create();
+
+  FInitialisiert := true;
 
 end;
 
@@ -178,7 +193,7 @@ end;
 function TSQLDB<T>.StrukturierteTabelleErhalten(): TList<T>;
 var
   Names: TList<String>;
-  Name: String;
+  Ndx: Integer;
 
   TempValue: TValue;
   TempRes: T;
@@ -191,6 +206,11 @@ begin
   Result := TList<T>.Create;
 
   Names := clrUtils.Rtti.TRttiUtils<T>.NamesAsArray();
+
+
+  var SQLQuery := 'SELECT * FROM ' + FSQLTabellenName;
+  InitialisiereQuery(FDQuery1, FDConnection1, SQLQuery);
+
   while not FDQuery1.EOF do
   begin
 
@@ -208,7 +228,7 @@ begin
 
       for Ndx := 0 to Names.Count - 1 do
       begin
-        TempValue := clrUtils.RTTI.TRttiUtils<T>.StrToT(RttiFields[Ndx], FDQuery1.FieldByName(Name).AsString);
+        TempValue := clrUtils.RTTI.TRttiUtils<T>.StrToT(RttiFields[Ndx], FDQuery1.FieldByName(Names[Ndx]).AsString);
 
         RttiFields[Ndx].SetValue(@TempRes, TempValue);
       end;
@@ -225,11 +245,20 @@ end;
 function TSQLDB<T>.UnstrukturierteTabelleErhalten(): TObjectList<TList<String>>;
 var
   TempList: TList<String>;
+  Names: TList<String>;
+  Name: String;
 begin
 
   Result := TObjectList<TList<String>>.Create;
 
   Names := clrUtils.Rtti.TRttiUtils<T>.NamesAsArray();
+  Result.AddRange(Names); // Überschriften
+
+
+  var SQLQuery := 'SELECT * FROM ' + FSQLTabellenName;
+  InitialisiereQuery(FDQuery1, FDConnection1, SQLQuery);
+
+
   while not FDQuery1.EOF do
   begin
 
@@ -299,16 +328,15 @@ begin
   Clipboard.AsText := SQLQuery;
 
 
-  InitialisiereQuery(FDQuery1, FDConnection1, SQLQuery);
+  InitialisiereQueryInsert(FDQuery1, FDConnection1, SQLQuery);
 
-  // INSERT INTO :table_name ()
-  // VALUES
+  CallDBUpdateEventListeners();
+
 end;
 
 procedure TSQLDB<T>.ZeileEntfernen(ARow: T);
 var
-  Ndx: Integer;
-  SQLWhereQuery: String;
+  SQLQuery: String;
 
   ColNames: TList<String>;
   ColValues: TList<String>;
@@ -323,33 +351,44 @@ begin
   end;
 
 
-  SQLWhereQuery := 'WHERE';
+  SQLQuery := '';
+  SQLQuery := SQLQuery + 'DELETE TOP(1) FROM ' + FSQLTabellenName + sLineBreak;
+  SQLQuery := SQLQuery + 'WHERE ' + clrUtils.SQL.TSQLUtils.FormatSQLCondition<T>(ARow, '%s=%s AND', '%s=%s;');
 
-  for Ndx := 0 to ColValues.Count - 1 do
-  begin
-    SQLWhereQuery := SQLWhereQuery + sLineBreak + ColNames[Ndx] + '=' + ColValues[Ndx];
-  end;
+  Clipboard.AsText := SQLQuery;
 
-  // Versuchen zu löschen, bei einer Exception Fehler ausgeben
-  //try
 
-  // DELETE FROM :table_name (TRttiUtils<T>.TNamesAsString)
-  // WHERE SQLWhereQuery
+  InitialisiereQueryInsert(FDQuery1, FDConnection1, SQLQuery);
+
+  CallDBUpdateEventListeners();
+
 end;
 
 procedure TSQLDB<T>.ZeileEntfernen(ARowString: String);
 begin
   raise Exception.Create('Dieser overload ist noch nicht implementiert worden.');
+
+  // ZeileEntfernen(DeserializeRowCSV(ARowString));
 end;
 
-function TSQLDB<T>.ZeileFinden(AFinderFunction: TDBFinderFunction<T>; out ReturlVal: T): Boolean;
+function TSQLDB<T>.ZeileFinden(AFinderFunction: TDBFinderFunction<T>; out ReturnValue: T): Boolean;
 var
-  SQLWhereQuery: String;
+  Row: T;
 begin
 
-
-  // SQLWhereQuery := 'WHERE' + #13#10 + clrUtils.SQL.TSQLUtils<T>.FormatSQLCondition(ARow, '%s=%s AND');
   Result := false;
+  ReturnValue := Default(T);
+
+  // Ineffizientes Design für SQL -> WHERE query
+  for Row in StrukturierteTabelleErhalten do
+  begin
+    if AFinderFunction(Row) then
+    begin
+      ReturnValue := Row;
+      Result := true;
+      Exit;
+    end;
+  end;
 end;
 
 

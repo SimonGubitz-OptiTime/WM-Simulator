@@ -7,7 +7,8 @@ uses
   System.RTTI,
   System.SysUtils,
   TypInfo,
-  Vcl.Dialogs;
+  Vcl.Dialogs,
+  clrUtils.ArrToStr;
 
 type
   // record, da es auf dem Stack lebt und keinen State braucht
@@ -125,6 +126,7 @@ begin
 
   if ( tempField.IsArray ) then
   begin
+
     Result := '[';
     for Ndx := 0 to tempField.GetArrayLength() - 1 do
     begin
@@ -137,7 +139,8 @@ begin
     end;
     Result := Result + ']';
 
-    ShowMessage(Result);
+    // Result := clrUtils.ArrToStr.TArrToStrUtils<String>.FormatArrToStr(tempField.AsVarRec, '[%s]');
+
   end
   else
   begin
@@ -260,7 +263,6 @@ begin
   RttiContext := TRttiContext.Create;
   try
     RttiFields := TObjectList<TRttiField>.Create(false);
-
     try
       RttiType := RttiContext.GetType(TypeInfo(T));
       RttiFields.AddRange(RttiType.GetFields);
@@ -290,17 +292,13 @@ begin
 
   RttiContext := TRttiContext.Create;
   try
-
     RttiType := RttiContext.GetType(TypeInfo(T));
     RttiFields := RttiType.GetFields;
 
     for Ndx := 0 to Length(RttiFields) - 1 do
     begin
       Result.Add(RttiFields[Ndx].GetValue(@Values));
-      ShowMessage(RttiFields[Ndx].FieldType.Name); // string, string, cardinal
-      ShowMessage(Result[Ndx].ToString);
     end;
-    
   finally
     RttiContext.Free;
   end;

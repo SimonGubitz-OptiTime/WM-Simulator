@@ -110,12 +110,6 @@ begin
     Exit;
   end;
 
-  // if ( StrToInt(ZuschauerkapazitaetEingabeFeld.Text) > High(UInt32) ) then
-  // begin
-  //  ShowMessage('Diese Zahl ist zu groß - bitte tragen sie eine gültige Zahl ein.');
-  //  Exit;
-  // end;
-
   Stadion := Default (TStadion);
 
   Stadion.Name := NameEingabeFeld.Text;

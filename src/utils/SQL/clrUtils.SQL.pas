@@ -3,6 +3,10 @@ unit clrUtils.SQL;
 interface
 
 uses
+  {$IFDEF DEBUG}
+  Vcl.Dialogs,
+  {$ENDIF}
+
   System.RTTI,
   System.SysUtils,
   System.TypInfo,
@@ -15,7 +19,8 @@ type
       /// <summary>
       /// string wird z.B. zu 'string'
       /// <summary>
-      class function FormatSQLCondition<T: record>(ARow: T; AFormatString: String = '%s=%s'): String;
+      class function FormatSQLCondition<T: record>(ARow: T; AFormatString: String = '%s=%s'): String; overload;
+      class function FormatSQLCondition<T: record>(ARow: T; AFormatString: String = '%s=%s AND'; ACustomLastFormatString: String = '%s=%s;'): String; overload;
       class function FormatVarToSQL<T>(AVar: T): String; overload;
       class function FormatVarToSQL(AVar: TValue): String; overload;
 
@@ -30,7 +35,6 @@ var
   RttiType: TRttiType;
   RttiFields: TArray<TRttiField>;
   Ndx: Integer;
-  TempRes: String;
 begin
 
   RttiContext := TRttiContext.Create;
@@ -46,58 +50,78 @@ begin
         Result := Result + sLineBreak;
       end;
 
-
-      if ( (RttiType.TypeKind = tkString) or (RttiType.TypeKind = tkUString) ) then
-      begin
-        Result := Result + Format(AFormatString, [RttiFields[Ndx].Name, '''' + clrUtils.RTTI.TRttiUtils<T>.TToStr(@ARow, RttiFields[Ndx]) + '''']);
-      end
-      else
-      begin
-        Result := Result + Format(AFormatString, [RttiFields[Ndx].Name, clrUtils.RTTI.TRttiUtils<T>.TToStr(@ARow, RttiFields[Ndx])]);
-      end
-
-
-
-
+      Result := Result + Format(AFormatString, [RttiFields[Ndx].Name, FormatVarToSQL(RttiFields[Ndx].GetValue(@ARow))]);
 
     end;
   finally
     RttiContext.Free;
   end;
+end;
 
-  {
-  case AType.TypeInfo.Kind of
-    tkString, tkUString: Result := AColumnName + '=' + '''' + TValue.GetValue(AType).ToString + '''';
-    else      Result := AColumnName + '=' + TValue.From(AType).ToString;
+class function TSQLUtils.FormatSQLCondition<T>(ARow: T; AFormatString: String = '%s=%s AND'; ACustomLastFormatString: String = '%s=%s;'): String;
+var
+  RttiContext: TRttiContext;
+  RttiType: TRttiType;
+  RttiFields: TArray<TRttiField>;
+  Ndx: Integer;
+begin
+
+  RttiContext := TRttiContext.Create;
+
+  try
+    RttiType := RttiContext.GetType(TypeInfo(T));
+    RttiFields := RttiType.GetFields;
+
+    for Ndx := 0 to Length(RttiFields) - 1 do
+    begin
+      if Ndx > 0 then
+      begin
+        Result := Result + sLineBreak;
+      end;
+
+      if Ndx < Length(RttiFields) - 1 then
+      begin
+        Result := Result + Format(AFormatString, [RttiFields[Ndx].Name, FormatVarToSQL(RttiFields[Ndx].GetValue(@ARow))]);
+      end
+      else if Ndx = Length(RttiFields) - 1 then
+      begin
+        Result := Result + Format(ACustomLastFormatString, [RttiFields[Ndx].Name, FormatVarToSQL(RttiFields[Ndx].GetValue(@ARow))]);
+      end;
+
+    end;
+  finally
+    RttiContext.Free;
   end;
-  //}
-
 end;
 
 class function TSQLUtils.FormatVarToSQL<T>(AVar: T): String;
 var
   MyVar: TValue;
 begin
-
   MyVar := TValue.From<T>(AVar);
-
-  if ( (MyVar.TypeInfo.Kind = tkString)
-    or (MyVar.TypeInfo.Kind = tkUString) ) then
-  begin
-    Result := '''' + MyVar.AsType<String> + '''';
-  end
-  else
-  begin
-    Result := MyVar.AsType<String>;
-  end;
+  Result := FormatVarToSQL(MyVar);
 end;
 
 class function TSQLUtils.FormatVarToSQL(AVar: TValue): String;
 begin
   case AVar.TypeInfo.Kind of
     tkString, tkUString: Result := '''' + AVar.AsType<String> + '''';
-    tkInteger, tkFloat: Result := AVar.ToString;
-    else Result := AVar.AsType<String>;
+    tkEnumeration: Result := '''' + AVar.ToString + '''';
+    tkArray, tkDynArray: begin
+      {$IFDEF DEBUG}
+        ShowMessage('array !!!');
+      {$ENDIF}
+      Result := clrUtils.ArrToStr.TArrToStrUtils<TValue>.FormatArrToStr(
+        function(Value: TValue; Ndx: Integer): String
+        begin
+          Result := Value.GetArrayElement(Ndx).ToString;
+        end,
+        AVar,
+        '[%s]',
+        ','
+      );
+    end
+    else Result := AVar.ToString;
   end;
 end;
 
