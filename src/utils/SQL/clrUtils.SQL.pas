@@ -112,11 +112,13 @@ begin
       Result := '''' + '[' + clrUtils.ArrToStr.TArrToStrUtils<TValue>.FormatArrToStr(
         function(Ndx: Integer): String
         begin
-          Result := AVar.GetArrayElement(Ndx).ToString;
+          var l := AVar.GetArrayElement(Ndx).ToString;
+          ShowMessage(l);
+          Result := l;
         end,
         AVar.GetArrayLength,
         '%s,',
-        '%s,'
+        '%s'
       ) + ']' + '''';
 
     end
