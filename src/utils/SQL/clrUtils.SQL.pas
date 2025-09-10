@@ -115,6 +115,7 @@ begin
           Result := AVar.GetArrayElement(Ndx).ToString;
         end,
         AVar.GetArrayLength,
+        '%s,',
         '%s,'
       ) + ']' + '''';
 
