@@ -9,18 +9,18 @@ uses
 
 
 type
-  TItemProcessor<T> = reference to function(Item: T; Ndx: Integer);
+  TItemProcessor = reference to function(Ndx: Integer): String;
 
   TArrToStrUtils<T> = class
   public
     class function ArrToStr(AList: TList<T>): String; overload;
     class function FormatArrToStr(AList: TList<T>; AFormatString: String): String; overload;
-    class function FormatArrToStr(ItemPreProcessorFunc: TItemProcessor<T>; AList: TList<T>; AFormatString: String): String; overload;
     class function FormatArrToStrSeparator(AList: TList<T>; ASeparator: String): String; overload;
+
+    class function FormatArrToStr(ItemPreProcessorFunc: TItemProcessor; ALength: Integer; AFormatString: String): String; overload;
 
     class function ArrToStr(AArray: TArray<T>): String; overload;
     class function FormatArrToStr(AArray: TArray<T>; AFormatString: String): String; overload;
-    class function FormatArrToStr(ItemPreProcessorFunc: TItemProcessor<T>; AArray: TArray<T>; AFormatString: String): String; overload;
     class function FormatArrToStrSeparator(AArray: TArray<T>; ASeparator: String): String; overload;
 
     // class function ArrToStr(AArray: TVarRec): String; overload;
@@ -48,6 +48,16 @@ begin
   for Ndx := 0 to AList.Count - 1 do
   begin
     Result := Result + Format(AFormatString, [TValue.From<T>(AList[Ndx]).AsType<String>]);
+  end;
+end;
+
+class function TArrToStrUtils<T>.FormatArrToStr(ItemPreProcessorFunc: TItemProcessor; ALength: Integer; AFormatString: String): String;
+var
+  Ndx: Integer;
+begin
+  for Ndx := 0 to ALength - 1 do
+  begin
+    Result := Result + Format(AFormatString, [ItemPreProcessorFunc(Ndx)]);
   end;
 end;
 

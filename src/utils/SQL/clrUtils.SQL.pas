@@ -10,7 +10,8 @@ uses
   System.RTTI,
   System.SysUtils,
   System.TypInfo,
-  clrUtils.RTTI;
+  clrUtils.RTTI,
+  clrUtils.ArrToStr;
 
 type
   TSQLUtils = class
@@ -108,18 +109,15 @@ begin
     tkString, tkUString: Result := '''' + AVar.AsType<String> + '''';
     tkEnumeration: Result := '''' + AVar.ToString + '''';
     tkArray, tkDynArray: begin
-      {$IFDEF DEBUG}
-        ShowMessage('array !!!');
-      {$ENDIF}
-      Result := clrUtils.ArrToStr.TArrToStrUtils<TValue>.FormatArrToStr(
-        function(Value: TValue; Ndx: Integer): String
+      Result := '''' + '[' + clrUtils.ArrToStr.TArrToStrUtils<TValue>.FormatArrToStr(
+        function(Ndx: Integer): String
         begin
-          Result := Value.GetArrayElement(Ndx).ToString;
+          Result := AVar.GetArrayElement(Ndx).ToString;
         end,
-        AVar,
-        '[%s]',
-        ','
-      );
+        AVar.GetArrayLength,
+        '%s,'
+      ) + ']' + '''';
+
     end
     else Result := AVar.ToString;
   end;

@@ -228,7 +228,8 @@ begin
 
       for Ndx := 0 to Names.Count - 1 do
       begin
-        TempValue := clrUtils.RTTI.TRttiUtils<T>.StrToT(RttiFields[Ndx], FDQuery1.FieldByName(Names[Ndx]).AsString);
+        var ref := FDQuery1.FieldByName(Names[Ndx]).AsString;
+        TempValue := clrUtils.RTTI.TRttiUtils<T>.StrToT(RttiFields[Ndx], ref);
 
         RttiFields[Ndx].SetValue(@TempRes, TempValue);
       end;
