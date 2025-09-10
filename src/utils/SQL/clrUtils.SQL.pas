@@ -94,15 +94,11 @@ end;
 
 class function TSQLUtils.FormatVarToSQL(AVar: TValue): String;
 begin
-
-
   case AVar.TypeInfo.Kind of
     tkString, tkUString: Result := '''' + AVar.AsType<String> + '''';
-    tkInteger: Result := 'Integer';
+    tkInteger, tkFloat: Result := AVar.ToString;
     else Result := AVar.AsType<String>;
   end;
-
-
 end;
 
 
