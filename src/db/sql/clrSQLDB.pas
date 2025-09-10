@@ -51,6 +51,11 @@ type
       FDConnection1: TFDConnection;
       FDQuery1: TFDQuery;
 
+      /// <summary>
+      /// Erstellt eine neue Tabelle mit FSQLTabellenName und mit den 
+      /// <summary>
+      procedure CreateTable;
+
       function InitialisiereQuery(AQuery: TFDQuery; AFDConnection: TFDConnection; ASql: String): Boolean;
       function InitialisiereQueryInsert(AQuery: TFDQuery; AFDConnection: TFDConnection; ASql: String): Boolean;
 
@@ -80,23 +85,14 @@ type
 
   end;
 
-// ↓ move to utils somewhere
-{
-const
-  DelphiToSQLTypeDict<String, String>
-
-  "String": "varchar"
-  "Integer": "int"
-
-
-// }
-
-
 
 implementation
 
 
 constructor TSQLDB<T>.Create(ATableName: String);
+var
+  TableNames: TStringList;
+  placeholder: Integer;
 begin
   inherited Create;
 
@@ -104,7 +100,7 @@ begin
   FInitialisiert := false;
 
   // SQL
-  FSQLTabellenName := clrUtils.DB.GetSQLDBName(ATableName);
+  FSQLTabellenName := clrUtils.DB.GetSQLTableName(ATableName);
   FDConnection1 := TFDConnection.Create(nil);
   FDQuery1 := TFDQuery.Create(nil);
 
@@ -129,6 +125,22 @@ begin
   end;
 
 
+  // Tabellen abfragen und erstellen, sollte diese nicht existieren
+  TableNames := TStringList.Create;
+  FDConnection1.GetTableNames(SQLDBName, 'dbo', '', TableNames, [osMy], [tkTable], false); // osMy - as "sa" Server Admin
+
+  if ( not(TableNames.Find(FSQLTabellenName, placeholder)) ) then
+  begin
+    // Create new table
+    CreateTable;
+  end
+  else
+  begin
+    ShowMessage(FSQLTabellenName + ' existiert');
+  end;
+  TableNames.Free;
+
+
   FDBUpdateEventListeners := TList<TDBUpdateEvent>.Create();
 
   FInitialisiert := true;
@@ -147,6 +159,18 @@ end;
 function TSQLDB<T>.GetInitialisiert: Boolean;
 begin
   Result := FInitialisiert;
+end;
+
+procedure TSQLDB<T>.CreateTable;
+var
+  SQLQuery: String;
+begin
+  ShowMessage('creating table for ' + FSQLTabellenName);
+
+  SQLQuery := 'CREATE TABLE dbo.' + FSQLTabellenName + ' (' + clrUtils.SQL.TSQLUtils.FormatSQLConditionNameType<T>(Default(T), '%s %s,', '%s %s') + ')';
+
+  Clipboard.AsText := SQLQuery;
+
 end;
 
 function TSQLDB<T>.InitialisiereQuery(AQuery: TFDQuery; AFDConnection: TFDConnection; ASql: string): boolean;
@@ -353,7 +377,7 @@ begin
 
   SQLQuery := '';
   SQLQuery := SQLQuery + 'DELETE TOP(1) FROM ' + FSQLTabellenName + sLineBreak;
-  SQLQuery := SQLQuery + 'WHERE ' + clrUtils.SQL.TSQLUtils.FormatSQLCondition<T>(ARow, '%s=%s AND', '%s=%s;');
+  SQLQuery := SQLQuery + 'WHERE ' + clrUtils.SQL.TSQLUtils.FormatSQLConditionNameValue<T>(ARow, '%s=%s AND', '%s=%s;');
 
   Clipboard.AsText := SQLQuery;
 
