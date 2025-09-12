@@ -10,7 +10,7 @@ type TGruppenphaseLogik = class
     private
 
       FField: String;
-
+      FMatches: TList<TPair<Byte, Byte>>;
 
       /// <summary>
       ///   Algorithmisch Spiele verteilen
@@ -23,6 +23,9 @@ type TGruppenphaseLogik = class
       destructor Destroy;
 
       procedure Starten;
+
+      // ↓ ???
+      // procedure AddMatchFinishCallback();
 
   end;
 
@@ -102,6 +105,12 @@ begin
 
 end;
 
+procedure TGruppenphaseLogik.Starten();
+begin
+
+  FMatches := CreateUniqueMatches();
+
+end;
 
 // think of a way to get the Callback here
 // or have the global state update really in the simulation

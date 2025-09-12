@@ -16,7 +16,12 @@ uses
 
 type
   TSQLUtils = class
+    private
+      FDelphiToSQLTypeDict: TDictionary<TTypeKind, String>;
     public
+
+      class constructor Create;
+      class destructor Destroy;
 
       /// <summary>
       /// string wird z.B. zu 'string'
@@ -33,23 +38,26 @@ type
     private
   end;
 
-// ↓ move to utils somewhere
-{
-const
-  DelphiToSQLTypeDict := TDict<TTypeKind, String>
-
-  tkUString: 'varchar(50)'
-  tkString: 'varchar(50)'
-  tkInt: 'int'
-  tkByte: 'char'
-  tkArray: ''
-  tkEnumeration: 'varchar(50)'
-
-
-// }
-
 
 implementation
+
+class constructor TSQLUtils.Create;
+begin
+  FDelphiToSQLTypeDict := TDictionary<TTypeKind, String>.Create;
+
+  // Dies ist keine offizielle 1:1-Übersetzung, sondern um eine App spezifische Adaption
+  FDelphiToSQLTypeDict.AddOrSetValue(tkUString, 'varchar(50)')
+  FDelphiToSQLTypeDict.AddOrSetValue(tkString, 'varchar(50)')
+  FDelphiToSQLTypeDict.AddOrSetValue(tkEnumeration, 'varchar(50)')
+  FDelphiToSQLTypeDict.AddOrSetValue(tkInt, 'int')
+  FDelphiToSQLTypeDict.AddOrSetValue(tkByte, 'char')
+  FDelphiToSQLTypeDict.AddOrSetValue(tkArray, 'varchar(50)')
+end;
+
+class destructor TSQLUtils.Destroy;
+begin
+  FDelphiToSQLTypeDict.Free;
+end;
 
 class function TSQLUtils.FormatSQLConditionNameValue<T>(ARow: T; AFormatString: String = '%s=%s'): String;
 var
@@ -137,8 +145,8 @@ begin
         Result := Result + sLineBreak;
       end;
 
-
-      Result := Result + Format(AFormatString, [RttiFields[Ndx].Name, RttiFields[Ndx].FieldType.Name]);
+      var _Type := FDelphiToSQLTypeDict[RttiFields[Ndx].FieldType.TypeKind];
+      Result := Result + Format(AFormatString, [RttiFields[Ndx].Name, _Type]);
 
     end;
   finally
@@ -167,13 +175,16 @@ begin
         Result := Result + sLineBreak;
       end;
 
+
+      var _Type := FDelphiToSQLTypeDict[RttiFields[Ndx].FieldType.TypeKind];
+
       if Ndx < Length(RttiFields) - 1 then
       begin
-        Result := Result + Format(AFormatString, [RttiFields[Ndx].Name, RttiFields[Ndx].FieldType.Name]);
+        Result := Result + Format(AFormatString, [RttiFields[Ndx].Name, _Type]);
       end
       else if Ndx = Length(RttiFields) - 1 then
       begin
-        Result := Result + Format(ACustomLastFormatString, [RttiFields[Ndx].Name, RttiFields[Ndx].FieldType.Name]);
+        Result := Result + Format(ACustomLastFormatString, [RttiFields[Ndx].Name, _Type]);
       end;
 
     end;

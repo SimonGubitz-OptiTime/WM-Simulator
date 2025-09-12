@@ -106,11 +106,6 @@ begin
     {
     clrUtils.UpdateStandings.GetUpdatedStandings(FState, ATeam1Tore, ATeam2Tore, Team1.ID, Team2.ID, TempStand1, TempStand2);
 
-
-    // Update the CurrentGroup
-    FCurrentGroupStandings.AddOrSetValue(Team1.ID, TempStand1);
-    FCurrentGroupStandings.AddOrSetValue(Team2.ID, TempStand2);
-
     // Also write it in the global FState.Stands to have a non scoped saved state
     // pull this into clrSimulation ???
     FState.AddOrSetTeamStandByID(Team1.ID, TempStand1);

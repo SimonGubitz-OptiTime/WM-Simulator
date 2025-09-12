@@ -64,7 +64,9 @@ begin
   for Ndx := 0 to AList.Count - 1 do
   begin
     if Ndx > 0 then
+    begin
       Result := Result + ASeparator;
+    end;
     Result := Result + TValue.From<T>(AList[Ndx]).AsType<String>;
   end;
 end;
@@ -74,7 +76,9 @@ var
   Ndx: Integer;
 begin
   for Ndx := 0 to ALength - 1 do
+  begin
     Result := Result + Format(AFormatString, [ItemPreProcessorFunc(Ndx)]);
+  end;
 end;
 
 class function TArrToStrUtils<T>.FormatArrToStr(ItemPreProcessorFunc: TItemProcessor; ALength: Integer; AFormatString, ACustomLastFormatString: String): String;
