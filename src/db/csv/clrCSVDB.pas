@@ -33,7 +33,6 @@ type
       FCachedUnstructuredCSV: TObjectList<TList<String>>;
 
       procedure CallDBUpdateEventListeners();
-      procedure AddCSVTableToDB(CSVObject: T);
 
     public
       constructor Create(ATableName: String);
@@ -201,36 +200,6 @@ begin
   end;
 end;
 
-procedure TCSVDB<T>.AddCSVTableToDB(CSVObject: T);
-var
-  SW: TStreamWriter;
-begin
-
-  SW := TStreamWriter.Create(FFS);
-
-
-  try
-    FFS.Position := 0;
-
-
-    SW.WriteLine(clrUtils.CSV.TCSVUtils<T>.GetCSVHeaderAsString);
-    SW.WriteLine(clrUtils.CSV.TCSVUtils<T>.SerializeRowCSV(CSVObject));
-
-    // Append to cache as well
-    FCachedUnstructuredCSV.Add(clrUtils.CSV.TCSVUtils<T>.ParseRowCSVToArray(CSVObject));
-    FCachedCSV.Add(CSVObject);
-
-    FInitialisiert := true;
-
-  finally
-    SW.Free;
-    FFS.Position := 0;
-  end;
-
-  // Call the event listeners
-  CallDBUpdateEventListeners();
-end;
-
 procedure TCSVDB<T>.AddDBUpdateEventListener(ACallbackFunction: TDBUpdateEvent);
 begin
 
@@ -266,38 +235,26 @@ var
   SW: TStreamWriter;
   WriterString: String;
 begin
+  SW := TStreamWriter.Create(FFS);
 
-  if ( not(FileExists(FDateiName))
-       or (FFS.size = 0)
-  ) then
-  begin
-    AddCSVTableToDB(ARowValues);
-    Exit;
-  end
-  else
-  begin
-
-    SW := TStreamWriter.Create(FFS);
-
-    try
-      SW.BaseStream.Position := FFS.size;
-      // Position in Bytes in the Stream
-      if SW.Encoding = TEncoding.Unicode then
-      begin
-        SW.BaseStream.Position := Floor(FFS.size / 2); // 2 byte pro character
-      end;
-
-      WriterString := clrUtils.CSV.TCSVUtils<T>.SerializeRowCSV(ARowValues);
-      SW.WriteLine(WriterString);
-
-      // Append to cache as well
-      {FCachedCSV.Add(ARowValues);
-      FCachedUnstructuredCSV.Add(clrUtils.CSV.TCSVUtils<T>.ParseRowCSVToArray(ARowValues));}
-
-    finally
-      SW.Free;
-      FFS.Position := 0;
+  try
+    SW.BaseStream.Position := FFS.size;
+    // Position in Bytes in the Stream
+    if SW.Encoding = TEncoding.Unicode then
+    begin
+      SW.BaseStream.Position := Floor(FFS.size / 2); // 2 byte pro character
     end;
+
+    WriterString := clrUtils.CSV.TCSVUtils<T>.SerializeRowCSV(ARowValues);
+    SW.WriteLine(WriterString);
+
+    // Append to cache as well
+    {FCachedCSV.Add(ARowValues);
+    FCachedUnstructuredCSV.Add(clrUtils.CSV.TCSVUtils<T>.ParseRowCSVToArray(ARowValues));}
+
+  finally
+    SW.Free;
+    FFS.Position := 0;
   end;
 
   // Call the event listeners

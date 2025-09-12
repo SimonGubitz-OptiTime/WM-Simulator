@@ -8,6 +8,7 @@ uses
   {$ENDIF}
 
   System.RTTI,
+  System.Generics.Collections,
   System.SysUtils,
   System.TypInfo,
   clrUtils.RTTI,
@@ -16,19 +17,27 @@ uses
 type
   TSQLUtils = class
     private
-      class var FDelphiToSQLTypeDict: TDictionary<TTypeKind, String>;
+      FDelphiToSQLTypeDict: TDictionary<TTypeKind, String>;
     public
+
+      class constructor Create;
+      class destructor Destroy;
 
       /// <summary>
       /// string wird z.B. zu 'string'
       /// <summary>
-      class function FormatSQLCondition<T: record>(ARow: T; AFormatString: String = '%s=%s'): String; overload;
-      class function FormatSQLCondition<T: record>(ARow: T; AFormatString: String = '%s=%s AND'; ACustomLastFormatString: String = '%s=%s;'): String; overload;
+      class function FormatSQLConditionNameValue<T: record>(ARow: T; AFormatString: String = '%s=%s'): String; overload;
+      class function FormatSQLConditionNameValue<T: record>(ARow: T; AFormatString: String = '%s=%s AND'; ACustomLastFormatString: String = '%s=%s;'): String; overload;
+
+      class function FormatSQLConditionNameType<T: record>(ARow: T; AFormatString: String = '%s=%s'): String; overload;
+      class function FormatSQLConditionNameType<T: record>(ARow: T; AFormatString: String = '%s=%s AND'; ACustomLastFormatString: String = '%s=%s;'): String; overload;
+
       class function FormatVarToSQL<T>(AVar: T): String; overload;
       class function FormatVarToSQL(AVar: TValue): String; overload;
 
     private
   end;
+
 
 implementation
 
@@ -37,13 +46,12 @@ begin
   FDelphiToSQLTypeDict := TDictionary<TTypeKind, String>.Create;
 
   // Dies ist keine offizielle 1:1-Übersetzung, sondern um eine App spezifische Adaption
-  FDelphiToSQLTypeDict.AddOrSetValue(tkUString, 'varchar(50)');
-  FDelphiToSQLTypeDict.AddOrSetValue(tkString, 'varchar(50)');
-  FDelphiToSQLTypeDict.AddOrSetValue(tkEnumeration, 'varchar(50)');
-  FDelphiToSQLTypeDict.AddOrSetValue(tkDynArray, 'varchar(50)'); // Spieler Liste wird als
-  FDelphiToSQLTypeDict.AddOrSetValue(tkInteger, 'int');
-  FDelphiToSQLTypeDict.AddOrSetValue(tkChar, 'char');
-  FDelphiToSQLTypeDict.AddOrSetValue(tkArray, 'varchar(50)');
+  FDelphiToSQLTypeDict.AddOrSetValue(tkUString, 'varchar(50)')
+  FDelphiToSQLTypeDict.AddOrSetValue(tkString, 'varchar(50)')
+  FDelphiToSQLTypeDict.AddOrSetValue(tkEnumeration, 'varchar(50)')
+  FDelphiToSQLTypeDict.AddOrSetValue(tkInt, 'int')
+  FDelphiToSQLTypeDict.AddOrSetValue(tkByte, 'char')
+  FDelphiToSQLTypeDict.AddOrSetValue(tkArray, 'varchar(50)')
 end;
 
 class destructor TSQLUtils.Destroy;
@@ -80,7 +88,7 @@ begin
   end;
 end;
 
-class function TSQLUtils.FormatSQLCondition<T>(ARow: T; AFormatString: String = '%s=%s AND'; ACustomLastFormatString: String = '%s=%s;'): String;
+class function TSQLUtils.FormatSQLConditionNameValue<T>(ARow: T; AFormatString: String = '%s=%s AND'; ACustomLastFormatString: String = '%s=%s;'): String;
 var
   RttiContext: TRttiContext;
   RttiType: TRttiType;
@@ -168,8 +176,6 @@ begin
       end;
 
 
-      ShowMessage(RttiFields[Ndx].FieldType.Name);
-
       var _Type := FDelphiToSQLTypeDict[RttiFields[Ndx].FieldType.TypeKind];
 
       if Ndx < Length(RttiFields) - 1 then
@@ -196,37 +202,35 @@ begin
 end;
 
 class function TSQLUtils.FormatVarToSQL(AVar: TValue): String;
+var
+  Ndx: Integer;
+  TempList: TList<String>;
 begin
   case AVar.TypeInfo.Kind of
     tkString, tkUString: Result := '''' + AVar.AsType<String> + '''';
     tkEnumeration: Result := '''' + AVar.ToString + '''';
     tkArray, tkDynArray: begin
 
-      //
-      {$IFDEF DEBUG}
-        ShowMessage(IntToStr(AVar.GetArrayLength));
-        var msg: String;
-        for var i := 0 to AVar.GetArrayLength() - 1 do
-        begin
-          ShowMessage(AVar.GetArrayElement(i).ToString);
+      TempList := TList<String>.Create;
 
-          if AVar.GetArrayElement(i).IsEmpty then
-            ShowMessage('Empty');
-        end;
-
-      {$ENDIF}
+      for Ndx := 0 to AVar.GetArrayLength - 1 do
+      begin
+        if ( AVar.GetArrayElement(Ndx).ToString <> '' ) then
+          TempList.Add(AVar.GetArrayElement(Ndx).ToString);
+      end;
 
       Result := '''' + '[' + clrUtils.ArrToStr.TArrToStrUtils<TValue>.FormatArrToStr(
         function(Ndx: Integer): String
         begin
-          var l := AVar.GetArrayElement(Ndx).ToString;
-          ShowMessage(l);
-          Result := l;
+          Result := AVar.GetArrayElement(Ndx).ToString;
         end,
-        AVar.GetArrayLength,
+        TempList.Count,
         '%s,',
         '%s'
       ) + ']' + '''';
+
+
+      TempList.Free;
 
     end
     else Result := AVar.ToString;

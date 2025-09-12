@@ -11,12 +11,7 @@ type TGruppenphaseLogik = class
     private
 
       FField: String;
-<<<<<<< Updated upstream
-
-=======
       FMatches: TList<TPair<Byte, Byte>>;
-      FState: IState;
->>>>>>> Stashed changes
 
       /// <summary>
       ///   Algorithmisch Spiele verteilen
@@ -29,6 +24,9 @@ type TGruppenphaseLogik = class
       destructor Destroy;
 
       procedure Starten;
+
+      // ↓ ???
+      // procedure AddMatchFinishCallback();
 
   end;
 
@@ -109,21 +107,12 @@ begin
 
 end;
 
-<<<<<<< Updated upstream
-=======
 procedure TGruppenphaseLogik.Starten();
-var
-  CurrentGroup: TGruppe;
 begin
 
-  for CurrentGroup in FState.Gruppen do
-  begin
-    FMatches := CreateUniqueMatches(CurrentGroup);
-  end;
-
+  FMatches := CreateUniqueMatches();
 
 end;
->>>>>>> Stashed changes
 
 // think of a way to get the Callback here
 // or have the global state update really in the simulation

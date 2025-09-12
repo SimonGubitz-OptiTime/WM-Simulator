@@ -238,8 +238,11 @@ type  TMainForm = class(TForm)
     FVerlosungUI: TVerlosungUI;
     FVerlosungLogik: TVerlosungLogik;
 
-    FGruppenphase: TGruppenphaseUI;
+    FGruppenphaseUI: TGruppenphaseUI;
+    FGruppenphaseLogik: TGruppenphaseLogik;
+
     FKOPhase: TKOPhaseUI;
+    // FKOPhase: TKOPhaseUI;
 
     FGruppenphaseFertig: Boolean;
 
@@ -271,22 +274,18 @@ begin
   // Globaler State, wodrin alle Teams, Gruppen und Auskommen nach und nach gespeichert werden
   FState := TWMState.Create;
 
-  {
+  // {
   FTeamDB := TCSVDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
   FStadionDB := TCSVDB<TStadion>.Create(TStadionEingabeFenster.GetTableName);
   // }
-<<<<<<< Updated upstream
-  //{
-=======
-  // {
->>>>>>> Stashed changes
-  FTeamDB := TSQLDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
-  FStadionDB := TSQLDB<TStadion>.Create(TStadionEingabeFenster.GetTableName);
+  {
+  FTeamDB := TSVDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
+  FStadionDB := TSVDB<TStadion>.Create(TStadionEingabeFenster.GetTableName);
   // }
 
   FVerlosungLogik := TVerlosungLogik.Create(FState, FTeamDB);
   FVerlosungUI := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12], FState);
-  FGruppenphase := TGruppenphaseUI.Create(GruppenphaseStringGrid, FState);
+  FGruppenphaseUI := TGruppenphaseUI.Create(GruppenphaseStringGrid, FState);
   FKOPhase := TKOPhaseUI.Create(
     [ SechzehntelfinaleLabel1, SechzehntelfinaleLabel2, SechzehntelfinaleLabel3, SechzehntelfinaleLabel4, SechzehntelfinaleLabel5, SechzehntelfinaleLabel6, SechzehntelfinaleLabel7, SechzehntelfinaleLabel8, SechzehntelfinaleLabel9, SechzehntelfinaleLabel10, SechzehntelfinaleLabel11, SechzehntelfinaleLabel12, SechzehntelfinaleLabel13, SechzehntelfinaleLabel14, SechzehntelfinaleLabel15, SechzehntelfinaleLabel16 ],
     [ AchtelfinaleLabel1, AchtelfinaleLabel2, AchtelfinaleLabel3, AchtelfinaleLabel4, AchtelfinaleLabel5, AchtelfinaleLabel6, AchtelfinaleLabel7, AchtelfinaleLabel8 ],
@@ -327,7 +326,7 @@ begin
 
   FVerlosungLogik.Free;
   FVerlosungUI.Free;
-  FGruppenphase.Free;
+  FGruppenphaseUI.Free;
   FKOPhase.Free;
 
   FStadionEingabeFenster.Free;
@@ -444,18 +443,13 @@ end;
 procedure TMainForm.VerlosungStartenButtonClick(Sender: TObject);
 begin
 
-<<<<<<< Updated upstream
-  FVerlosungLogik.Starten();
-  FVerlosungFertig := FVerlosungUI.VerlosungStarten(VerlosungSheet);
-=======
   try
     FVerlosungLogik.Starten();
     FVerlosungFertig := FVerlosungUI.Starten(VerlosungSheet);
   except
-  on E: Exception do
+  on E: Exception:
     ShowMessage('Fehler bei der Verlosung: ' + E.Message);
   end;
->>>>>>> Stashed changes
 
   // Wenn es genügend Gruppen gibt
   if ( FState.GetGruppen.Count = 12 ) then
@@ -467,8 +461,9 @@ end;
 procedure TMainForm.GruppenphaseStartenButtonClick(Sender: TObject);
 begin
 
-  // Gruppenphase Labels und Sechzehntelfinale Labels
-  FGruppenphase.GruppenphaseStarten([ Spiel1Label, Spiel2Label, Spiel3Label, Spiel4Label, Spiel5Label, Spiel6Label ], [ SechzehntelfinaleLabel1, SechzehntelfinaleLabel2, SechzehntelfinaleLabel3, SechzehntelfinaleLabel4, SechzehntelfinaleLabel5, SechzehntelfinaleLabel6, SechzehntelfinaleLabel7, SechzehntelfinaleLabel8, SechzehntelfinaleLabel9, SechzehntelfinaleLabel10, SechzehntelfinaleLabel11, SechzehntelfinaleLabel12, SechzehntelfinaleLabel13, SechzehntelfinaleLabel14, SechzehntelfinaleLabel15, SechzehntelfinaleLabel16 ]);
+  // Gruppenphase Labels und Sechzehntelfinale AGruppenphaseLabels
+  FGruppenphaseLogik.Starten();
+  FGruppenphaseUI.Starten([ Spiel1Label, Spiel2Label, Spiel3Label, Spiel4Label, Spiel5Label, Spiel6Label ], [ SechzehntelfinaleLabel1, SechzehntelfinaleLabel2, SechzehntelfinaleLabel3, SechzehntelfinaleLabel4, SechzehntelfinaleLabel5, SechzehntelfinaleLabel6, SechzehntelfinaleLabel7, SechzehntelfinaleLabel8, SechzehntelfinaleLabel9, SechzehntelfinaleLabel10, SechzehntelfinaleLabel11, SechzehntelfinaleLabel12, SechzehntelfinaleLabel13, SechzehntelfinaleLabel14, SechzehntelfinaleLabel15, SechzehntelfinaleLabel16 ]);
 
 end;
 
@@ -490,7 +485,7 @@ begin
   // Verlosung starten
 //  FVerlosungLogik.Starten();
 
-  FVerlosungFertig := FVerlosungUI.VerlosungStarten(VerlosungSheet);
+  FVerlosungFertig := FVerlosungUI.Starten(VerlosungSheet);
 end;
 
 procedure TMainForm.ZurGruppenphaseButtonClick(Sender: TObject);
