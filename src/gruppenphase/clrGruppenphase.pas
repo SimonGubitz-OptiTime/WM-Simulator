@@ -1,8 +1,9 @@
-unit clrGruppenphase;
+﻿unit clrGruppenphase;
 
 interface
 
 uses
+  System.Generics.Collections,
   damTypes,
   clrState;
 
@@ -11,6 +12,7 @@ type TGruppenphaseLogik = class
 
       FField: String;
       FMatches: TList<TPair<Byte, Byte>>;
+      FState: IState;
 
       /// <summary>
       ///   Algorithmisch Spiele verteilen
@@ -19,7 +21,7 @@ type TGruppenphaseLogik = class
 
     public
 
-      constructor Create;
+      constructor Create(AState: IState);
       destructor Destroy;
 
       procedure Starten;
@@ -31,9 +33,10 @@ type TGruppenphaseLogik = class
 
 implementation
 
-constructor TGruppenphaseLogik.Create;
+constructor TGruppenphaseLogik.Create(AState: IState);
 begin
   //
+  FState := AState;
 end;
 
 destructor TGruppenphaseLogik.Destroy;
@@ -106,9 +109,13 @@ begin
 end;
 
 procedure TGruppenphaseLogik.Starten();
+var
+  CurrentGroup: TGruppe;
 begin
-
-  FMatches := CreateUniqueMatches();
+  for CurrentGroup in FState.Gruppen do
+  begin
+    FMatches := CreateUniqueMatches(CurrentGroup);
+  end;
 
 end;
 

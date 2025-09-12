@@ -17,7 +17,7 @@ uses
 type
   TSQLUtils = class
     private
-      FDelphiToSQLTypeDict: TDictionary<TTypeKind, String>;
+      class var FDelphiToSQLTypeDict: TDictionary<TTypeKind, String>;
     public
 
       class constructor Create;
@@ -46,12 +46,12 @@ begin
   FDelphiToSQLTypeDict := TDictionary<TTypeKind, String>.Create;
 
   // Dies ist keine offizielle 1:1-Übersetzung, sondern um eine App spezifische Adaption
-  FDelphiToSQLTypeDict.AddOrSetValue(tkUString, 'varchar(50)')
-  FDelphiToSQLTypeDict.AddOrSetValue(tkString, 'varchar(50)')
-  FDelphiToSQLTypeDict.AddOrSetValue(tkEnumeration, 'varchar(50)')
-  FDelphiToSQLTypeDict.AddOrSetValue(tkInt, 'int')
-  FDelphiToSQLTypeDict.AddOrSetValue(tkByte, 'char')
-  FDelphiToSQLTypeDict.AddOrSetValue(tkArray, 'varchar(50)')
+  FDelphiToSQLTypeDict.AddOrSetValue(tkUString, 'varchar(50)');
+  FDelphiToSQLTypeDict.AddOrSetValue(tkString, 'varchar(50)');
+  FDelphiToSQLTypeDict.AddOrSetValue(tkEnumeration, 'varchar(50)');
+  FDelphiToSQLTypeDict.AddOrSetValue(tkDynArray, 'varchar(50)');
+  FDelphiToSQLTypeDict.AddOrSetValue(tkInteger, 'int');
+  FDelphiToSQLTypeDict.AddOrSetValue(tkArray, 'varchar(50)');
 end;
 
 class destructor TSQLUtils.Destroy;

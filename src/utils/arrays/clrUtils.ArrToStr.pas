@@ -50,7 +50,7 @@ var
 begin
   for Ndx := 0 to AList.Count - 1 do
   begin
-    if Ndx = AList.Count - 1 then
+    if ( Ndx = AList.Count - 1 ) then
       Result := Result + Format(ACustomLastFormatString, [TValue.From<T>(AList[Ndx]).AsType<String>])
     else
       Result := Result + Format(AFormatString, [TValue.From<T>(AList[Ndx]).AsType<String>]);
@@ -87,7 +87,7 @@ var
 begin
   for Ndx := 0 to ALength - 1 do
   begin
-    if Ndx = ALength - 1 then
+    if ( Ndx = ALength - 1 ) then
       Result := Result + Format(ACustomLastFormatString, [ItemPreProcessorFunc(Ndx)])
     else
       Result := Result + Format(AFormatString, [ItemPreProcessorFunc(Ndx)]);
@@ -116,7 +116,7 @@ var
 begin
   for Ndx := 0 to Length(AArray) - 1 do
   begin
-    if Ndx = Length(AArray) - 1 then
+    if ( Ndx = Length(AArray) - 1 ) then
       Result := Result + Format(ACustomLastFormatString, [TValue.From<T>(AArray[Ndx]).AsType<String>])
     else
       Result := Result + Format(AFormatString, [TValue.From<T>(AArray[Ndx]).AsType<String>]);
@@ -129,7 +129,7 @@ var
 begin
   for Ndx := 0 to Length(AArray) - 1 do
   begin
-    if Ndx > 0 then
+    if ( Ndx > 0 ) then
       Result := Result + ASeparator;
     Result := Result + TValue.From<T>(AArray[Ndx]).AsType<String>;
   end;
