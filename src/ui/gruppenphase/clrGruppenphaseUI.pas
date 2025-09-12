@@ -78,7 +78,7 @@ procedure TGruppenphaseUI.Starten(ASpiel: TSpiel; AGruppe: TGruppe; ANdx: Intege
 var
   SimulationList: TObjectList<TSimulation>;
 begin
-  clrUtils.TableFormating.TeamTabelleZeichnenMitPunkten(FGrid, AGruppe);
+  clrUtils.TableFormating.TeamTabelleZeichnenMitPunkten(FState, FGrid, AGruppe);
 
   FGruppenphaseLabels[ANdx].Caption := clrUtils.StringFormating.FormatSpielString(ASpiel);
 
