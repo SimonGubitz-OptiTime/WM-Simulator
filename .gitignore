@@ -23,6 +23,7 @@ database/*
 
 # But keep the mock "autofill" files
 !database/custom_database_keep_*.csv
+!database/**.sql
 
 # Other
 **/.DS_Store
