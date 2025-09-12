@@ -1,4 +1,4 @@
-INSERT INTO Teams (
+INSERT INTO WMSimulatorTeams (
   Name, FIFACode, TeamVerband, HistorischeWMSiege,
   HeimstadionName, Flagge, SpielerListe, TeamRanking, ID
 ) VALUES
