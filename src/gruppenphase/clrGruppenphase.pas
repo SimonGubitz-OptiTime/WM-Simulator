@@ -6,16 +6,17 @@ uses
   System.Generics.Collections,
   damTypes,
   clrState,
-  clrUtils.SortHashMap;
+  clrSimulation,
+  clrUtils.SortHashMap,
+  clrUtils.UpdateStandings;
 
 type
 
-  TSpielFertigCallbackFn = reference to procedure(AMatch: TSpielIDs; AGruppe: TGruppe; ANdx: Integer);
+  TSpielFertigCallbackFn = reference to procedure(AMatch: TSpiel; AGruppe: TGruppe; ANdx: Integer);
 
   TGruppenphaseLogik = class
     private
 
-      FField: String;
       FState: IState;
 
       /// <summary>
@@ -122,14 +123,18 @@ var
   TopTeams: TList<Byte>;
   ThirdPlaceTeams: TList<Byte>;
   RoundOf32Teams: TList<Byte>;
-
+  Spiel: TSpiel;
+  Simulation: TSimulation;
   GroupStandings: TDictionary<Byte, TTeamStatistik>;
+  OutTempState1, OutTempState2: TTeamSTatistik;
 begin
 
   TopTeams := TList<Byte>.Create;
   ThirdPlaceTeams := TList<Byte>.Create;
   RoundOf32Teams := TList<Byte>.Create;
   GroupStandings := TDictionary<Byte, TTeamStatistik>.Create;
+  Spiel := TSpiel.Create;
+  Simulation := TSimulation.Create;
   try
     for CurrentGroup in FState.Gruppen do
     begin
@@ -137,7 +142,27 @@ begin
       Matches := CreateUniqueMatches(CurrentGroup);
       for Ndx := 0 to Matches.Count - 1 do
       begin
-        ACallbackOnSpielFertig(Matches[Ndx], CurrentGroup, Ndx);
+
+        // hier muss simuliert werden
+        Spiel.Team1 := FState.Teams[Matches[Ndx].Key];
+        Spiel.Team2 := FState.Teams[Matches[Ndx].Value];
+        Spiel.Stadion := Default(TStadion);
+
+        Simulation.SpielSimulieren(procedure(Sender: TObject; AMatch: TSpiel; AMatchIDs: TSpielIDs)
+          begin
+            // Update GroupStandings
+            clrUtils.UpdateStandings.GetUpdatedStandings(FState, Spiel, OutTempState1, OutTempState2);
+            GroupStandings.AddOrSetValue(Spiel.Team1.ID, OutTempState1);
+            GroupStandings.AddOrSetValue(Spiel.Team2.ID, OutTempState2);
+
+            ACallbackOnSpielFertig(Spiel, CurrentGroup, Ndx);
+          end,
+          Spiel, Matches[Ndx]
+        );
+
+
+
+
       end;
 
 
@@ -168,6 +193,11 @@ begin
       );
 
       // und in den dafür vorgesehenen Grid reinschreiben
+      for var team in sorted_teams do
+      begin
+        // clrUtils.TableFormating.
+      end;
+
 
 
 

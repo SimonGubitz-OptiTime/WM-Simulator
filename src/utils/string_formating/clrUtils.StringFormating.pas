@@ -4,10 +4,11 @@ interface
 
 uses
   System.Generics.Collections,
-  System.SysUtils;
+  System.SysUtils,
+  damTypes;
 
 function FormatSpielerListe(AList: TList<String>): String;
-function FormaTSpielIDsString(Team1Name: String; Team2Name: String; Team1Score: Integer; Team2Score: Integer): String; inline;
+function FormatSpielString(ASpiel: TSpiel): String;
 
 implementation
 
@@ -38,9 +39,9 @@ begin
 
 end;
 
-function FormaTSpielIDsString(Team1Name: String; Team2Name: String; Team1Score: Integer; Team2Score: Integer): String;
+function FormatSpielString(ASpiel: TSpiel): String;
 begin
-  Result := Team1Name + ' ' + IntToStr(Team1Score) + ':' + IntToStr(Team2Score) + ' ' + Team2Name;
+  Result := ASpiel.Team1.Name + ' ' + IntToStr(ASpiel.Team1Tore) + ':' + IntToStr(ASpiel.Team2Tore) + ' ' + ASpiel.Team2.Name;
 end;
 
 

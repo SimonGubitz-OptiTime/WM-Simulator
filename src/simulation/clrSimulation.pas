@@ -7,7 +7,7 @@ uses
   Vcl.Forms,
   damTypes;
 
-type TSimulationCallbackFn = procedure(Sender: TObject; AMatch: TSpiel; AMatchIDs: TSpielIDs) of object;
+type TSimulationCallbackFn = reference to procedure(Sender: TObject; AMatch: TSpiel; AMatchIDs: TSpielIDs);
 
 type TSimulation = class
   private
@@ -15,7 +15,6 @@ type TSimulation = class
     FTimerCount: Integer;
 
     FTotalGoals: Integer;
-    FNdx: Integer;
     FSpiel: TSpiel;
     FSpielIDs: TSpielIDs;
     FCallbackFn: TSimulationCallbackFn;
@@ -29,7 +28,7 @@ type TSimulation = class
     constructor Create(PossibleMaxGoals: Byte = 6);
     destructor Destroy; override;
 
-    procedure SpielSimulieren(ACallbackFn: TSimulationCallbackFn; ANdx: Integer; ASpiel: TSpiel; ASpielIDs: TSpielIDs);
+    procedure SpielSimulieren(ACallbackFn: TSimulationCallbackFn; ASpiel: TSpiel; ASpielIDs: TSpielIDs);
 
 end;
 
@@ -70,7 +69,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TSimulation.SpielSimulieren(ACallbackFn: TSimulationCallbackFn; ANdx: Integer; ASpiel: TSpiel; ASpielIDs: TSpielIDs);
+procedure TSimulation.SpielSimulieren(ACallbackFn: TSimulationCallbackFn; ASpiel: TSpiel; ASpielIDs: TSpielIDs);
 begin
   FTeam1Tore := 0;
   FTeam2Tore := 0;
@@ -78,7 +77,6 @@ begin
   FTotalGoals := Random(FPossibleMaxGoals + 1);
   FSimulationFinished := false;
 
-  FNdx := ANdx;
   FSpiel := ASpiel;
   FSpielIDs := ASpielIDs;
   FCallbackFn := ACallbackFn;

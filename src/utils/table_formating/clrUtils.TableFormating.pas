@@ -12,6 +12,7 @@ procedure SetColumnFullWidth(AGrid: TStringGrid; ACol: Integer);
 procedure VolleTabelleZeichnen(AGrid: TStringGrid; ARows: TObjectList<TList<String>> );
 procedure TeamZeileZeichnen(AGrid: TStringGrid; const ATeam: TTeam; const ARow: Integer);
 procedure TeamTabelleZeichnen(AGrid: TStringGrid; const AGroup: TGruppe);
+procedure TeamTabelleZeichnenMitPunkten(FState: IState; AGrid: TStringGrid; const AGroup: TGruppe);
 procedure TabelleLeeren(AGrid: TStringGrid);
 
 implementation
@@ -61,6 +62,7 @@ begin
   with AGrid do
   begin
     Cells[0, ARow] := ATeam.Name;
+
     case ATeam.TeamRanking of
       TTeamRanking.SehrStark:
         Cells[1, ARow] := 'Sehr Stark';
@@ -92,6 +94,16 @@ begin
 end;
 
 procedure TeamTabelleZeichnen(AGrid: TStringGrid; const AGroup: TGruppe);
+var
+  Ndx: Integer;
+begin
+  for Ndx := 0 to AGroup.Count - 1 do
+  begin
+    TeamZeileZeichnen(AGrid, AGroup[Ndx], Ndx);
+  end;
+end;
+
+procedure TeamTabelleZeichnenMitPunkten(FState: IState; AGrid: TStringGrid; const AGroup: TGruppe);
 var
   Ndx: Integer;
 begin

@@ -44,6 +44,12 @@ var
   Ndx, j: Integer;
   HashMapArray: TArray<TPair<Byte, TTeamStatistik>>;
 begin
+
+  if ( HashMap.Count = 0 ) then
+  begin
+    raise Exception.Create('clrUtils.SortHashMap.pas Error: HashMap ist leer.');
+  end;
+
   HashMapArray := HashMap.ToArray;
 
   // Insertion sort by Punkte
@@ -71,6 +77,12 @@ var
   Ndx, j: Integer;
   HashMapArray: TArray<TPair<TKey, TValue>>;
 begin
+
+  if ( HashMap.Count = 0 ) then
+  begin
+    raise Exception.Create('clrUtils.SortHashMap.pas Error: HashMap ist leer.');
+  end;
+
   HashMapArray := HashMap.ToArray;
 
   // Insertion sort
@@ -98,8 +110,16 @@ var
   Ndx, j: Integer;
   HashMapArray: TArray<TPair<TKey, TValue>>;
 begin
+
+  if ( HashMap.Count = 0 ) then
+  begin
+    raise Exception.Create('clrUtils.SortHashMap.pas Error: HashMap ist leer.');
+  end;
+
   if not AAsArray then
+  begin
     raise Exception.Create('clrUtils.SortHashMap.pas Error: maybe you meant to call the overload with TList');
+  end;
 
   HashMapArray := HashMap.ToArray;
 

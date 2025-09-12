@@ -152,18 +152,18 @@ type  TMainForm = class(TForm)
     kophaseStartenButton: TButton;
     GruppenstatistikenSheet: TTabSheet;
     Label4: TLabel;
-    StringGrid13: TStringGrid;
-    StringGrid14: TStringGrid;
-    StringGrid15: TStringGrid;
-    StringGrid16: TStringGrid;
-    StringGrid17: TStringGrid;
-    StringGrid18: TStringGrid;
-    StringGrid19: TStringGrid;
-    StringGrid20: TStringGrid;
-    StringGrid21: TStringGrid;
-    StringGrid22: TStringGrid;
-    StringGrid23: TStringGrid;
-    StringGrid24: TStringGrid;
+    GruppenphaseUebersichtGrid1: TStringGrid;
+    GruppenphaseUebersichtGrid2: TStringGrid;
+    GruppenphaseUebersichtGrid3: TStringGrid;
+    GruppenphaseUebersichtGrid4: TStringGrid;
+    GruppenphaseUebersichtGrid11: TStringGrid;
+    GruppenphaseUebersichtGrid9: TStringGrid;
+    GruppenphaseUebersichtGrid8: TStringGrid;
+    GruppenphaseUebersichtGrid7: TStringGrid;
+    GruppenphaseUebersichtGrid6: TStringGrid;
+    GruppenphaseUebersichtGrid5: TStringGrid;
+    GruppenphaseUebersichtGrid12: TStringGrid;
+    GruppenphaseUebersichtGrid10: TStringGrid;
     TeamEntfernenButton: TButton;
     StadionEntfernenButton: TButton;
     VerlosungSheet: TTabSheet;
@@ -241,8 +241,8 @@ type  TMainForm = class(TForm)
     FGruppenphaseUI: TGruppenphaseUI;
     FGruppenphaseLogik: TGruppenphaseLogik;
 
-    FKOPhase: TKOPhaseUI;
-    // FKOPhase: TKOPhaseUI;
+    FKOPhaseUI: TKOPhaseUI;
+    // FKOPhaseUI: TKOPhaseUI;
 
     FGruppenphaseFertig: Boolean;
 
@@ -290,10 +290,11 @@ begin
   FGruppenphaseUI := TGruppenphaseUI.Create(GruppenphaseStringGrid,
     [ Spiel1Label, Spiel2Label, Spiel3Label, Spiel4Label, Spiel5Label, Spiel6Label ],
     [ SechzehntelfinaleLabel1, SechzehntelfinaleLabel2, SechzehntelfinaleLabel3, SechzehntelfinaleLabel4, SechzehntelfinaleLabel5, SechzehntelfinaleLabel6, SechzehntelfinaleLabel7, SechzehntelfinaleLabel8, SechzehntelfinaleLabel9, SechzehntelfinaleLabel10, SechzehntelfinaleLabel11, SechzehntelfinaleLabel12, SechzehntelfinaleLabel13, SechzehntelfinaleLabel14, SechzehntelfinaleLabel15, SechzehntelfinaleLabel16 ],
+    [ GruppenphaseUebersichtGrid1, GruppenphaseUebersichtGrid2, GruppenphaseUebersichtGrid3, GruppenphaseUebersichtGrid4, GruppenphaseUebersichtGrid5, GruppenphaseUebersichtGrid6, GruppenphaseUebersichtGrid7, GruppenphaseUebersichtGrid8, GruppenphaseUebersichtGrid9, GruppenphaseUebersichtGrid10, GruppenphaseUebersichtGrid11, GruppenphaseUebersichtGrid12 ],
     FState
   );
 
-  FKOPhase := TKOPhaseUI.Create(
+  FKOPhaseUI := TKOPhaseUI.Create(
     [ SechzehntelfinaleLabel1, SechzehntelfinaleLabel2, SechzehntelfinaleLabel3, SechzehntelfinaleLabel4, SechzehntelfinaleLabel5, SechzehntelfinaleLabel6, SechzehntelfinaleLabel7, SechzehntelfinaleLabel8, SechzehntelfinaleLabel9, SechzehntelfinaleLabel10, SechzehntelfinaleLabel11, SechzehntelfinaleLabel12, SechzehntelfinaleLabel13, SechzehntelfinaleLabel14, SechzehntelfinaleLabel15, SechzehntelfinaleLabel16 ],
     [ AchtelfinaleLabel1, AchtelfinaleLabel2, AchtelfinaleLabel3, AchtelfinaleLabel4, AchtelfinaleLabel5, AchtelfinaleLabel6, AchtelfinaleLabel7, AchtelfinaleLabel8 ],
     [ ViertelfinaleLabel1, ViertelfinaleLabel2, ViertelfinaleLabel3, ViertelfinaleLabel4 ],
@@ -333,8 +334,11 @@ begin
 
   FVerlosungLogik.Free;
   FVerlosungUI.Free;
+
+  FGruppenphaseLogik.Free;
   FGruppenphaseUI.Free;
-  FKOPhase.Free;
+
+  FKOPhaseUI.Free;
 
   FStadionEingabeFenster.Free;
   FTeamEingabeFenster.Free;
@@ -469,17 +473,20 @@ procedure TMainForm.GruppenphaseStartenButtonClick(Sender: TObject);
 begin
 
   // Gruppenphase Labels und Sechzehntelfinale AGruppenphaseLabels
-  FGruppenphaseLogik.Starten(procedure(AMatch: TSpielIDs; AGruppe: TGruppe; ANdx: Integer)
+  FGruppenphaseLogik.Starten(procedure(AMatch: TSpiel; AGruppe: TGruppe; ANdx: Integer)
     begin
       FGruppenphaseUI.Starten(AMatch, AGruppe, ANdx);
     end
   );
 
+  // Gruppenphase Übersicht zeichnen
+  FGruppenphaseUI.GruppenphaseUebersichtZeichnen();
+
 end;
 
 procedure TMainForm.kophaseStartenButtonClick(Sender: TObject);
 begin
-  FKOPhase.KOPhaseStarten;
+  FKOPhaseUI.KOPhaseStarten;
 end;
 
 procedure TMainForm.ZurVerlosungButtonClick(Sender: TObject);

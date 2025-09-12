@@ -26,7 +26,7 @@ object MainForm: TMainForm
     Top = 0
     Width = 1309
     Height = 797
-    ActivePage = GruppenphaseSheet
+    ActivePage = GruppenstatistikenSheet
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 0
     OnChanging = PageControlChanging
@@ -687,7 +687,7 @@ object MainForm: TMainForm
         Height = 15
         Caption = 'Team Verband'
       end
-      object StringGrid13: TStringGrid
+      object GruppenphaseUebesichtGrid1: TStringGrid
         Left = 3
         Top = 77
         Width = 320
@@ -698,7 +698,7 @@ object MainForm: TMainForm
         FixedRows = 0
         TabOrder = 0
       end
-      object StringGrid14: TStringGrid
+      object GruppenphaseUebesichtGrid2: TStringGrid
         Left = 3
         Top = 203
         Width = 320
@@ -709,7 +709,7 @@ object MainForm: TMainForm
         FixedRows = 0
         TabOrder = 1
       end
-      object StringGrid15: TStringGrid
+      object GruppenphaseUebesichtGrid3: TStringGrid
         Left = 3
         Top = 346
         Width = 320
@@ -720,7 +720,7 @@ object MainForm: TMainForm
         FixedRows = 0
         TabOrder = 2
       end
-      object StringGrid16: TStringGrid
+      object GruppenphaseUebesichtGrid4: TStringGrid
         Left = 3
         Top = 488
         Width = 320
@@ -731,7 +731,7 @@ object MainForm: TMainForm
         FixedRows = 0
         TabOrder = 3
       end
-      object StringGrid17: TStringGrid
+      object GruppenphaseUebesichtGrid11: TStringGrid
         Left = 507
         Top = 488
         Width = 320
@@ -742,7 +742,7 @@ object MainForm: TMainForm
         FixedRows = 0
         TabOrder = 4
       end
-      object StringGrid18: TStringGrid
+      object GruppenphaseUebesichtGrid9: TStringGrid
         Left = 975
         Top = 488
         Width = 323
@@ -754,7 +754,7 @@ object MainForm: TMainForm
         FixedRows = 0
         TabOrder = 5
       end
-      object StringGrid19: TStringGrid
+      object GruppenphaseUebesichtGrid8: TStringGrid
         Left = 975
         Top = 346
         Width = 323
@@ -766,7 +766,7 @@ object MainForm: TMainForm
         FixedRows = 0
         TabOrder = 6
       end
-      object StringGrid20: TStringGrid
+      object GruppenphaseUebesichtGrid7: TStringGrid
         Left = 975
         Top = 203
         Width = 323
@@ -778,7 +778,7 @@ object MainForm: TMainForm
         FixedRows = 0
         TabOrder = 7
       end
-      object StringGrid21: TStringGrid
+      object GruppenphaseUebesichtGrid6: TStringGrid
         Left = 975
         Top = 77
         Width = 323
@@ -790,7 +790,7 @@ object MainForm: TMainForm
         FixedRows = 0
         TabOrder = 8
       end
-      object StringGrid22: TStringGrid
+      object GruppenphaseUebesichtGrid5: TStringGrid
         Left = 3
         Top = 630
         Width = 320
@@ -801,7 +801,7 @@ object MainForm: TMainForm
         FixedRows = 0
         TabOrder = 9
       end
-      object StringGrid23: TStringGrid
+      object GruppenphaseUebesichtGrid12: TStringGrid
         Left = 507
         Top = 630
         Width = 320
@@ -812,7 +812,7 @@ object MainForm: TMainForm
         FixedRows = 0
         TabOrder = 10
       end
-      object StringGrid24: TStringGrid
+      object GruppenphaseUebesichtGrid10: TStringGrid
         Left = 975
         Top = 630
         Width = 323

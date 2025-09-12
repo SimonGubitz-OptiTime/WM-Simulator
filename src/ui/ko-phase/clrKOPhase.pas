@@ -30,8 +30,8 @@ type
     FCurrentLabels: TArray<TLabel>;
     FNextStage: TList<Byte>;
     FNextStageSpielUmPlatz3: TList<Byte>;
-    
-    procedure KOPhaseCallback(Sender: TObject; ANdx: Integer; ATeam1Tore, ATeam2Tore: Integer);
+
+    procedure KOPhaseCallback(Sender: TObject; ASpiel: TSpiel; ASpielIDs: TSpielIDs);
 
   public
 
@@ -106,7 +106,7 @@ begin
       Spiel.Stadion := Default(TStadion);
 
       Myself.Add(TSimulation.Create(6));
-      Myself.Last.SpielSimulieren(KOPhaseCallback, Ndx, Spiel, FCurrentTeams.Items[Ndx]);
+      Myself.Last.SpielSimulieren(KOPhaseCallback, Spiel, FCurrentTeams.Items[Ndx]);
 
       FCurrentLabels[Ndx].Font.Style := [];
       FCurrentLabels[Ndx].Font.Color := clWindowText;
@@ -146,7 +146,7 @@ begin
       Spiel.Stadion := Default(TStadion);
 
       Myself.Add(TSimulation.Create(5)); // immer einen weniger, da es ja theoritisch immer schwieriger wird
-      Myself.Last.SpielSimulieren(KOPhaseCallback, Ndx, Spiel);
+      Myself.Last.SpielSimulieren(KOPhaseCallback, Spiel, FCurrentTeams.Items[Ndx]);
 
       FCurrentLabels[Ndx].Font.Style := [];
       FCurrentLabels[Ndx].Font.Color := clWindowText;
@@ -184,7 +184,7 @@ begin
       Spiel.Stadion := Default(TStadion);
 
       Myself.Add(TSimulation.Create(5));
-      Myself.Last.SpielSimulieren(KOPhaseCallback, Ndx, Spiel);
+      Myself.Last.SpielSimulieren(KOPhaseCallback, Spiel, FCurrentTeams.Items[Ndx]);
 
       FCurrentLabels[Ndx].Font.Style := [];
       FCurrentLabels[Ndx].Font.Color := clWindowText;
@@ -214,7 +214,7 @@ begin
       FCurrentLabels[Ndx].Font.Color := clGreen;
 
       Myself.Add(TSimulation.Create(5));
-      Myself.Last.SpielSimulieren(KOPhaseCallback, Ndx, Spiel);
+      Myself.Last.SpielSimulieren(KOPhaseCallback, Spiel, FCurrentTeams.Items[Ndx]);
 
       FCurrentLabels[Ndx].Font.Style := [];
       FCurrentLabels[Ndx].Font.Color := clWindowText;
@@ -238,7 +238,7 @@ begin
     FCurrentLabels[0].Font.Color := clGreen;
 
     Myself.Add(TSimulation.Create(5));
-    Myself.Last.SpielSimulieren(KOPhaseCallback, 0, Spiel);
+    Myself.Last.SpielSimulieren(KOPhaseCallback, Spiel, FCurrentTeams.Items[Ndx]);
 
     FCurrentLabels[0].Font.Style := [];
     FCurrentLabels[0].Font.Color := clWindowText;
@@ -264,7 +264,7 @@ begin
     FCurrentLabels[0].Font.Color := clGreen;
 
     Myself.Add(TSimulation.Create(5));
-    Myself.Last.SpielSimulieren(KOPhaseCallback, 0, Spiel);
+    Myself.Last.SpielSimulieren(KOPhaseCallback, Spiel, FCurrentTeams.Items[Ndx]);
 
     FCurrentLabels[0].Font.Style := [];
     FCurrentLabels[0].Font.Color := clWindowText;
@@ -281,17 +281,17 @@ begin
 end;
 
 
-procedure TKOphaseUI.KOPhaseCallback(ACallbackFn: TSimulationCallbackFn; ANdx: Integer; ASpiel: TSpiel; ASpielIDs: TSpielIDs);
+procedure TKOphaseUI.KOPhaseCallback(Sender: TObject; ASpiel: TSpiel; ASpielIDs: TSpielIDs);
 var
   Team1, Team2: TTeam;
 begin
   Team1 := FState.GetTeams.Items[ASpielIDs.Key];
   Team2 := FState.GetTeams.Items[ASpielIDs.Value];
 
-  FCurrentLabels[ANdx].Caption := clrUtils.StringFormating.FormaTSpielIDsString(Team1.Name, Team2.Name, ASpiel.ATeam1Tore, ASpiel.ATeam2Tore);
+  // FCurrentLabels[ANdx].Caption := clrUtils.StringFormating.FormatSpielString(Team1.Name, Team2.Name, ASpiel.Team1Tore, ASpiel.Team2Tore);
 
   // Update state
-  if ( ATeam1Tore > ATeam2Tore ) then
+  if ( ASpiel.Team1Tore > ASpiel.Team2Tore ) then
   begin
     FNextStage.Add(Team1.ID);
     FNextStageSpielUmPlatz3.Add(Team2.ID);

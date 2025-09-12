@@ -42,14 +42,16 @@ type
     ID: TTeamID;
   end;
 
-  // class statt record??, um Pass-By-Ref zu nutzen als Speicher-Optimierung, trotz Heap statt Stack?
-  TSpiel = record
+  //? class statt record, um Pass-By-Ref zu nutzen als Speicher-Optimierung, trotz Heap statt Stack
+  TSpiel = class
     Team1: TTeam;
     Team2: TTeam;
     Stadion: TStadion;
 
     Team1Tore: Byte;
     Team2Tore: Byte;
+
+    constructor Create();
   end;
 
   TSpielIDs = TPair<TTeamID, TTeamID>;
@@ -113,6 +115,14 @@ type
   end;
 
 implementation
+
+constructor TSpiel.Create();
+begin
+  Team1Tore := 0;
+  Team2Tore := 0;
+
+  inherited Create;
+end;
 
 
 end.
