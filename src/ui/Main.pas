@@ -332,18 +332,18 @@ procedure TMainForm.FormDestroy(Sender: TObject);
 begin
 
 
-  FVerlosungLogik.Free;
-  FVerlosungUI.Free;
+  FVerlosungLogik.Destroy;
+  FVerlosungUI.Destroy;
 
-  FGruppenphaseLogik.Free;
-  FGruppenphaseUI.Free;
+  FGruppenphaseLogik.Destroy;
+  FGruppenphaseUI.Destroy;
 
-  FKOPhaseUI.Free;
+  FKOPhaseUI.Destroy;
 
-  FStadionEingabeFenster.Free;
-  FTeamEingabeFenster.Free;
-  FTeamEntfernenFenster.Free;
-  FStadionEntfernenFenster.Free;
+  FStadionEingabeFenster.Destroy;
+  FTeamEingabeFenster.Destroy;
+  FTeamEntfernenFenster.Destroy;
+  FStadionEntfernenFenster.Destroy;
 end;
 
 procedure TMainForm.TeamDBUpdate;

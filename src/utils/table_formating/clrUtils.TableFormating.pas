@@ -109,7 +109,38 @@ var
 begin
   for Ndx := 0 to AGroup.Count - 1 do
   begin
-    TeamZeileZeichnen(AGrid, AGroup[Ndx], Ndx);
+    with AGrid do
+    begin
+      Cells[0, Ndx] := AGroup[Ndx].Name;
+
+      case AGroup[Ndx].TeamRanking of
+        TTeamRanking.SehrStark:
+          Cells[1, Ndx] := 'Sehr Stark';
+        TTeamRanking.Stark:
+          Cells[1, Ndx] := 'Stark';
+        TTeamRanking.MittelStark:
+          Cells[1, Ndx] := 'Mittel Stark';
+        TTeamRanking.Schwach:
+          Cells[1, Ndx] := 'Schwach';
+      end;
+
+      Cells[2, Ndx] := IntToStr(FState.TeamStands[AGroup[Ndx].ID].Punkte);
+
+      case AGroup[Ndx].TeamVerband of
+        TTeamVerband.AFC:
+          Cells[3, Ndx] := 'AFC';
+        TTeamVerband.CAF:
+          Cells[3, Ndx] := 'CAF';
+        TTeamVerband.CONCACAF:
+          Cells[3, Ndx] := 'CONCACAF';
+        TTeamVerband.CONMEBOL:
+          Cells[3, Ndx] := 'CONMEBOL';
+        TTeamVerband.OFC:
+          Cells[3, Ndx] := 'OFC';
+        TTeamVerband.UEFA:
+          Cells[3, Ndx] := 'UEFA';
+      end;
+    end;
   end;
 end;
 

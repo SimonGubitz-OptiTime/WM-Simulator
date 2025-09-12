@@ -620,9 +620,9 @@ object MainForm: TMainForm
       object Label33: TLabel
         Left = 176
         Top = 57
-        Width = 32
+        Width = 38
         Height = 15
-        Caption = 'Siege'
+        Caption = 'Punkte'
       end
       object Label34: TLabel
         Left = 252
@@ -655,9 +655,9 @@ object MainForm: TMainForm
       object Label57: TLabel
         Left = 672
         Top = 467
-        Width = 32
+        Width = 38
         Height = 15
-        Caption = 'Siege'
+        Caption = 'Punkte'
       end
       object Label59: TLabel
         Left = 975
@@ -669,9 +669,9 @@ object MainForm: TMainForm
       object Label62: TLabel
         Left = 1140
         Top = 56
-        Width = 32
+        Width = 38
         Height = 15
-        Caption = 'Siege'
+        Caption = 'Punkte'
       end
       object Label65: TLabel
         Left = 1060
@@ -687,7 +687,7 @@ object MainForm: TMainForm
         Height = 15
         Caption = 'Team Verband'
       end
-      object GruppenphaseUebesichtGrid1: TStringGrid
+      object GruppenphaseUebersichtGrid1: TStringGrid
         Left = 3
         Top = 77
         Width = 320
@@ -698,7 +698,7 @@ object MainForm: TMainForm
         FixedRows = 0
         TabOrder = 0
       end
-      object GruppenphaseUebesichtGrid2: TStringGrid
+      object GruppenphaseUebersichtGrid2: TStringGrid
         Left = 3
         Top = 203
         Width = 320
@@ -709,7 +709,7 @@ object MainForm: TMainForm
         FixedRows = 0
         TabOrder = 1
       end
-      object GruppenphaseUebesichtGrid3: TStringGrid
+      object GruppenphaseUebersichtGrid3: TStringGrid
         Left = 3
         Top = 346
         Width = 320
@@ -720,7 +720,7 @@ object MainForm: TMainForm
         FixedRows = 0
         TabOrder = 2
       end
-      object GruppenphaseUebesichtGrid4: TStringGrid
+      object GruppenphaseUebersichtGrid4: TStringGrid
         Left = 3
         Top = 488
         Width = 320
@@ -731,7 +731,7 @@ object MainForm: TMainForm
         FixedRows = 0
         TabOrder = 3
       end
-      object GruppenphaseUebesichtGrid11: TStringGrid
+      object GruppenphaseUebersichtGrid11: TStringGrid
         Left = 507
         Top = 488
         Width = 320
@@ -742,7 +742,7 @@ object MainForm: TMainForm
         FixedRows = 0
         TabOrder = 4
       end
-      object GruppenphaseUebesichtGrid9: TStringGrid
+      object GruppenphaseUebersichtGrid9: TStringGrid
         Left = 975
         Top = 488
         Width = 323
@@ -754,7 +754,7 @@ object MainForm: TMainForm
         FixedRows = 0
         TabOrder = 5
       end
-      object GruppenphaseUebesichtGrid8: TStringGrid
+      object GruppenphaseUebersichtGrid8: TStringGrid
         Left = 975
         Top = 346
         Width = 323
@@ -766,7 +766,7 @@ object MainForm: TMainForm
         FixedRows = 0
         TabOrder = 6
       end
-      object GruppenphaseUebesichtGrid7: TStringGrid
+      object GruppenphaseUebersichtGrid7: TStringGrid
         Left = 975
         Top = 203
         Width = 323
@@ -778,7 +778,7 @@ object MainForm: TMainForm
         FixedRows = 0
         TabOrder = 7
       end
-      object GruppenphaseUebesichtGrid6: TStringGrid
+      object GruppenphaseUebersichtGrid6: TStringGrid
         Left = 975
         Top = 77
         Width = 323
@@ -790,7 +790,7 @@ object MainForm: TMainForm
         FixedRows = 0
         TabOrder = 8
       end
-      object GruppenphaseUebesichtGrid5: TStringGrid
+      object GruppenphaseUebersichtGrid5: TStringGrid
         Left = 3
         Top = 630
         Width = 320
@@ -801,7 +801,7 @@ object MainForm: TMainForm
         FixedRows = 0
         TabOrder = 9
       end
-      object GruppenphaseUebesichtGrid12: TStringGrid
+      object GruppenphaseUebersichtGrid12: TStringGrid
         Left = 507
         Top = 630
         Width = 320
@@ -812,7 +812,7 @@ object MainForm: TMainForm
         FixedRows = 0
         TabOrder = 10
       end
-      object GruppenphaseUebesichtGrid10: TStringGrid
+      object GruppenphaseUebersichtGrid10: TStringGrid
         Left = 975
         Top = 630
         Width = 323

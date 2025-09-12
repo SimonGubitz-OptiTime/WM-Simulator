@@ -134,7 +134,7 @@ begin
   RoundOf32Teams := TList<Byte>.Create;
   GroupStandings := TDictionary<Byte, TTeamStatistik>.Create;
   Spiel := TSpiel.Create;
-  Simulation := TSimulation.Create;
+  Simulation := TSimulation.Create(FState);
   try
     for CurrentGroup in FState.Gruppen do
     begin
@@ -164,6 +164,8 @@ begin
 
 
       end;
+
+      Simulation.Destroy;
 
 
 

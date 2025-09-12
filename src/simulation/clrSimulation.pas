@@ -5,12 +5,14 @@ interface
 uses
   Vcl.ExtCtrls,
   Vcl.Forms,
-  damTypes;
+  damTypes,
+  clrUtils.UpdateStandings;
 
 type TSimulationCallbackFn = reference to procedure(Sender: TObject; AMatch: TSpiel; AMatchIDs: TSpielIDs);
 
 type TSimulation = class
   private
+    FState: IState;
     FTimer: TTimer;
     FTimerCount: Integer;
 
@@ -25,7 +27,7 @@ type TSimulation = class
 
     procedure UpdateState(Sender: TObject);
   public
-    constructor Create(PossibleMaxGoals: Byte = 6);
+    constructor Create(AState: IState; PossibleMaxGoals: Byte = 6);
     destructor Destroy; override;
 
     procedure SpielSimulieren(ACallbackFn: TSimulationCallbackFn; ASpiel: TSpiel; ASpielIDs: TSpielIDs);
@@ -44,8 +46,9 @@ const
 
 implementation
 
-constructor TSimulation.Create(PossibleMaxGoals: Byte = 6);
+constructor TSimulation.Create(AState: IState; PossibleMaxGoals: Byte = 6);
 begin
+  FState := AState;
   FTeam1Tore := 0;
   FTeam2Tore := 0;
   FTimerCount := 0;
@@ -92,6 +95,7 @@ end;
 
 procedure TSimulation.UpdateState(Sender: TObject);
 var
+  TempStand1, TempStand2: TTeamStatistik;
   SiegchancenTeam1: ShortInt; // ShortInt, weil Byte durch das hinzufügen von negativen Zahlen nicht funktioniert, und ich trotzdem keinen Wert > 100 brauche
 begin
 
@@ -104,14 +108,10 @@ begin
     //(Sender: TObject; AMatch: TSpiel; AMatchIDs: TSpielIDs)
 
     // Update State here
-    {
-    clrUtils.UpdateStandings.GetUpdatedStandings(FState, ATeam1Tore, ATeam2Tore, Team1.ID, Team2.ID, TempStand1, TempStand2);
 
-    // Also write it in the global FState.Stands to have a non scoped saved state
-    // pull this into clrSimulation ???
-    FState.AddOrSetTeamStandByID(Team1.ID, TempStand1);
-    FState.AddOrSetTeamStandByID(Team2.ID, TempStand2);
-    }
+    clrUtils.UpdateStandings.GetUpdatedStandings(FState, FSpiel, TempStand1, TempStand2);
+    FState.AddOrSetTeamStandByID(FSpiel.Team1.ID, TempStand1);
+    FState.AddOrSetTeamStandByID(FSpiel.Team2.ID, TempStand2);
 
     Exit;
   end;

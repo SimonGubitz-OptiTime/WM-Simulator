@@ -23,7 +23,6 @@ type TGruppenphaseUI = class
   private
 
     FState: IState;
-    FSimulation: TSimulation;
     FGrid: TStringGrid;
     FGruppenphaseLabels: TArray<TLabel>;
     FSechzehntelfinaleLabels: TArray<TLabel>;
@@ -50,7 +49,6 @@ var
 begin
   FState := AState;
   FGrid := AGruppenphaseGrid;
-  FSimulation := TSimulation.Create;
   FGruppenphaseLabels := AGruppenphaseLabels;
   FSechzehntelfinaleLabels := ASechzehntelfinaleLabels;
   FGruppenphaseUebersichtGrids := AGruppenphaseUebersichtGrids;
@@ -75,8 +73,6 @@ end;
 
 //{
 procedure TGruppenphaseUI.Starten(ASpiel: TSpiel; AGruppe: TGruppe; ANdx: Integer);
-var
-  SimulationList: TObjectList<TSimulation>;
 begin
   clrUtils.TableFormating.TeamTabelleZeichnenMitPunkten(FState, FGrid, AGruppe);
 
@@ -97,9 +93,6 @@ var
   TeamNdx, GruppenNdx: Integer;
 begin
 
-  ShowMessage('Amount Groups: ' + IntToStr(FState.Gruppen.Count));
-  ShowMessage('Amount Grids: ' + IntToStr(Length(FGruppenphaseUebersichtGrids)));
-
   if ( Length(FGruppenphaseUebersichtGrids) <> FState.Gruppen.Count ) then
   begin
     raise Exception.Create('Fehlermeldung');
@@ -110,8 +103,9 @@ begin
   begin
     for TeamNdx := 0 to FState.Gruppen[GruppenNdx].Count - 1 do
     begin
-      clrUtils.TableFormating.TeamZeileZeichnen(FGruppenphaseUebersichtGrids[GruppenNdx], FState.Gruppen[GruppenNdx][TeamNdx], TeamNdx);    
-    end;      
+      ShowMessage('GroupIndex: ' + IntToStr(GruppenNdx));
+      clrUtils.TableFormating.TeamZeileZeichnen(FGruppenphaseUebersichtGrids[GruppenNdx], FState.Gruppen[GruppenNdx][TeamNdx], TeamNdx);
+    end;
   end;
 end;
 

@@ -105,7 +105,7 @@ begin
       Spiel.Team2 := FState.GetTeams.Items[FCurrentTeams.Items[Ndx].Value];
       Spiel.Stadion := Default(TStadion);
 
-      Myself.Add(TSimulation.Create(6));
+      Myself.Add(TSimulation.Create(FState, 6));
       Myself.Last.SpielSimulieren(KOPhaseCallback, Spiel, FCurrentTeams.Items[Ndx]);
 
       FCurrentLabels[Ndx].Font.Style := [];
@@ -145,7 +145,7 @@ begin
       Spiel.Team2 := FState.GetTeams.Items[FCurrentTeams.Items[Ndx].Value];
       Spiel.Stadion := Default(TStadion);
 
-      Myself.Add(TSimulation.Create(5)); // immer einen weniger, da es ja theoritisch immer schwieriger wird
+      Myself.Add(TSimulation.Create(FState, 5)); // immer einen weniger, da es ja theoritisch immer schwieriger wird
       Myself.Last.SpielSimulieren(KOPhaseCallback, Spiel, FCurrentTeams.Items[Ndx]);
 
       FCurrentLabels[Ndx].Font.Style := [];
@@ -183,7 +183,7 @@ begin
       Spiel.Team2 := FState.GetTeams.Items[FCurrentTeams.Items[Ndx].Value];
       Spiel.Stadion := Default(TStadion);
 
-      Myself.Add(TSimulation.Create(5));
+      Myself.Add(TSimulation.Create(FState, 5));
       Myself.Last.SpielSimulieren(KOPhaseCallback, Spiel, FCurrentTeams.Items[Ndx]);
 
       FCurrentLabels[Ndx].Font.Style := [];
@@ -213,7 +213,7 @@ begin
       FCurrentLabels[Ndx].Font.Style := [fsBold];
       FCurrentLabels[Ndx].Font.Color := clGreen;
 
-      Myself.Add(TSimulation.Create(5));
+      Myself.Add(TSimulation.Create(FState, 5));
       Myself.Last.SpielSimulieren(KOPhaseCallback, Spiel, FCurrentTeams.Items[Ndx]);
 
       FCurrentLabels[Ndx].Font.Style := [];
@@ -237,7 +237,7 @@ begin
     FCurrentLabels[0].Font.Style := [fsBold];
     FCurrentLabels[0].Font.Color := clGreen;
 
-    Myself.Add(TSimulation.Create(5));
+    Myself.Add(TSimulation.Create(FState, 5));
     Myself.Last.SpielSimulieren(KOPhaseCallback, Spiel, FCurrentTeams.Items[Ndx]);
 
     FCurrentLabels[0].Font.Style := [];
@@ -263,7 +263,7 @@ begin
     FCurrentLabels[0].Font.Style := [fsBold];
     FCurrentLabels[0].Font.Color := clGreen;
 
-    Myself.Add(TSimulation.Create(5));
+    Myself.Add(TSimulation.Create(FState, 5));
     Myself.Last.SpielSimulieren(KOPhaseCallback, Spiel, FCurrentTeams.Items[Ndx]);
 
     FCurrentLabels[0].Font.Style := [];
