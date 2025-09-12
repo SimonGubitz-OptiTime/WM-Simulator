@@ -26,31 +26,32 @@ type TGruppenphaseUI = class
     FSimulation: TSimulation;
     FGrid: TStringGrid;
     FMatches: TList<TPair<Byte, Byte>>; // sortierbare TDictionary implementierung, mit mehreren gleichen Keys
-    FLabels: TArray<TLabel>;
     FCurrentGroup: TGruppe;
-    FCurrentGroupStandings: TDictionary<Byte, TTeamStatistik>;
+    FGruppenphaseLabels: TArray<TLabel>;
+    FSechzehntelfinaleLabels: TArray<TLabel>;
 
 
-    procedure CallbackSimulation(Sender: TObject; AMatchNdx: Integer; ATeam1Tore, ATeam2Tore: Integer);
+    procedure CallbackSimulation(Sender: TObject; ASpielIDs: TSpiel; ASpielIDsIDs: TSpielIDs);
 
   public
-    constructor Create(AGruppenphaseGrid: TStringGrid; const AState: IState);
+    constructor Create(AGruppenphaseGrid: TStringGrid; AGruppenphaseLabels: TArray<TLabel>; ASechzehntelfinaleLabels: TArray<TLabel>; const AState: IState);
     destructor Destroy; override;
 
-    procedure Starten(AGruppenphaseLabels: TArray<TLabel>; ASechzehntelfinaleLabels: TArray<TLabel>);
+    procedure Starten(ASpielIDs: TSpielIDs; AGruppe: TGruppe; ANdx: Integer);
 
   end;
 
 implementation
 
-constructor TGruppenphaseUI.Create(AGruppenphaseGrid: TStringGrid; const AState: IState);
+constructor TGruppenphaseUI.Create(AGruppenphaseGrid: TStringGrid; AGruppenphaseLabels: TArray<TLabel>; ASechzehntelfinaleLabels: TArray<TLabel>; const AState: IState);
 var
   j: Integer;
 begin
   FState := AState;
   FGrid := AGruppenphaseGrid;
   FSimulation := TSimulation.Create;
-  FCurrentGroupStandings := TDictionary<Byte, TTeamStatistik>.Create;
+  FGruppenphaseLabels := AGruppenphaseLabels;
+  FSechzehntelfinaleLabels := ASechzehntelfinaleLabels;
 
   var ColSize := Floor(FGrid.Width / FGrid.ColCount) - 2;
   var RowSize := Floor(FGrid.Height / FGrid.RowCount) - 2;
@@ -67,12 +68,48 @@ end;
 
 destructor TGruppenphaseUI.Destroy;
 begin
-  FMatches.Free;
-  FSimulation.Destroy;
-  FCurrentGroupStandings.Destroy;
-
   inherited Destroy;
 end;
+
+//{
+procedure TGruppenphaseUI.Starten(ASpielIDs: TSpielIDs; AGruppe: TGruppe; ANdx: Integer);
+var
+  SimulationList: TObjectList<TSimulation>;
+begin
+  clrUtils.TableFormating.TeamTabelleZeichnen(FGrid, AGruppe);
+
+  FGruppenphaseLabels[ANdx].Caption := clrUtils.StringFormating.FormaTSpielIDsString(
+    FState.Teams[ASpielIDs.Key].Name,
+    FState.Teams[ASpielIDs.Value].Name,
+    0,
+    0
+  );
+
+  // Das aktuelle Spiel immer grün markieren
+  FGruppenphaseLabels[ANdx].Font.Style := [fsBold];
+  FGruppenphaseLabels[ANdx].Font.Color := clGreen;
+
+
+  var Spiel := Default(TSpiel);
+  Spiel.Team1 := FState.Teams[ASpielIDs.Key];
+  Spiel.Team1 := FState.Teams[ASpielIDs.Value];
+  Spiel.Stadion := Default(TStadion);
+
+  SimulationList := TObjectList<TSimulation>.Create;
+  try
+    SimulationList.Add(TSimulation.Create);
+    SimulationList.Last.SpielSimulieren(CallbackSimulation, ANdx, Spiel, ASpielIDs);
+
+  finally
+    SimulationList.Free;
+  end;
+
+  FGruppenphaseLabels[ANdx].Font.Style := [];
+  FGruppenphaseLabels[ANdx].Font.Color := clWindowText;
+end;
+// }
+
+{
 
 procedure TGruppenphaseUI.Starten(AGruppenphaseLabels: TArray<TLabel>; ASechzehntelfinaleLabels: TArray<TLabel>);
 var
@@ -112,46 +149,10 @@ begin
       for Ndx := 0 to FMatches.Count - 1 do
       begin
 
-        clrUtils.TableFormating.TeamTabelleZeichnen(FGrid, FCurrentGroup);
 
-        AGruppenphaseLabels[Ndx].Caption := clrUtils.StringFormating.FormatMatchString(
-          FState.Teams[FMatches[Ndx].Key].Name,
-          FState.Teams[FMatches[Ndx].Value].Name,
-          0,
-          0
-        );
-
-        // Das aktuelle Spiel immer grün markieren
-        AGruppenphaseLabels[Ndx].Font.Style := [fsBold];
-        AGruppenphaseLabels[Ndx].Font.Color := clGreen;
-
-
-        var Spiel := Default(TSpiel);
-        Spiel.Team1 := FState.Teams[FMatches[Ndx].Key];
-        Spiel.Team1 := FState.Teams[FMatches[Ndx].Value];
-        Spiel.Stadion := Default(TStadion);
-
-        FSimulationList := TObjectList<TSimulation>.Create;
-        try
-          FSimulationList.Add(TSimulation.Create);
-          FSimulationList.Last.SpielSimulieren(CallbackSimulation, Ndx, Spiel);
-
-        finally
-          FSimulationList.Free;
-        end;
-
-        AGruppenphaseLabels[Ndx].Font.Style := [];
-        AGruppenphaseLabels[Ndx].Font.Color := clWindowText;
       end;
 
 
-      {
-
-       ALLES HIERDRUNTER MUSS REFACTORED WERDEN
-
-       - Callback in Main.pas, wo Logic and UI may meet?
-
-      }
 
       // Extract the top 2 teams
       var x := clrUtils.SortHashMap.THashMapUtils.Sort<Byte, TTeamStatistik>(
@@ -206,7 +207,7 @@ begin
       begin
         with ASechzehntelfinaleLabels[i] do
         begin
-          Caption := clrUtils.StringFormating.FormatMatchString(
+          Caption := clrUtils.StringFormating.FormaTSpielIDsString(
             FState.Teams[RoundOf32Teams[Team1Index]].Name,
             FState.Teams[RoundOf32Teams[Team2Index]].Name,
             0, 0
@@ -232,25 +233,26 @@ begin
   end;
 
 end;
+//}
 
-procedure TGruppenphaseUI.CallbackSimulation(Sender: TObject; AMatchNdx: Integer; ATeam1Tore, ATeam2Tore: Integer);
+procedure TGruppenphaseUI.CallbackSimulation(Sender: TObject; ASpielIDs: TSpiel; ASpielIDsIDs: TSpielIDs);
 var
   Team1, Team2: TTeam;
   TempStand1, TempStand2: TTeamStatistik;
 begin
 
-  Team1 := FState.Teams[FMatches[AMatchNdx].Key];
-  Team2 := FState.Teams[FMatches[AMatchNdx].Value];
-  FLabels[AMatchNdx].Caption := clrUtils.StringFormating.FormatMatchString(Team1.Name, Team2.Name, ATeam1Tore, ATeam2Tore);
+  Team1 := FState.Teams[ASpielIDsIDs.Key];
+  Team2 := FState.Teams[ASpielIDsIDs.Value];
+  //FLabels[ASpielIDsNdx].Caption := clrUtils.StringFormating.FormaTSpielIDsString(Team1.Name, Team2.Name, ATeam1Tore, ATeam2Tore);
 
   // Schreibt die Werte in TempStand1 & TempStand2
-  clrUtils.UpdateStandings.GetUpdatedStandings(FState, ATeam1Tore, ATeam2Tore, Team1.ID, Team2.ID, TempStand1, TempStand2);
+  clrUtils.UpdateStandings.GetUpdatedStandings(FState, ASpielIDs.Team1Tore, ASpielIDs.Team2Tore, Team1.ID, Team2.ID, TempStand1, TempStand2);
 
   // Update the CurrentGroup
-  FCurrentGroupStandings.AddOrSetValue(Team1.ID, TempStand1);
-  FCurrentGroupStandings.AddOrSetValue(Team2.ID, TempStand2);
+  //FCurrentGroupStandings.AddOrSetValue(Team1.ID, TempStand1);
+  //FCurrentGroupStandings.AddOrSetValue(Team2.ID, TempStand2);
 
 end;
-
+//}
 
 end.

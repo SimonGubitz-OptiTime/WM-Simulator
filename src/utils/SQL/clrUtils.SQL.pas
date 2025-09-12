@@ -49,7 +49,7 @@ begin
   FDelphiToSQLTypeDict.AddOrSetValue(tkUString, 'varchar(50)');
   FDelphiToSQLTypeDict.AddOrSetValue(tkString, 'varchar(50)');
   FDelphiToSQLTypeDict.AddOrSetValue(tkEnumeration, 'varchar(50)');
-  FDelphiToSQLTypeDict.AddOrSetValue(tkDynArray, 'varchar(50)');
+  FDelphiToSQLTypeDict.AddOrSetValue(tkDynArray, 'varchar(500)');
   FDelphiToSQLTypeDict.AddOrSetValue(tkInteger, 'int');
   FDelphiToSQLTypeDict.AddOrSetValue(tkArray, 'varchar(50)');
 end;

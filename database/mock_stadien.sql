@@ -1,4 +1,4 @@
-INSERT INTO WMSimulatorStadien (
+INSERT INTO WMSimulationStadien (
     Name, Ort, ZuschauerKapazitaet
 ) VALUES
 ('Estadio Azteca', 'Mexico City', 87523),
@@ -12,4 +12,8 @@ INSERT INTO WMSimulatorStadien (
 ('Gillette Stadium', 'Foxborough, MA', 65878),
 ('BC Place', 'Vancouver, BC', 54500),
 ('Estadio BBVA', 'Monterrey, NL', 53500),
-('Estadio Akron', 'Guadalajara, JAL', 49850);
+('Wembley Stadium', 'London, UK', 90000),
+('Camp Nou', 'Barcelona, Spain', 99534),
+('Estadio Akron', 'Guadalajara, JAL', 49850),
+('Allianz Arena', 'München, DE', 75000),
+('Parc des Princes', 'Paris, FR', 47929);

@@ -7,7 +7,7 @@ uses
   Vcl.Forms,
   damTypes;
 
-type TSimulationCallbackFn = procedure(Sender: TObject; ANdx: Integer; ATeam1Tore, ATeam2Tore: Integer) of object;
+type TSimulationCallbackFn = procedure(Sender: TObject; AMatch: TSpiel; AMatchIDs: TSpielIDs) of object;
 
 type TSimulation = class
   private
@@ -17,6 +17,7 @@ type TSimulation = class
     FTotalGoals: Integer;
     FNdx: Integer;
     FSpiel: TSpiel;
+    FSpielIDs: TSpielIDs;
     FCallbackFn: TSimulationCallbackFn;
     FTeam1Tore, FTeam2Tore: Integer;
 
@@ -28,7 +29,7 @@ type TSimulation = class
     constructor Create(PossibleMaxGoals: Byte = 6);
     destructor Destroy; override;
 
-    procedure SpielSimulieren(ACallbackFn: TSimulationCallbackFn; ANdx: Integer; ASpiel: TSpiel);
+    procedure SpielSimulieren(ACallbackFn: TSimulationCallbackFn; ANdx: Integer; ASpiel: TSpiel; ASpielIDs: TSpielIDs);
 
 end;
 
@@ -69,7 +70,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TSimulation.SpielSimulieren(ACallbackFn: TSimulationCallbackFn; ANdx: Integer; ASpiel: TSpiel);
+procedure TSimulation.SpielSimulieren(ACallbackFn: TSimulationCallbackFn; ANdx: Integer; ASpiel: TSpiel; ASpielIDs: TSpielIDs);
 begin
   FTeam1Tore := 0;
   FTeam2Tore := 0;
@@ -79,6 +80,7 @@ begin
 
   FNdx := ANdx;
   FSpiel := ASpiel;
+  FSpielIDs := ASpielIDs;
   FCallbackFn := ACallbackFn;
 
   FTimer.OnTimer := UpdateState;
@@ -100,7 +102,8 @@ begin
     FSimulationFinished := true;
     FTimer.Enabled := false;
 
-    FCallbackFn(Self, FNdx, FTeam1Tore, FTeam2Tore);
+    FCallbackFn(Self, FSpiel, FSpielIDs);
+    //(Sender: TObject; AMatch: TSpiel; AMatchIDs: TSpielIDs)
 
     // Update State here
     {

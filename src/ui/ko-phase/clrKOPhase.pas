@@ -106,7 +106,7 @@ begin
       Spiel.Stadion := Default(TStadion);
 
       Myself.Add(TSimulation.Create(6));
-      Myself.Last.SpielSimulieren(KOPhaseCallback, Ndx, Spiel);
+      Myself.Last.SpielSimulieren(KOPhaseCallback, Ndx, Spiel, FCurrentTeams.Items[Ndx]);
 
       FCurrentLabels[Ndx].Font.Style := [];
       FCurrentLabels[Ndx].Font.Color := clWindowText;
@@ -280,14 +280,15 @@ begin
 
 end;
 
-procedure TKOphaseUI.KOPhaseCallback(Sender: TObject; ANdx: Integer; ATeam1Tore, ATeam2Tore: Integer);
+
+procedure TKOphaseUI.KOPhaseCallback(ACallbackFn: TSimulationCallbackFn; ANdx: Integer; ASpiel: TSpiel; ASpielIDs: TSpielIDs);
 var
   Team1, Team2: TTeam;
 begin
-  Team1 := FState.GetTeams.Items[FCurrentTeams.Items[ANdx].Key];
-  Team2 := FState.GetTeams.Items[FCurrentTeams.Items[ANdx].Value];
+  Team1 := FState.GetTeams.Items[ASpielIDs.Key];
+  Team2 := FState.GetTeams.Items[ASpielIDs.Value];
 
-  FCurrentLabels[ANdx].Caption := clrUtils.StringFormating.FormatMatchString(Team1.Name, Team2.Name, ATeam1Tore, ATeam2Tore);
+  FCurrentLabels[ANdx].Caption := clrUtils.StringFormating.FormaTSpielIDsString(Team1.Name, Team2.Name, ASpiel.ATeam1Tore, ASpiel.ATeam2Tore);
 
   // Update state
   if ( ATeam1Tore > ATeam2Tore ) then

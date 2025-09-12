@@ -25,6 +25,8 @@ type
     Niederlagen: Byte;
   end;
 
+  TTeamID = Byte;
+
   //{$RTTI EXPLICIT Fields([vcPublished])}
   TTeam = record
   public
@@ -37,14 +39,20 @@ type
     SpielerListe: array of String; // ← Nur Namen, muss um Simplizität in der Rtti array bleiben, kein TList<string>
     TeamRanking: TTeamRanking;
 
-    ID: Byte;
+    ID: TTeamID;
   end;
 
+  // class statt record??, um Pass-By-Ref zu nutzen als Speicher-Optimierung, trotz Heap statt Stack?
   TSpiel = record
     Team1: TTeam;
     Team2: TTeam;
     Stadion: TStadion;
+
+    Team1Tore: Byte;
+    Team2Tore: Byte;
   end;
+
+  TSpielIDs = TPair<TTeamID, TTeamID>;
 
   TGruppe = TList<TTeam>;
 

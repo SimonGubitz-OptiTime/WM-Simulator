@@ -285,7 +285,14 @@ begin
 
   FVerlosungLogik := TVerlosungLogik.Create(FState, FTeamDB);
   FVerlosungUI := TVerlosungUI.Create([StringGrid1, StringGrid2, StringGrid3, StringGrid4, StringGrid5, StringGrid6, StringGrid7, StringGrid8, StringGrid9, StringGrid10, StringGrid11, StringGrid12], FState);
-  FGruppenphaseUI := TGruppenphaseUI.Create(GruppenphaseStringGrid, FState);
+
+  FGruppenphaseLogik := TGruppenphaseLogik.Create(FState);
+  FGruppenphaseUI := TGruppenphaseUI.Create(GruppenphaseStringGrid,
+    [ Spiel1Label, Spiel2Label, Spiel3Label, Spiel4Label, Spiel5Label, Spiel6Label ],
+    [ SechzehntelfinaleLabel1, SechzehntelfinaleLabel2, SechzehntelfinaleLabel3, SechzehntelfinaleLabel4, SechzehntelfinaleLabel5, SechzehntelfinaleLabel6, SechzehntelfinaleLabel7, SechzehntelfinaleLabel8, SechzehntelfinaleLabel9, SechzehntelfinaleLabel10, SechzehntelfinaleLabel11, SechzehntelfinaleLabel12, SechzehntelfinaleLabel13, SechzehntelfinaleLabel14, SechzehntelfinaleLabel15, SechzehntelfinaleLabel16 ],
+    FState
+  );
+
   FKOPhase := TKOPhaseUI.Create(
     [ SechzehntelfinaleLabel1, SechzehntelfinaleLabel2, SechzehntelfinaleLabel3, SechzehntelfinaleLabel4, SechzehntelfinaleLabel5, SechzehntelfinaleLabel6, SechzehntelfinaleLabel7, SechzehntelfinaleLabel8, SechzehntelfinaleLabel9, SechzehntelfinaleLabel10, SechzehntelfinaleLabel11, SechzehntelfinaleLabel12, SechzehntelfinaleLabel13, SechzehntelfinaleLabel14, SechzehntelfinaleLabel15, SechzehntelfinaleLabel16 ],
     [ AchtelfinaleLabel1, AchtelfinaleLabel2, AchtelfinaleLabel3, AchtelfinaleLabel4, AchtelfinaleLabel5, AchtelfinaleLabel6, AchtelfinaleLabel7, AchtelfinaleLabel8 ],
@@ -462,8 +469,11 @@ procedure TMainForm.GruppenphaseStartenButtonClick(Sender: TObject);
 begin
 
   // Gruppenphase Labels und Sechzehntelfinale AGruppenphaseLabels
-  FGruppenphaseLogik.Starten();
-  FGruppenphaseUI.Starten([ Spiel1Label, Spiel2Label, Spiel3Label, Spiel4Label, Spiel5Label, Spiel6Label ], [ SechzehntelfinaleLabel1, SechzehntelfinaleLabel2, SechzehntelfinaleLabel3, SechzehntelfinaleLabel4, SechzehntelfinaleLabel5, SechzehntelfinaleLabel6, SechzehntelfinaleLabel7, SechzehntelfinaleLabel8, SechzehntelfinaleLabel9, SechzehntelfinaleLabel10, SechzehntelfinaleLabel11, SechzehntelfinaleLabel12, SechzehntelfinaleLabel13, SechzehntelfinaleLabel14, SechzehntelfinaleLabel15, SechzehntelfinaleLabel16 ]);
+  FGruppenphaseLogik.Starten(procedure(AMatch: TSpielIDs; AGruppe: TGruppe; ANdx: Integer)
+    begin
+      FGruppenphaseUI.Starten(AMatch, AGruppe, ANdx);
+    end
+  );
 
 end;
 

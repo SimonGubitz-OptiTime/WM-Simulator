@@ -19,7 +19,7 @@ type TVerlosungLogik = class
     FDB: IDB<TTeam>;
 
     procedure IDSVergeben;
-    procedure CreateTeams;
+    procedure GruppenErstellen;
 
   public
 
@@ -60,7 +60,7 @@ begin
   end;
 end;
 
-procedure TVerlosungLogik.CreateTeams;
+procedure TVerlosungLogik.GruppenErstellen;
 var
   Ndx: Integer;
   TempList: TList<TTeam>;
@@ -138,7 +138,8 @@ end;
 
 procedure TVerlosungLogik.Starten;
 begin
-  CreateTeams;
+  GruppenErstellen;
 end;
+
 
 end.
