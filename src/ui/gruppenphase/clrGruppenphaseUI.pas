@@ -35,13 +35,11 @@ type TGruppenphaseUI = class
 
   public
     constructor Create(AGruppenphaseGrid: TStringGrid; const AState: IState);
-
-    procedure GruppenphaseStarten(AGruppenphaseLabels: TArray<TLabel>; ASechzehntelfinaleLabels: TArray<TLabel>);
-
     destructor Destroy; override;
 
-end;
+    procedure Starten(AGruppenphaseLabels: TArray<TLabel>; ASechzehntelfinaleLabels: TArray<TLabel>);
 
+  end;
 
 implementation
 
@@ -76,7 +74,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TGruppenphaseUI.GruppenphaseStarten(AGruppenphaseLabels: TArray<TLabel>; ASechzehntelfinaleLabels: TArray<TLabel>);
+procedure TGruppenphaseUI.Starten(AGruppenphaseLabels: TArray<TLabel>; ASechzehntelfinaleLabels: TArray<TLabel>);
 var
   CurrentGroup: TGruppe;
   Ndx: Integer;
@@ -248,16 +246,9 @@ begin
   // Schreibt die Werte in TempStand1 & TempStand2
   clrUtils.UpdateStandings.GetUpdatedStandings(FState, ATeam1Tore, ATeam2Tore, Team1.ID, Team2.ID, TempStand1, TempStand2);
 
-
-  // ↓ pull this into clrSimulation ???
-
   // Update the CurrentGroup
   FCurrentGroupStandings.AddOrSetValue(Team1.ID, TempStand1);
   FCurrentGroupStandings.AddOrSetValue(Team2.ID, TempStand2);
-
-  // Also write it in the global FState.Stands to have a non scoped saved state
-  FState.AddOrSetTeamStandByID(Team1.ID, TempStand1);
-  FState.AddOrSetTeamStandByID(Team2.ID, TempStand2);
 
 end;
 

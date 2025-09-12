@@ -42,7 +42,7 @@ type TVerlosungUI = class
     constructor Create(AGrids: array of TStringGrid; AState: IState);
     destructor Destroy; override;
 
-    function VerlosungStarten(AOwner: TControl): Boolean;
+    function Starten(AOwner: TControl): Boolean;
 
   end;
 
@@ -98,7 +98,7 @@ begin
   end;
 end;
 
-function TVerlosungUI.VerlosungStarten(AOwner: TControl): Boolean;
+function TVerlosungUI.Starten(AOwner: TControl): Boolean;
 var
   Grid: TStringGrid;
   TempLabel: TStaticText;

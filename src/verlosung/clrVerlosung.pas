@@ -65,8 +65,15 @@ var
   SehrStarkeTeams, StarkeTeams, MittelStarkeTeams, SchwacheTeams: TList<TTeam>;
 begin
 
+
   FState.SetTeams(FDB.StrukturierteTabelleErhalten());
   FState.ClearGruppen();
+
+  if ( (FUITeams.Count mod 4) <> 0 ) then
+  begin
+    raise Exception.Create('TVerlosungUI.Starten Error: The number of FUITeams must be divisible by 4.');
+  end;
+
 
   IDSVergeben;
 
@@ -104,12 +111,11 @@ begin
 
 
   if ( (SehrStarkeTeams.Count <> StarkeTeams.Count)
-      or (StarkeTeams.Count <> MittelStarkeTeams.Count)
-      or (MittelStarkeTeams.Count <> SchwacheTeams.Count)
+    or (StarkeTeams.Count <> MittelStarkeTeams.Count)
+    or (MittelStarkeTeams.Count <> SchwacheTeams.Count)
   ) then
   begin
-    // custom error
-    // raise E
+    ShowMessage('Die Anzahl der Teams in den Lostöpfen ist nicht gleich.');
     Exit;
   end;
 
