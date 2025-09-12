@@ -26,6 +26,7 @@ uses
   clrState,
   clrVerlosung,
   clrVerlosungUI,
+  clrGruppenphase,
   clrGruppenphaseUI,
   clrKOPhase,
   fraTeamEingabeFenster,
@@ -274,7 +275,11 @@ begin
   FTeamDB := TCSVDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
   FStadionDB := TCSVDB<TStadion>.Create(TStadionEingabeFenster.GetTableName);
   // }
+<<<<<<< Updated upstream
   //{
+=======
+  // {
+>>>>>>> Stashed changes
   FTeamDB := TSQLDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
   FStadionDB := TSQLDB<TStadion>.Create(TStadionEingabeFenster.GetTableName);
   // }
@@ -439,8 +444,18 @@ end;
 procedure TMainForm.VerlosungStartenButtonClick(Sender: TObject);
 begin
 
+<<<<<<< Updated upstream
   FVerlosungLogik.Starten();
   FVerlosungFertig := FVerlosungUI.VerlosungStarten(VerlosungSheet);
+=======
+  try
+    FVerlosungLogik.Starten();
+    FVerlosungFertig := FVerlosungUI.Starten(VerlosungSheet);
+  except
+  on E: Exception do
+    ShowMessage('Fehler bei der Verlosung: ' + E.Message);
+  end;
+>>>>>>> Stashed changes
 
   // Wenn es genügend Gruppen gibt
   if ( FState.GetGruppen.Count = 12 ) then

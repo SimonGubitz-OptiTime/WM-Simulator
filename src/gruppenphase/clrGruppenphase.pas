@@ -1,8 +1,9 @@
-unit clrGruppenphase;
+﻿unit clrGruppenphase;
 
 interface
 
 uses
+  System.Generics.Collections,
   damTypes,
   clrState;
 
@@ -10,7 +11,12 @@ type TGruppenphaseLogik = class
     private
 
       FField: String;
+<<<<<<< Updated upstream
 
+=======
+      FMatches: TList<TPair<Byte, Byte>>;
+      FState: IState;
+>>>>>>> Stashed changes
 
       /// <summary>
       ///   Algorithmisch Spiele verteilen
@@ -19,7 +25,7 @@ type TGruppenphaseLogik = class
 
     public
 
-      constructor Create;
+      constructor Create(AState: IState);
       destructor Destroy;
 
       procedure Starten;
@@ -28,9 +34,10 @@ type TGruppenphaseLogik = class
 
 implementation
 
-constructor TGruppenphaseLogik.Create;
+constructor TGruppenphaseLogik.Create(AState: IState);
 begin
   //
+  FState := AState;
 end;
 
 destructor TGruppenphaseLogik.Destroy;
@@ -102,6 +109,21 @@ begin
 
 end;
 
+<<<<<<< Updated upstream
+=======
+procedure TGruppenphaseLogik.Starten();
+var
+  CurrentGroup: TGruppe;
+begin
+
+  for CurrentGroup in FState.Gruppen do
+  begin
+    FMatches := CreateUniqueMatches(CurrentGroup);
+  end;
+
+
+end;
+>>>>>>> Stashed changes
 
 // think of a way to get the Callback here
 // or have the global state update really in the simulation

@@ -4,6 +4,8 @@ interface
 
 uses
   System.Generics.Collections,
+  System.SysUtils,
+  Vcl.Dialogs,
   clrDB,
   damTypes,
   clrState,
@@ -68,6 +70,15 @@ begin
   FState.SetTeams(FDB.StrukturierteTabelleErhalten());
   FState.ClearGruppen();
 
+<<<<<<< Updated upstream
+=======
+  if ( (FState.Teams.Count mod 4) <> 0 ) then
+  begin
+    raise Exception.Create('TVerlosungUI.Starten Error: The number of FUITeams must be divisible by 4.');
+  end;
+
+
+>>>>>>> Stashed changes
   IDSVergeben;
 
   // Nur die sehr starken Teams nehmen

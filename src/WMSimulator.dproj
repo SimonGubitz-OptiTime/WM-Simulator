@@ -188,6 +188,7 @@
         <DCCReference Include="verlosung\clrVerlosung.pas"/>
         <DCCReference Include="utils\SQL\clrUtils.SQL.pas"/>
         <DCCReference Include="utils\arrays\clrUtils.ArrToStr.pas"/>
+        <DCCReference Include="gruppenphase\clrGruppenphase.pas"/>
         <None Include="ModelSupport_WMSimulator\default.txaPackage"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>

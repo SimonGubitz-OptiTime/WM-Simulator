@@ -33,7 +33,8 @@ uses
   clrUtils.StreamPosition in 'utils\streams\clrUtils.StreamPosition.pas',
   clrVerlosung in 'verlosung\clrVerlosung.pas',
   clrUtils.SQL in 'utils\SQL\clrUtils.SQL.pas',
-  clrUtils.ArrToStr in 'utils\arrays\clrUtils.ArrToStr.pas';
+  clrUtils.ArrToStr in 'utils\arrays\clrUtils.ArrToStr.pas',
+  clrGruppenphase in 'gruppenphase\clrGruppenphase.pas';
 
 {$R *.res}
 
