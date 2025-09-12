@@ -12,6 +12,7 @@ type TGruppenphaseLogik = class
 
       FField: String;
       FMatches: TList<TPair<Byte, Byte>>;
+      FState: IState;
 
       /// <summary>
       ///   Algorithmisch Spiele verteilen
@@ -108,9 +109,13 @@ begin
 end;
 
 procedure TGruppenphaseLogik.Starten();
+var
+  CurrentGroup: TGruppe;
 begin
-
-  FMatches := CreateUniqueMatches();
+  for CurrentGroup in FState.Gruppen do
+  begin
+    FMatches := CreateUniqueMatches(CurrentGroup);
+  end;
 
 end;
 

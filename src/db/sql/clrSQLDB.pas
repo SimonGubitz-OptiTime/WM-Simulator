@@ -133,10 +133,6 @@ begin
   begin
     // Create new table
     CreateTable;
-  end
-  else
-  begin
-    ShowMessage(FSQLTabellenName + ' existiert');
   end;
   TableNames.Free;
 
@@ -165,12 +161,8 @@ procedure TSQLDB<T>.CreateTable;
 var
   SQLQuery: String;
 begin
-  ShowMessage('creating table for ' + FSQLTabellenName);
-
   SQLQuery := 'CREATE TABLE dbo.' + FSQLTabellenName + ' (' + clrUtils.SQL.TSQLUtils.FormatSQLConditionNameType<T>(Default(T), '%s %s,', '%s %s') + ')';
-
-  Clipboard.AsText := SQLQuery;
-
+  InitialisiereQueryInsert(FDQuery1, FDConnection1, SQLQuery);
 end;
 
 function TSQLDB<T>.InitialisiereQuery(AQuery: TFDQuery; AFDConnection: TFDConnection; ASql: string): boolean;

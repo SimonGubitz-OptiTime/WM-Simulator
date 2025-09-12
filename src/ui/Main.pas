@@ -274,13 +274,13 @@ begin
   // Globaler State, wodrin alle Teams, Gruppen und Auskommen nach und nach gespeichert werden
   FState := TWMState.Create;
 
-  // {
+  {
   FTeamDB := TCSVDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
   FStadionDB := TCSVDB<TStadion>.Create(TStadionEingabeFenster.GetTableName);
   // }
-  {
-  FTeamDB := TSVDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
-  FStadionDB := TSVDB<TStadion>.Create(TStadionEingabeFenster.GetTableName);
+  // {
+  FTeamDB := TSQLDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
+  FStadionDB := TSQLDB<TStadion>.Create(TStadionEingabeFenster.GetTableName);
   // }
 
   FVerlosungLogik := TVerlosungLogik.Create(FState, FTeamDB);
@@ -447,7 +447,7 @@ begin
     FVerlosungLogik.Starten();
     FVerlosungFertig := FVerlosungUI.Starten(VerlosungSheet);
   except
-  on E: Exception:
+  on E: Exception do
     ShowMessage('Fehler bei der Verlosung: ' + E.Message);
   end;
 

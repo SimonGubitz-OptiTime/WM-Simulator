@@ -245,6 +245,13 @@ begin
       SW.BaseStream.Position := Floor(FFS.size / 2); // 2 byte pro character
     end;
 
+
+
+    WriterString := '';
+    if ( FFS.size = 0 ) then
+    begin
+      WriterString := clrUtils.CSV.TCSVUtils<T>.GetCSVHeaderAsString();
+    end;
     WriterString := clrUtils.CSV.TCSVUtils<T>.SerializeRowCSV(ARowValues);
     SW.WriteLine(WriterString);
 

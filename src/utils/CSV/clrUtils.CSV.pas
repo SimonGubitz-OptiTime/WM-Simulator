@@ -315,10 +315,9 @@ var
   Ndx: Integer;
 begin
 
-  RttiFields := TObjectList<TRttiField>.Create;
+  RttiFields := TObjectList<TRttiField>.Create(false);
 
   try
-  
     RttiContext := TRttiContext.Create;
     RttiType := RttiContext.GetType(TypeInfo(T));
 

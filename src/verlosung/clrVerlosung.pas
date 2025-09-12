@@ -71,7 +71,7 @@ begin
   FState.SetTeams(FDB.StrukturierteTabelleErhalten());
   FState.ClearGruppen();
 
-  if ( (FUITeams.Count mod 4) <> 0 ) then
+  if ( (FState.Teams.Count mod 4) <> 0 ) then
   begin
     raise Exception.Create('TVerlosungUI.Starten Error: The number of FUITeams must be divisible by 4.');
   end;
