@@ -159,15 +159,7 @@ begin
           end,
           Spiel, Matches[Ndx]
         );
-
-
-
-
       end;
-
-      Simulation.Destroy;
-
-
 
 
       // Extract the top 2 teams
@@ -184,27 +176,48 @@ begin
       TopTeams.Add(x[1].Key);
       ThirdPlaceTeams.Add(x[2].Key);
 
-
-      // Das Team sortieren
-      var sorted_teams := clrUtils.SortHashMap.THashMapUtils.Sort<Byte, TTeamStatistik>(
-        GroupStandings,
-        function(Left: TTeamStatistik; Right: TTeamStatistik): Boolean
-        begin
-          Result := (Left.Punkte - Right.Punkte) > 0;
-        end
-      );
-
-      // und in den dafür vorgesehenen Grid reinschreiben
-      for var team in sorted_teams do
-      begin
-        // clrUtils.TableFormating.
-      end;
-
-
-
-
     end;
+
+    // Compose round-of-32 teams
+    RoundOf32Teams.AddRange(TopTeams);
+    RoundOf32Teams.AddRange([ThirdPlaceTeams[0], ThirdPlaceTeams[1], ThirdPlaceTeams[2], ThirdPlaceTeams[3], ThirdPlaceTeams[4], ThirdPlaceTeams[5], ThirdPlaceTeams[6], ThirdPlaceTeams[7]]);
+
+
+    // Die jeweiligen top Einträge als Spiele für das Sechzehntelfinale eintragen
+    for var i := 0 to Floor(RoundOf32Teams.Count / 2) - 1 do
+    begin
+      var Team1Index := i;
+      var Team2Index := RoundOf32Teams.Count - i;
+
+      if (Team1Index < RoundOf32Teams.Count) and
+         (Team2Index < RoundOf32Teams.Count) and
+         (RoundOf32Teams[Team1Index] <> RoundOf32Teams[Team2Index]) then
+      begin
+        with ASechzehntelfinaleLabels[i] do
+        begin
+
+
+          // TODO: Refactor to new TSpiel type format
+          {Caption := clrUtils.StringFormating.FormatMatchString(
+            FState.Teams[RoundOf32Teams[Team1Index]].Name,
+            FState.Teams[RoundOf32Teams[Team2Index]].Name,
+            0, 0
+          );}
+
+          FState.AddSechzehntelFinalist(TSpielIDs.Create(RoundOf32Teams[Team1Index], RoundOf32Teams[Team2Index]));
+        end;
+      end
+      else
+      begin
+        ShowMessage(Format('Error: Invalid pairing for match %d', [i]));
+      end;
+    end;
+
+
+    ShowMessage('Die Gruppenphase ist abgeschlossen.');
+
   finally
+    Simulation.Destroy;
     TopTeams.Free;
     ThirdPlaceTeams.Free;
     RoundOf32Teams.Free;
