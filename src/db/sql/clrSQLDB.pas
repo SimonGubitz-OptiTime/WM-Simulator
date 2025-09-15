@@ -13,8 +13,6 @@ uses
   FireDAC.DApt,
   FireDAC.Phys,
   FireDAC.Phys.Intf,
-  FireDAC.Phys.MSSQL,
-  FireDAC.Phys.MSSQLDef,
   FireDAC.Stan.Async,
   FireDAC.Stan.Error,
   FireDAC.Stan.Def,

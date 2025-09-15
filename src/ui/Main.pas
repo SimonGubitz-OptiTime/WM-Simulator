@@ -274,11 +274,11 @@ begin
   // Globaler State, wodrin alle Teams, Gruppen und Auskommen nach und nach gespeichert werden
   FState := TWMState.Create;
 
-  {
+  // {
   FTeamDB := TCSVDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
   FStadionDB := TCSVDB<TStadion>.Create(TStadionEingabeFenster.GetTableName);
   // }
-  // {
+  {
   FTeamDB := TSQLDB<TTeam>.Create(TTeamEingabeFenster.GetTableName);
   FStadionDB := TSQLDB<TStadion>.Create(TStadionEingabeFenster.GetTableName);
   // }
@@ -481,6 +481,9 @@ begin
 
   // Gruppenphase Übersicht zeichnen
   FGruppenphaseUI.GruppenphaseUebersichtZeichnen();
+
+  // Sechzehntelfinale eintragen
+  FGruppenphaseUI.SechzehntelFinaleEintragen();
 
 end;
 

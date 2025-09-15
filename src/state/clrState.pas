@@ -168,7 +168,7 @@ begin
   FGruppen.Clear;
 end;
 
-function TWMState.GetTeamStand: TDictionary<TTeamIDs, TTeamStatistik>;
+function TWMState.GetTeamStand: TDictionary<TTeamID, TTeamStatistik>;
 begin
   Result := FTeamStands;
 end;
