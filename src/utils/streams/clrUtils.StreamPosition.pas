@@ -1,4 +1,4 @@
-unit clrUtils.StreamPosition;
+﻿unit clrUtils.StreamPosition;
 
 interface
 
@@ -39,6 +39,5 @@ begin
   AStream.BaseStream.Position := StreamPosition;
 
 end;
-
 
 end.

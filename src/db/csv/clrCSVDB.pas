@@ -28,10 +28,6 @@ type
       FInitialisiert: Boolean;
       FDateiName: String;
       FOrdnerPfad: String;
-
-      FCachedCSV: TList<T>;
-      FCachedUnstructuredCSV: TObjectList<TList<String>>;
-
       procedure CallDBUpdateEventListeners();
 
     public
@@ -83,28 +79,12 @@ begin
   // Um als Ziel anzugeben, ob die Datei sicher geöffnet und beschrieben werden kann
   FInitialisiert := true;
 
-  {if ( FFS.Size <> 0 ) then
-  begin
-    // Write cache
-    FCachedCSV              := StrukturierteTabelleErhalten();
-    FCachedUnstructuredCSV  := UnstrukturierteTabelleErhalten();
-  end;}
-
 end;
 
 destructor TCSVDB<T>.Destroy;
 begin
-
-  // Clear the filestream
   FFS.Free;
-
-  // Free the list of event listeners
   FDBUpdateEventListeners.Free;
-
-  // Clear the cached data
-  FCachedCSV.Free;
-  // FCachedUnstructuredCSV.Free;
-
 
   // Call the inherited destructor
   inherited Destroy;
@@ -133,31 +113,23 @@ begin
 
   Result := TList<T>.Create;
 
-  if ( Assigned(FCachedCSV)) and ( FCachedCSV.Count > 0 ) then
-  begin
-    Result.AddRange(FCachedCSV);
-    Exit;
-  end
-  else
-  begin
-    SR := TStreamReader.Create(FFS);
+  SR := TStreamReader.Create(FFS);
 
-    try
-      // headline ignorieren
+  try
+    // headline ignorieren
+    Line := SR.ReadLine();
+
+    while not(SR.EndOfStream) do
+    begin
       Line := SR.ReadLine();
 
-      while not(SR.EndOfStream) do
-      begin
-        Line := SR.ReadLine();
-
-        // Zeile direkt als serialisiertes Objekt speichern
-        Row := clrUtils.CSV.TCSVUtils<T>.DeserializeRowCSV(Line);
-        Result.Add(Row);
-      end;
-    finally
-      SR.Free;
-      FFS.Position := 0;
+      // Zeile direkt als serialisiertes Objekt speichern
+      Row := clrUtils.CSV.TCSVUtils<T>.DeserializeRowCSV(Line);
+      Result.Add(Row);
     end;
+  finally
+    SR.Free;
+    FFS.Position := 0;
   end;
 end;
 
@@ -175,28 +147,19 @@ begin
 
   Result := TObjectList<TList<String>>.Create(true);
 
-  if ( Assigned(FCachedUnstructuredCSV)) and ( FCachedUnstructuredCSV.Count > 0) then
-  begin
-    Result.AddRange(FCachedUnstructuredCSV);
-    Exit;
-  end
-  else
-  begin
+  SR := TStreamReader.Create(FFS);
 
-    SR := TStreamReader.Create(FFS);
-
-    try
-      FFS.Position := 0;
-      while not(SR.EndOfStream) do
-      begin
-        Line := SR.ReadLine();
-        Temp := clrUtils.CSV.DeserializeCSV(Line);
-        Result.Add(Temp);
-      end;
-    finally
-      SR.Free;
-      FFS.Position := 0;
+  try
+    FFS.Position := 0;
+    while not(SR.EndOfStream) do
+    begin
+      Line := SR.ReadLine();
+      Temp := clrUtils.CSV.DeserializeCSV(Line);
+      Result.Add(Temp);
     end;
+  finally
+    SR.Free;
+    FFS.Position := 0;
   end;
 end;
 
@@ -250,14 +213,10 @@ begin
     WriterString := '';
     if ( FFS.size = 0 ) then
     begin
-      WriterString := clrUtils.CSV.TCSVUtils<T>.GetCSVHeaderAsString();
+      WriterString := clrUtils.CSV.TCSVUtils<T>.GetCSVHeaderAsString() + sLineBreak;
     end;
-    WriterString := clrUtils.CSV.TCSVUtils<T>.SerializeRowCSV(ARowValues);
+    WriterString := WriterString + clrUtils.CSV.TCSVUtils<T>.SerializeRowCSV(ARowValues);
     SW.WriteLine(WriterString);
-
-    // Append to cache as well
-    {FCachedCSV.Add(ARowValues);
-    FCachedUnstructuredCSV.Add(clrUtils.CSV.TCSVUtils<T>.ParseRowCSVToArray(ARowValues));}
 
   finally
     SW.Free;
@@ -292,8 +251,6 @@ begin
     SR := TStreamReader.Create(FFS);
 
     try
-      SR.ReadLine();
-
       while not(SR.EndOfStream) do
       begin
         Line := SR.ReadLine();
@@ -307,15 +264,17 @@ begin
       FFS.Position := 0;
     end;
 
-
     SW := TStreamWriter.Create(FFS);
     try
       for Ndx := 0 to SL.Count - 1 do
       begin
         SW.WriteLine(SL[Ndx]);
       end;
+      SW.Flush;
+      FFS.Size := FFS.Position;
     finally
       SW.Free;
+      FFS.Position := 0;
     end;
   finally
     SL.Free;
@@ -327,19 +286,25 @@ end;
 function TCSVDB<T>.ZeileFinden(AFinderFunction: TDBFinderFunction<T>; out ReturnValue: T): Boolean;
 var
   Row: T;
+  Rows: TList<T>;
 begin
 
   ReturnValue := Default(T);
   Result := false;
 
-  for Row in StrukturierteTabelleErhalten do
-  begin
-    if AFinderFunction(Row) then
+  Rows := StrukturierteTabelleErhalten;
+  try
+    for Row in Rows do
     begin
-      ReturnValue := Row;
-      Result := true;
-      Exit;
+      if AFinderFunction(Row) then
+      begin
+        ReturnValue := Row;
+        Result := true;
+        Exit;
+      end;
     end;
+  finally
+    Rows.Free;
   end;
 
 end;

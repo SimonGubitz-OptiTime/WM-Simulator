@@ -181,7 +181,7 @@ end;
 
 procedure TTeamEingabeFenster.BestaetigenButtonClick(Sender: TObject);
 var
-  placeholder: Integer;
+  placeholder, Ndx: Integer;
   placeholderRow: TTeam;
   Team: TTeam;
 begin
@@ -218,8 +218,6 @@ begin
   if ( FDatabase.ZeileFinden(
     function(Param: TTeam): Boolean
     begin
-      // Alles außer ID, weil dies erst in clrVerlosungUI gesetzt wird
-      // und Spieler Liste, da Array nicht verglichen werden können
       Result := (Param.Name = NameEingabeFeld.Text);
     end,
     placeholderRow
@@ -229,7 +227,7 @@ begin
     Exit;
   end;
 
-  Team := Default (TTeam);
+  Team := Default(TTeam);
   Team.Name := NameEingabeFeld.Text;
   Team.FIFACode := FIFACodeEingabeFeld.Text;
   Team.TeamVerband := TTeamVerband(TeamVerbandEingabeBox.ItemIndex);
@@ -239,13 +237,9 @@ begin
   Team.TeamRanking := TTeamRanking(TeamRankingEingabeBox.ItemIndex);
 
   SetLength(Team.SpielerListe, 11);
-  for placeholder := Low(Team.SpielerListe) to High(Team.SpielerListe) do
+  for Ndx := Low(Team.SpielerListe) to High(Team.SpielerListe) do
   begin
-    var
-    s := Team.SpielerListe[placeholder];
-    var
-    y := FSpielerListe[placeholder];
-    Team.SpielerListe[placeholder] := FSpielerListe[placeholder];
+    Team.SpielerListe[Ndx] := FSpielerListe[Ndx];
   end;
 
   // Team in die Datenbank schreiben
