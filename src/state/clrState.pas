@@ -14,7 +14,7 @@ type TWMState = class(TInterfacedObject, IState)
   private
     FTeams: TList<TTeam>;
     FStadien: TList<TStadion>;
-    FGruppen: TList<TGruppe>;
+    FGruppen: TObjectList<TGruppe>; // ObjectList weil TGruppe als TList<TTeam> definiert ist und somit ein objekt ist
 
     FTeamStands: TDictionary<Byte, TTeamStatistik>;
 
@@ -34,9 +34,9 @@ type TWMState = class(TInterfacedObject, IState)
     function    GetStadien: TList<TStadion>;
     procedure   SetStadien(const AStadien: TList<TStadion>);
 
-    function    GetGruppen: TList<TGruppe>;
+    function    GetGruppen: TObjectList<TGruppe>;
     procedure   AddGruppe(const AGroup: TGruppe);
-    procedure   SetGruppen(const AGruppen: TList<TGruppe>);
+    procedure   SetGruppen(const AGruppen: TObjectList<TGruppe>);
     procedure   ClearGruppen();
 
     function    GetTeamStand: TDictionary<Byte, TTeamStatistik>;
@@ -73,7 +73,7 @@ type TWMState = class(TInterfacedObject, IState)
   published
     property Teams: TList<TTeam> read GetTeams write SetTeams;
     property Stadien: TList<TStadion> read GetStadien write SetStadien;
-    property Gruppen: TList<TGruppe> read GetGruppen write SetGruppen;
+    property Gruppen: TObjectList<TGruppe> read GetGruppen write SetGruppen;
     property TeamStands: TDictionary<TTeamID, TTeamStatistik> read GetTeamStand write SetTeamStand;
 
     property SechzehntelFinalisten: TList<TSpielIDs> read GetSechzehntelFinalisten write SetSechzehntelFinalisten;
@@ -91,7 +91,7 @@ constructor TWMState.Create;
 begin
   FTeams := TList<TTeam>.Create;
   FStadien := TList<TStadion>.Create;
-  FGruppen := TList<TGruppe>.Create;
+  FGruppen := TObjectList<TGruppe>.Create;
   FTeamStands := TDictionary<TTeamID, TTeamStatistik>.Create;
 
 
@@ -103,15 +103,17 @@ end;
 
 destructor TWMState.Destroy;
 begin
+
   FSechzehntelFinalisten.Free;
   FAchtelFinalisten.Free;
   FViertelFinalisten.Free;
   FHalbFinalisten.Free;
 
+  ClearGruppen;
+  FGruppen.Free;
 
   FTeams.Free;
   FStadien.Free;
-  FGruppen.Free;
   FTeamStands.Free;
 
   inherited Destroy;
@@ -148,7 +150,7 @@ begin
   FStadien := AStadien;
 end;
 
-function TWMState.GetGruppen: TList<TGruppe>;
+function TWMState.GetGruppen: TObjectList<TGruppe>;
 begin
   Result := FGruppen;
 end;
@@ -158,7 +160,7 @@ begin
   FGruppen.Add(AGroup);
 end;
 
-procedure TWMState.SetGruppen(const AGruppen: TList<TGruppe>);
+procedure TWMState.SetGruppen(const AGruppen: TObjectList<TGruppe>);
 begin
   FGruppen := AGruppen;
 end;

@@ -3,10 +3,13 @@
 interface
 
 uses
+  System.SysUtils,
   System.Generics.Collections;
 
 
 type
+  ESkipStepException = class(Exception);
+
   TTeamVerband = (AFC, CAF, CONCACAF, CONMEBOL, OFC, UEFA);
   TTeamRanking = (SehrStark, Stark, MittelStark, Schwach);
 
@@ -68,9 +71,9 @@ type
       function    GetStadien: TList<TStadion>;
       procedure   SetStadien(const AStadien: TList<TStadion>);
 
-      function    GetGruppen: TList<TGruppe>;
+      function    GetGruppen: TObjectList<TGruppe>;
       procedure   AddGruppe(const AGroup: TGruppe);
-      procedure   SetGruppen(const AGruppen: TList<TGruppe>);
+      procedure   SetGruppen(const AGruppen: TObjectList<TGruppe>);
       procedure   ClearGruppen();
 
       function    GetTeamStand: TDictionary<Byte, TTeamStatistik>;
@@ -103,7 +106,7 @@ type
 
       property Teams: TList<TTeam> read GetTeams write SetTeams;
       property Stadien: TList<TStadion> read GetStadien write SetStadien;
-      property Gruppen: TList<TGruppe> read GetGruppen write SetGruppen;
+      property Gruppen: TObjectList<TGruppe> read GetGruppen write SetGruppen;
       property TeamStands: TDictionary<Byte, TTeamStatistik> read GetTeamStand write SetTeamStand;
 
       property SechzehntelFinalisten: TList<TPair<Byte, Byte>> read GetSechzehntelFinalisten write SetSechzehntelFinalisten;

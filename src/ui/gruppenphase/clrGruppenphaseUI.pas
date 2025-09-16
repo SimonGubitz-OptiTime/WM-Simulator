@@ -127,7 +127,6 @@ begin
     raise Exception.Create('Fehlermeldung');
   end;
 
-
   for GruppenNdx := 0 to FState.Gruppen.Count - 1 do
   begin
 
@@ -143,7 +142,7 @@ var
   Team2: TTeam;
 begin
     Ndx := 0;
-    while Ndx < FState.SechzehntelFinalisten.Count - 1 do
+    while Ndx <= FState.SechzehntelFinalisten.Count - 1 do
     begin
       Team1 := FState.Teams[FState.SechzehntelFinalisten[Ndx].Key];
       Team2 := FState.Teams[FState.SechzehntelFinalisten[Ndx].Value];

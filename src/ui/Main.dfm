@@ -26,10 +26,9 @@ object MainForm: TMainForm
     Top = 0
     Width = 1309
     Height = 797
-    ActivePage = VerlosungSheet
+    ActivePage = GruppenphaseSheet
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 0
-    OnChanging = PageControlChanging
     object Stammdaten: TTabSheet
       Caption = 'Stammdaten'
       DesignSize = (
@@ -174,17 +173,6 @@ object MainForm: TMainForm
         Anchors = [akLeft, akTop, akBottom]
         TabOrder = 3
       end
-      object ZurVerlosungButton: TButton
-        Left = 1223
-        Top = 3
-        Width = 75
-        Height = 25
-        Anchors = [akTop, akRight]
-        Caption = 'Verlosen'
-        Enabled = False
-        TabOrder = 4
-        OnClick = ZurVerlosungButtonClick
-      end
       object TeamEntfernenButton: TButton
         Left = 163
         Top = 54
@@ -193,7 +181,7 @@ object MainForm: TMainForm
         Caption = 'Team Entfernen'
         ImageIndex = 1
         Images = SymbolImageList
-        TabOrder = 5
+        TabOrder = 4
         OnClick = TeamEntfernenButtonClick
       end
       object StadionEntfernenButton: TButton
@@ -205,7 +193,7 @@ object MainForm: TMainForm
         Caption = 'Stadion Entfernen'
         ImageIndex = 1
         Images = SymbolImageList
-        TabOrder = 6
+        TabOrder = 5
         OnClick = StadionEntfernenButtonClick
       end
     end
@@ -321,7 +309,6 @@ object MainForm: TMainForm
         Caption = 'Gruppenphase'
         Enabled = False
         TabOrder = 0
-        OnClick = ZurGruppenphaseButtonClick
       end
       object StringGrid1: TStringGrid
         Left = 3
@@ -549,16 +536,33 @@ object MainForm: TMainForm
         Anchors = [akTop, akRight]
         Caption = 'Spiel6Label'
       end
-      object ZumSpielButton: TButton
-        Left = 1223
-        Top = 3
-        Width = 75
-        Height = 25
-        Anchors = [akTop, akRight]
-        Caption = 'Spielen'
-        Enabled = False
-        TabOrder = 0
-        OnClick = ZumSpielButtonClick
+      object Label69: TLabel
+        Left = 200
+        Top = 73
+        Width = 38
+        Height = 15
+        Caption = 'Punkte'
+      end
+      object Label71: TLabel
+        Left = 276
+        Top = 73
+        Width = 79
+        Height = 15
+        Caption = 'Team Verband'
+      end
+      object Label72: TLabel
+        Left = 120
+        Top = 73
+        Width = 35
+        Height = 15
+        Caption = 'St'#228'rke'
+      end
+      object Label75: TLabel
+        Left = 35
+        Top = 73
+        Width = 34
+        Height = 15
+        Caption = 'Name'
       end
       object GruppenphaseStartenButton: TButton
         Left = 588
@@ -569,7 +573,7 @@ object MainForm: TMainForm
         Caption = 'Gruppenphase starten'
         Constraints.MinHeight = 27
         Constraints.MinWidth = 150
-        TabOrder = 1
+        TabOrder = 0
         OnClick = GruppenphaseStartenButtonClick
       end
       object GruppenphaseStringGrid: TStringGrid
@@ -581,7 +585,7 @@ object MainForm: TMainForm
         FixedCols = 0
         RowCount = 4
         FixedRows = 0
-        TabOrder = 2
+        TabOrder = 1
       end
     end
     object GruppenstatistikenSheet: TTabSheet

@@ -121,18 +121,24 @@ begin
     Exit;
   end;
 
+  try
+    clrUtils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(SehrStarkeTeams);
+    clrUtils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(StarkeTeams);
+    clrUtils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(MittelStarkeTeams);
+    clrUtils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(SchwacheTeams);
 
-  clrUtils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(SehrStarkeTeams);
-  clrUtils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(StarkeTeams);
-  clrUtils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(MittelStarkeTeams);
-  clrUtils.ShuffleArray.TShuffleArrayUtils<TTeam>.Shuffle(SchwacheTeams);
 
-
-  for Ndx := 0 to SehrStarkeTeams.Count - 1 do
-  begin
-    TempList := TGruppe.Create;
-    TempList.AddRange([ SehrStarkeTeams[Ndx], StarkeTeams[Ndx], MittelStarkeTeams[Ndx], SchwacheTeams[Ndx] ]);
-    FState.AddGruppe(TempList);
+    for Ndx := 0 to SehrStarkeTeams.Count - 1 do
+    begin
+      TempList := TGruppe.Create;
+      TempList.AddRange([ SehrStarkeTeams[Ndx], StarkeTeams[Ndx], MittelStarkeTeams[Ndx], SchwacheTeams[Ndx] ]);
+      FState.AddGruppe(TempList);
+    end;
+  finally
+    SehrStarkeTeams.Free;
+    StarkeTeams.Free;
+    MittelStarkeTeams.Free;
+    SchwacheTeams.Free;
   end;
 
 end;

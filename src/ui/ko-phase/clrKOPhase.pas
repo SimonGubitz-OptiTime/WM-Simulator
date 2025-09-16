@@ -81,7 +81,7 @@ begin
   // Sicherstellen, dass die Sechzehntelfinale-Teams vorhanden sind
   if FState.GetSechzehntelFinalisten.Count = 0 then
   begin
-    raise Exception.Create('Bitte erst Gruppenphase starten.');
+    raise ESkipStepException.Create('Bitte erst Gruppenphase starten.');
   end;
 
 

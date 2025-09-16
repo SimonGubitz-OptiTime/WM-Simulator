@@ -54,7 +54,7 @@ begin
   {$IFDEF DEBUG}
     FTimer.Interval := 5;
   {$ELSE}
-    FTimer.Interval := 250;
+    FTimer.Interval := 100;
   {$ENDIF}
 
   FPossibleMaxGoals := PossibleMaxGoals;
@@ -102,10 +102,8 @@ begin
     FTimer.Enabled := false;
 
     FCallbackFn(Self, FSpiel, FSpielIDs);
-    //(Sender: TObject; AMatch: TSpiel; AMatchIDs: TSpielIDs)
 
     // Update State here
-
     clrUtils.UpdateStandings.GetUpdatedStandings(FState, FSpiel, TempStand1, TempStand2);
     FState.AddOrSetTeamStandByID(FSpiel.Team1.ID, TempStand1);
     FState.AddOrSetTeamStandByID(FSpiel.Team2.ID, TempStand2);

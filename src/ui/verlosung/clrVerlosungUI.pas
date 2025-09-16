@@ -100,6 +100,8 @@ end;
 
 function TVerlosungUI.Starten(AOwner: TControl): Boolean;
 var
+  UITeams: TList<TTeam>;
+  Gruppe: TGruppe;
   Grid: TStringGrid;
   TempLabel: TStaticText;
   RowNdx, GridNdx, TeamNdx: Integer;
@@ -113,11 +115,11 @@ begin
 
 
   AnimationList := TObjectList<TAnimations>.Create(true);
-  // UITeams := TList<TTeam>.Create;
-  // for Gruppe in FState.Gruppen do
-  // begin
-  //   UITeams.AddRange(Gruppe);
-  // end;
+  UITeams := TList<TTeam>.Create;
+  for Gruppe in FState.Gruppen do
+  begin
+    UITeams.AddRange(Gruppe);
+  end;
 
   try
     // Für alle Grids je 4 Teams eintragen
@@ -136,7 +138,7 @@ begin
           TempLabel := TStaticText.Create(nil);
 
           TempLabel.Parent := AOwner as TWinControl;
-          TempLabel.Caption := FState.Teams[TeamNdx].Name;
+          TempLabel.Caption := UITeams[TeamNdx].Name;
           TempLabel.Top := Round((AOwner.Height / 2) - (TempLabel.Height / 2));
           // Middle
           TempLabel.Left := Round((AOwner.Width / 2) - (TempLabel.Width / 2)); // Middle
@@ -156,6 +158,7 @@ begin
 
     ShowMessage('Die Verlosung ist abgeschlossen.');
   finally
+    UITeams.Free;
     AnimationList.Free;
   end;
 

@@ -50,8 +50,6 @@ type  TMainForm = class(TForm)
     StadienStringGrid: TStringGrid;
     TeamsStringGrid: TStringGrid;
     UeberschriftGruppenphase: TLabel;
-    ZurVerlosungButton: TButton;
-    ZumSpielButton: TButton;
     StadionAnzahlLabel: TLabel;
     StadionVergleichsLabel: TLabel;
     StadionGewollteAnzahlLabel: TLabel;
@@ -206,16 +204,16 @@ type  TMainForm = class(TForm)
     Label62: TLabel;
     Label65: TLabel;
     Label66: TLabel;
+    Label69: TLabel;
+    Label71: TLabel;
+    Label72: TLabel;
+    Label75: TLabel;
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure GruppenphaseStartenButtonClick(Sender: TObject);
-    procedure PageControlChanging(Sender: TObject; var AllowChange: Boolean);
     procedure TeamHinzufuegenButtonClick(Sender: TObject);
     procedure StadionHinzufuegenButtonClick(Sender: TObject);
     procedure VerlosungStartenButtonClick(Sender: TObject);
-    procedure ZumSpielButtonClick(Sender: TObject);
-    procedure ZurGruppenphaseButtonClick(Sender: TObject);
-    procedure ZurVerlosungButtonClick(Sender: TObject);
     procedure kophaseStartenButtonClick(Sender: TObject);
     procedure TeamEntfernenButtonClick(Sender: TObject);
     procedure StadionEntfernenButtonClick(Sender: TObject);
@@ -331,7 +329,6 @@ end;
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
 
-
   FVerlosungLogik.Destroy;
   FVerlosungUI.Destroy;
 
@@ -440,7 +437,6 @@ begin
   FStadionEingabeFenster.Show;
 end;
 
-
 procedure TMainForm.TeamEntfernenButtonClick(Sender: TObject);
 begin
   FTeamEntfernenFenster.Show;
@@ -472,58 +468,37 @@ end;
 procedure TMainForm.GruppenphaseStartenButtonClick(Sender: TObject);
 begin
 
-  // Gruppenphase Labels und Sechzehntelfinale AGruppenphaseLabels
-  FGruppenphaseLogik.Starten(procedure(AMatch: TSpiel; AGruppe: TGruppe; ANdx: Integer)
-    begin
-      FGruppenphaseUI.Starten(AMatch, AGruppe, ANdx);
-    end
-  );
+  try
+    // Gruppenphase Labels und Sechzehntelfinale AGruppenphaseLabels
+    FGruppenphaseLogik.Starten(procedure(AMatch: TSpiel; AGruppe: TGruppe; ANdx: Integer)
+      begin
+        FGruppenphaseUI.Starten(AMatch, AGruppe, ANdx);
+      end
+    );
 
-  // Gruppenphase Übersicht zeichnen
-  FGruppenphaseUI.GruppenphaseUebersichtZeichnen();
+    // Gruppenphase Übersicht zeichnen
+    FGruppenphaseUI.GruppenphaseUebersichtZeichnen();
 
-  // Sechzehntelfinale eintragen
-  FGruppenphaseUI.SechzehntelFinaleEintragen();
+    // Sechzehntelfinale eintragen
+    FGruppenphaseUI.SechzehntelFinaleEintragen();
+  except
+    on E: ESkipStepException do
+      ShowMessage(E.Message);
+  end;
 
 end;
 
 procedure TMainForm.kophaseStartenButtonClick(Sender: TObject);
 begin
-  FKOPhaseUI.KOPhaseStarten;
-end;
-
-procedure TMainForm.ZurVerlosungButtonClick(Sender: TObject);
-
-begin
-  // Gültigkeitsprüfung
-  if not ( clrUtils.Routing.OnVerlosungChanging((FTeamAnzahl = FGewollteTeamAnzahl)
-    and ( FStadionAnzahl = FGewollteStadionAnzahl)) ) then
-  begin
-    Exit;
-  end;
-
-  // Verlosung starten
-//  FVerlosungLogik.Starten();
-
-  FVerlosungFertig := FVerlosungUI.Starten(VerlosungSheet);
-end;
-
-procedure TMainForm.ZurGruppenphaseButtonClick(Sender: TObject);
-begin
-  // Gültigkeitsprüfung
-  if not ( clrUtils.Routing.OnGruppenphaseChanging((FTeamAnzahl = FGewollteTeamAnzahl)
-    and ( FStadionAnzahl = FGewollteStadionAnzahl)) ) then
-  begin
-    Exit;
+  try
+    FKOPhaseUI.KOPhaseStarten;
+  except
+    on E: ESkipStepException do
+      ShowMessage(E.Message);
   end;
 end;
 
-procedure TMainForm.ZumSpielButtonClick(Sender: TObject);
-begin
-  // Gültigkeitsprüfung
-end;
-
-procedure TMainForm.PageControlChanging(Sender: TObject;
+{procedure TMainForm.PageControlChanging(Sender: TObject;
   var AllowChange: Boolean);
 begin
   case TPageControl(Sender).ActivePageIndex of
@@ -553,6 +528,6 @@ begin
   end;
 
   AllowChange := True;
-end;
+end;}
 
 end.

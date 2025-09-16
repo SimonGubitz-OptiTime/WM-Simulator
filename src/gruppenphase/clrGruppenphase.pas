@@ -59,61 +59,58 @@ var
   Team: TTeam;
   Team2: TTeam;
   IDList: TList<Byte>;
-  GameDict: TDictionary<Byte, TList<Byte>>;
+  GameDict: TObjectDictionary<Byte, TList<Byte>>;
   AsArray: TArray<TPair<Byte, TList<Byte>>>;
   ArrVal: TPair<Byte, Byte>;
   Ndx: Integer;
 begin
 
-  GameDict := TDictionary<Byte, TList<Byte>>.Create;
-
-  for Team in AGruppe do
-  begin
-    for Team2 in AGruppe do
+  GameDict := TObjectDictionary<Byte, TList<Byte>>.Create([ doOwnsValues ]);
+  try
+    for Team in AGruppe do
     begin
-      // wenn es den Wert bereits als Schlüssels gibt
-      if ( (GameDict.ContainsKey(Team.ID)
-          and (GameDict[Team.ID].Contains(Team2.ID)))  // ← TList.Contains
-        or (GameDict.ContainsKey(Team2.ID))            // if the enemy has its own key already
-        or (Team.ID = Team2.ID)                         // if it is the same team
-      ) then
+      for Team2 in AGruppe do
       begin
-        continue;
-      end
-      else
-      begin
-        if ( GameDict.ContainsKey(Team.ID) ) then
+        // wenn es den Wert bereits als Schlüssels gibt
+        if ( (GameDict.ContainsKey(Team.ID)
+            and (GameDict[Team.ID].Contains(Team2.ID)))  // ← TList.Contains
+          or (GameDict.ContainsKey(Team2.ID))            // if the enemy has its own key already
+          or (Team.ID = Team2.ID)                         // if it is the same team
+        ) then
         begin
-          IDList := GameDict[Team.ID];
+          continue;
         end
         else
         begin
-          IDList := TList<Byte>.Create;
+          if ( GameDict.ContainsKey(Team.ID) ) then
+          begin
+            IDList.Add(Team2.ID);
+          end
+          else
+          begin
+            IDList := TList<Byte>.Create;
+            IDList.Add(Team2.ID);
+            GameDict.AddOrSetValue(Team.ID, IDList);
+          end;
         end;
-
-        IDList.Add(Team2.ID);
-
-        GameDict.AddOrSetValue(Team.ID, IDList);
       end;
     end;
-  end;
 
-  AsArray := GameDict.ToArray;
-  Result := TList<TSpielIDs>.Create;
+    AsArray := GameDict.ToArray;
+    Result := TList<TSpielIDs>.Create;
 
-  for Ndx := 0 to Length(AsArray) - 1 do
-  begin
-    for var Value in AsArray[Ndx].Value do
+    for Ndx := 0 to Length(AsArray) - 1 do
     begin
-      // ShowMessage(Format('Team %d spielt gegen Team %d', [AsArray[Ndx].Key, Value]));
-      ArrVal := TSpielIDs.Create(AsArray[Ndx].Key, Value);
-      Result.Add(ArrVal); // ungültiger Zugriff
+      for var Value in AsArray[Ndx].Value do
+      begin
+        // ShowMessage(Format('Team %d spielt gegen Team %d', [AsArray[Ndx].Key, Value]));
+        ArrVal := TSpielIDs.Create(AsArray[Ndx].Key, Value);
+        Result.Add(ArrVal);
+      end;
     end;
+  finally
+    GameDict.Free;
   end;
-
-  GameDict.Free;
-  IDList.Free;
-
 end;
 
 procedure TGruppenphaseLogik.ResetTeamStandings(AGruppe: TGruppe);
@@ -143,7 +140,7 @@ begin
 
   if ( FState.Gruppen.Count = 0 ) then
   begin
-    raise Exception.Create('Gruppen sind leer. Bitte zuerst Verlosung starten.');
+    raise ESkipStepException.Create('Gruppen sind leer. Bitte zuerst Verlosung starten.');
   end;
 
 
@@ -186,7 +183,7 @@ begin
                 CurrentGroup,
                 function(Left: TTeam; Right: TTeam): Boolean
                 begin
-                  Result := (FState.TeamStands[Left.ID].Punkte - FState.TeamStands[Right.ID].Punkte) < 0;
+                  Result := FState.TeamStands[Left.ID].Punkte < FState.TeamStands[Right.ID].Punkte;
                 end
               );
 
@@ -205,7 +202,7 @@ begin
         GroupStandings,
         function(Left: TTeamStatistik; Right: TTeamStatistik): Boolean
         begin
-          Result := (Left.Punkte - Right.Punkte) > 0;
+          Result := Left.Punkte > Right.Punkte;
         end,
         true // as array, as to avoid object copying and ambiguous cleanup behavior
       );
