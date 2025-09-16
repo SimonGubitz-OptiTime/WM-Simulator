@@ -131,7 +131,7 @@ begin
   begin
 
     clrUtils.TableFormating.TeamTabelleZeichnenMitPunkten(FState, FGruppenphaseUebersichtGrids[GruppenNdx], FState.Gruppen[GruppenNdx]);
-    
+
   end;
 end;
 

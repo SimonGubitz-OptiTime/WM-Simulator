@@ -28,3 +28,4 @@ database/*
 # Other
 **/.DS_Store
 cimnet.ini
+**/WMSimulator.delphilsp.json

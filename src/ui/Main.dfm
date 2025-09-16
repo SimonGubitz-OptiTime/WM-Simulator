@@ -134,7 +134,7 @@ object MainForm: TMainForm
         Width = 146
         Height = 25
         Caption = 'Team Hinzuf'#252'gen'
-        ImageIndex = 2
+        ImageIndex = 3
         Images = SymbolImageList
         TabOrder = 0
         OnClick = TeamHinzufuegenButtonClick
