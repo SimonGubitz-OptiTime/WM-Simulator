@@ -28,6 +28,8 @@ type TGruppenphaseUI = class
     FSechzehntelfinaleLabels: TArray<TLabel>;
     FGruppenphaseUebersichtGrids: TArray<TStringGrid>;
 
+    procedure ResizeGrids(AGrids: TArray<TStringGrid>);
+
   public
     constructor Create(AGruppenphaseGrid: TStringGrid;
       AGruppenphaseLabels: TArray<TLabel>;
@@ -72,7 +74,29 @@ begin
   inherited Destroy;
 end;
 
-//{
+procedure TGruppenphaseUI.ResizeGrids(AGrids: TArray<TStringGrid>);
+var
+  GridNdx, RowNdx, ColNdx: Integer;
+  ColSize, RowSize: Integer;
+begin
+  for GridNdx := 0 to Length(AGrids) - 1 do
+  begin
+
+    ColSize := Floor(AGrids[GridNdx].Width / AGrids[GridNdx].ColCount) - 2;
+    RowSize := Floor(AGrids[GridNdx].Height / AGrids[GridNdx].RowCount) - 2;
+
+    for RowNdx := 0 to AGrids[GridNdx].ColCount - 1 do
+    begin
+      AGrids[GridNdx].ColWidths[RowNdx] := ColSize;
+    end;
+
+    for ColNdx := 0 to AGrids[GridNdx].RowCount - 1 do
+    begin
+      AGrids[GridNdx].RowHeights[ColNdx] := RowSize;
+    end;
+  end;
+end;
+
 procedure TGruppenphaseUI.Starten(ASpiel: TSpiel; AGruppe: TGruppe; ANdx: Integer);
 begin
   clrUtils.TableFormating.TeamTabelleZeichnenMitPunkten(FState, FGrid, AGruppe);
@@ -91,8 +115,12 @@ end;
 
 procedure TGruppenphaseUI.GruppenphaseUebersichtZeichnen();
 var
-  TeamNdx, GruppenNdx: Integer;
+  GruppenNdx: Integer;
 begin
+
+  // Resize all the FGruppenphaseUebersichtGrids
+  ResizeGrids(FGruppenphaseUebersichtGrids);
+
 
   if ( Length(FGruppenphaseUebersichtGrids) <> FState.Gruppen.Count ) then
   begin
@@ -102,10 +130,9 @@ begin
 
   for GruppenNdx := 0 to FState.Gruppen.Count - 1 do
   begin
-    for TeamNdx := 0 to FState.Gruppen[GruppenNdx].Count - 1 do
-    begin
-      clrUtils.TableFormating.TeamZeileZeichnen(FGruppenphaseUebersichtGrids[GruppenNdx], FState.Gruppen[GruppenNdx][TeamNdx], TeamNdx);
-    end;
+
+    clrUtils.TableFormating.TeamTabelleZeichnenMitPunkten(FState, FGruppenphaseUebersichtGrids[GruppenNdx], FState.Gruppen[GruppenNdx]);
+    
   end;
 end;
 
@@ -116,10 +143,10 @@ var
   Team2: TTeam;
 begin
     Ndx := 0;
-    while Ndx < Floor(FState.SechzehntelFinalisten.Count / 2 ) - 1 do
+    while Ndx < FState.SechzehntelFinalisten.Count - 1 do
     begin
-      Team1 := FState.Teams[Ndx];
-      Team2 := FState.Teams[Ndx + 1];
+      Team1 := FState.Teams[FState.SechzehntelFinalisten[Ndx].Key];
+      Team2 := FState.Teams[FState.SechzehntelFinalisten[Ndx].Value];
 
       FSechzehntelfinaleLabels[Ndx].Caption := clrUtils.StringFormating.FormatSpielString(
         Team1.Name,
@@ -127,7 +154,7 @@ begin
         0, 0
       );
 
-      Inc(Ndx, 2);
+      Inc(Ndx, 1);
     end;
 end;
 

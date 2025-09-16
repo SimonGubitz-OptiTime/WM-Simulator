@@ -13,12 +13,12 @@ type TConditionFn<T> = reference to function(Left: T; Right: T): Boolean;
 
 type TSortArrayUtils<T> = class
   public
-    class procedure Sort(var ArrayToSort: TList<T>; ConditionFn: TConditionFn<T>);
+    class procedure Sort(ArrayToSort: TList<T>; ConditionFn: TConditionFn<T>);
 end;
 
 implementation
 
-class procedure TSortArrayUtils<T>.Sort(var ArrayToSort: TList<T>; ConditionFn: TConditionFn<T>);
+class procedure TSortArrayUtils<T>.Sort(ArrayToSort: TList<T>; ConditionFn: TConditionFn<T>);
 var
   Ndx: Integer;
 begin

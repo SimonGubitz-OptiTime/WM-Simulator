@@ -33,7 +33,7 @@ type TVerlosungUI = class
     FRowSize: array [0 .. 11] of Integer;
 
 
-    procedure ResizeGrids;
+    procedure ResizeGrids();
     procedure AnimationCallbackFn(Count: Integer; SecondCount: Integer; ThirdCount: Integer);
 
   public
@@ -70,7 +70,7 @@ end;
 
 destructor TVerlosungUI.Destroy;
 begin
-  FGrids.Destroy;
+  FGrids.Free;
 
   inherited Destroy;
 end;
@@ -113,6 +113,11 @@ begin
 
 
   AnimationList := TObjectList<TAnimations>.Create(true);
+  // UITeams := TList<TTeam>.Create;
+  // for Gruppe in FState.Gruppen do
+  // begin
+  //   UITeams.AddRange(Gruppe);
+  // end;
 
   try
     // Für alle Grids je 4 Teams eintragen

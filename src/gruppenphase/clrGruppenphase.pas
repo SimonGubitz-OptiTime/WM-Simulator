@@ -10,6 +10,7 @@ uses
   damTypes,
   clrState,
   clrSimulation,
+  clrUtils.SortArray,
   clrUtils.SortHashMap,
   clrUtils.UpdateStandings;
 
@@ -31,12 +32,9 @@ type
     public
 
       constructor Create(AState: IState);
-      destructor Destroy;
+      destructor Destroy; override;
 
       procedure Starten(ACallbackOnSpielFertig: TSpielFertigCallbackFn);
-
-      // ↓ ???
-      // procedure AddMatchFinishCallback();
 
   end;
 
@@ -114,6 +112,7 @@ begin
   end;
 
   GameDict.Free;
+  IDList.Free;
 
 end;
 
@@ -139,7 +138,7 @@ var
   Spiel: TSpiel;
   Simulation: TSimulation;
   GroupStandings: TDictionary<Byte, TTeamStatistik>;
-  OutTempState1, OutTempState2: TTeamSTatistik;
+  OutTempState1, OutTempState2: TTeamStatistik;
 begin
 
   if ( FState.Gruppen.Count = 0 ) then
@@ -160,34 +159,46 @@ begin
 
       Matches := CreateUniqueMatches(CurrentGroup);
 
-      // set the teams in the group to baseline 0
-      ResetTeamStandings(CurrentGroup);
+      try
+        // set the teams in the group to baseline 0
+        ResetTeamStandings(CurrentGroup);
+
+        // for each group reset the CurrentStanding
+        GroupStandings.Clear;
 
 
-      for Ndx := 0 to Matches.Count - 1 do
-      begin
+        for Ndx := 0 to Matches.Count - 1 do
+        begin
 
-        // hier muss simuliert werden
-        Spiel.Team1 := FState.Teams[Matches[Ndx].Key];
-        Spiel.Team2 := FState.Teams[Matches[Ndx].Value];
-        Spiel.Stadion := Default(TStadion);
+          // hier muss simuliert werden
+          Spiel.Team1 := FState.Teams[Matches[Ndx].Key];
+          Spiel.Team2 := FState.Teams[Matches[Ndx].Value];
+          Spiel.Stadion := Default(TStadion);
 
-        Simulation.SpielSimulieren(procedure(Sender: TObject; AMatch: TSpiel; AMatchIDs: TSpielIDs)
-          begin
-            // Update GroupStandings
-            clrUtils.UpdateStandings.GetUpdatedStandings(FState, Spiel, OutTempState1, OutTempState2);
-            GroupStandings.AddOrSetValue(Spiel.Team1.ID, OutTempState1);
-            GroupStandings.AddOrSetValue(Spiel.Team2.ID, OutTempState2);
+          Simulation.SpielSimulieren(procedure(Sender: TObject; AMatch: TSpiel; AMatchIDs: TSpielIDs)
+            begin
+              // Update GroupStandings
+              clrUtils.UpdateStandings.GetUpdatedStandings(FState, Spiel, OutTempState1, OutTempState2);
+              GroupStandings.AddOrSetValue(Spiel.Team1.ID, OutTempState1);
+              GroupStandings.AddOrSetValue(Spiel.Team2.ID, OutTempState2);
 
-            ACallbackOnSpielFertig(Spiel, CurrentGroup, Ndx);
-          end,
-          Spiel, Matches[Ndx]
-        );
+              clrUtils.SortArray.TSortArrayUtils<TTeam>.Sort(
+                CurrentGroup,
+                function(Left: TTeam; Right: TTeam): Boolean
+                begin
+                  Result := (FState.TeamStands[Left.ID].Punkte - FState.TeamStands[Right.ID].Punkte) < 0;
+                end
+              );
+
+              ACallbackOnSpielFertig(Spiel, CurrentGroup, Ndx);
+            end,
+            Spiel, Matches[Ndx]
+          );
+        end;
+      finally
+        Matches.Free;
       end;
 
-
-
-      var y_y := GroupStandings;
 
       // Extract the top 2 teams
       var x := clrUtils.SortHashMap.THashMapUtils.Sort<Byte, TTeamStatistik>(
@@ -198,13 +209,6 @@ begin
         end,
         true // as array, as to avoid object copying and ambiguous cleanup behavior
       );
-
-
-      if TopTeams.Contains(x[0].Key) then
-        ShowMessage(Format('x[0].Key: %d is contained', [x[0].Key]));
-
-      if TopTeams.Contains(x[1].Key) then
-        ShowMessage(Format('%d is contained', [x[1].Key]));
 
       TopTeams.Add(x[0].Key);
       TopTeams.Add(x[1].Key);
@@ -249,6 +253,7 @@ begin
     ThirdPlaceTeams.Free;
     RoundOf32Teams.Free;
     GroupStandings.Free;
+    Spiel.Destroy;
   end;
 
 end;

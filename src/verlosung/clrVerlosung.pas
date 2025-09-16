@@ -134,6 +134,7 @@ begin
     TempList.AddRange([ SehrStarkeTeams[Ndx], StarkeTeams[Ndx], MittelStarkeTeams[Ndx], SchwacheTeams[Ndx] ]);
     FState.AddGruppe(TempList);
   end;
+
 end;
 
 procedure TVerlosungLogik.Starten;

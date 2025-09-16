@@ -20,7 +20,6 @@ type TSimulation = class
     FSpiel: TSpiel;
     FSpielIDs: TSpielIDs;
     FCallbackFn: TSimulationCallbackFn;
-    FTeam1Tore, FTeam2Tore: Integer;
 
     FPossibleMaxGoals: Integer;
     FSimulationFinished: Boolean;
@@ -49,8 +48,6 @@ implementation
 constructor TSimulation.Create(AState: IState; PossibleMaxGoals: Byte = 6);
 begin
   FState := AState;
-  FTeam1Tore := 0;
-  FTeam2Tore := 0;
   FTimerCount := 0;
   FTimer := TTimer.Create(nil);
   FTimer.Enabled := false;
@@ -74,8 +71,8 @@ end;
 
 procedure TSimulation.SpielSimulieren(ACallbackFn: TSimulationCallbackFn; ASpiel: TSpiel; ASpielIDs: TSpielIDs);
 begin
-  FTeam1Tore := 0;
-  FTeam2Tore := 0;
+  ASpiel.Team1Tore := 0;
+  ASpiel.Team2Tore := 0;
   FTimerCount := 0;
   FTotalGoals := Random(FPossibleMaxGoals + 1);
   FSimulationFinished := false;
@@ -147,11 +144,11 @@ begin
   // Random Tore generieren
   if ( Random(100) < SiegchancenTeam1 ) then
   begin
-    Inc(FTeam1Tore);
+    Inc(FSpiel.Team1Tore);
   end
   else
   begin
-    Inc(FTeam2Tore);
+    Inc(FSpiel.Team2Tore);
   end;
 
   Inc(FTimerCount);

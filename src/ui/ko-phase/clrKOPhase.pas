@@ -35,7 +35,7 @@ type
 
   public
 
-    constructor Create(ASechzehntelfinaleLabels: TArray<TLabel>; AAchtelfinaleLabels: TArray<TLabel>; AViertelfinaleLabels: TArray<TLabel>; AHalbfinaleLabels: TArray<TLabel>; AFinaleLabel: TLabel; ASpielUmPlatz3Label: TLabel; const AState: IState);
+    constructor Create(ASechzehntelfinaleLabels: TArray<TLabel>; AAchtelfinaleLabels: TArray<TLabel>; AViertelfinaleLabels: TArray<TLabel>; AHalbfinaleLabels: TArray<TLabel>; AFinaleLabel: TLabel; ASpielUmPlatz3Label: TLabel; AState: IState);
     destructor Destroy; override;
 
     procedure KOPhaseStarten;
@@ -46,7 +46,7 @@ const
 
 implementation
 
-constructor TKOPhaseUI.Create(ASechzehntelfinaleLabels: TArray<TLabel>; AAchtelfinaleLabels: TArray<TLabel>; AViertelfinaleLabels: TArray<TLabel>; AHalbfinaleLabels: TArray<TLabel>; AFinaleLabel: TLabel; ASpielUmPlatz3Label: TLabel; const AState: IState);
+constructor TKOPhaseUI.Create(ASechzehntelfinaleLabels: TArray<TLabel>; AAchtelfinaleLabels: TArray<TLabel>; AViertelfinaleLabels: TArray<TLabel>; AHalbfinaleLabels: TArray<TLabel>; AFinaleLabel: TLabel; ASpielUmPlatz3Label: TLabel; AState: IState);
 begin
   FState := AState;
   FSechzehntelfinaleLabels := ASechzehntelfinaleLabels;
@@ -81,12 +81,11 @@ begin
   // Sicherstellen, dass die Sechzehntelfinale-Teams vorhanden sind
   if FState.GetSechzehntelFinalisten.Count = 0 then
   begin
-    ShowMessage('Bitte erst Gruppenphase starten.');
-    Exit;
+    raise Exception.Create('Bitte erst Gruppenphase starten.');
   end;
 
 
-  var Myself := TObjectList<TSimulation>.Create;
+  var Simulation := TObjectList<TSimulation>.Create;
   try
 
     // Sechzehntelfinale
@@ -98,15 +97,16 @@ begin
       FCurrentLabels[Ndx].Font.Style := [fsBold];
       FCurrentLabels[Ndx].Font.Color := clGreen;
 
-
-
-      Spiel := Default(TSpiel);
-      Spiel.Team1 := FState.GetTeams.Items[FCurrentTeams.Items[Ndx].Key];
-      Spiel.Team2 := FState.GetTeams.Items[FCurrentTeams.Items[Ndx].Value];
+      Spiel := TSpiel.Create;
+      Spiel.Team1 := FState.GetTeams.Items[FCurrentTeams[Ndx].Key];
+      Spiel.Team2 := FState.GetTeams.Items[FCurrentTeams[Ndx].Value];
       Spiel.Stadion := Default(TStadion);
 
-      Myself.Add(TSimulation.Create(FState, 6));
-      Myself.Last.SpielSimulieren(KOPhaseCallback, Spiel, FCurrentTeams.Items[Ndx]);
+      Simulation.Add(TSimulation.Create(FState, 6));
+      Simulation.Last.SpielSimulieren(KOPhaseCallback, Spiel, FCurrentTeams.Items[Ndx]);
+
+      FCurrentLabels[Ndx].Caption := clrUtils.StringFormating.FormatSpielString(Spiel);
+      Spiel.Destroy;
 
       FCurrentLabels[Ndx].Font.Style := [];
       FCurrentLabels[Ndx].Font.Color := clWindowText;
@@ -140,13 +140,16 @@ begin
 
 
 
-      Spiel := Default(TSpiel);
+      Spiel := TSpiel.Create;
       Spiel.Team1 := FState.GetTeams.Items[FCurrentTeams.Items[Ndx].Key];
       Spiel.Team2 := FState.GetTeams.Items[FCurrentTeams.Items[Ndx].Value];
       Spiel.Stadion := Default(TStadion);
 
-      Myself.Add(TSimulation.Create(FState, 5)); // immer einen weniger, da es ja theoritisch immer schwieriger wird
-      Myself.Last.SpielSimulieren(KOPhaseCallback, Spiel, FCurrentTeams.Items[Ndx]);
+      Simulation.Add(TSimulation.Create(FState, 5)); // immer einen weniger, da es ja theoretisch immer schwieriger wird
+      Simulation.Last.SpielSimulieren(KOPhaseCallback, Spiel, FCurrentTeams.Items[Ndx]);
+
+      FCurrentLabels[Ndx].Caption := clrUtils.StringFormating.FormatSpielString(Spiel);
+      Spiel.Destroy;
 
       FCurrentLabels[Ndx].Font.Style := [];
       FCurrentLabels[Ndx].Font.Color := clWindowText;
@@ -178,13 +181,16 @@ begin
 
 
 
-      Spiel := Default(TSpiel);
+      Spiel := TSpiel.Create;
       Spiel.Team1 := FState.GetTeams.Items[FCurrentTeams.Items[Ndx].Key];
       Spiel.Team2 := FState.GetTeams.Items[FCurrentTeams.Items[Ndx].Value];
       Spiel.Stadion := Default(TStadion);
 
-      Myself.Add(TSimulation.Create(FState, 5));
-      Myself.Last.SpielSimulieren(KOPhaseCallback, Spiel, FCurrentTeams.Items[Ndx]);
+      Simulation.Add(TSimulation.Create(FState, 5));
+      Simulation.Last.SpielSimulieren(KOPhaseCallback, Spiel, FCurrentTeams.Items[Ndx]);
+
+      FCurrentLabels[Ndx].Caption := clrUtils.StringFormating.FormatSpielString(Spiel);
+      Spiel.Destroy;
 
       FCurrentLabels[Ndx].Font.Style := [];
       FCurrentLabels[Ndx].Font.Color := clWindowText;
@@ -213,8 +219,16 @@ begin
       FCurrentLabels[Ndx].Font.Style := [fsBold];
       FCurrentLabels[Ndx].Font.Color := clGreen;
 
-      Myself.Add(TSimulation.Create(FState, 5));
-      Myself.Last.SpielSimulieren(KOPhaseCallback, Spiel, FCurrentTeams.Items[Ndx]);
+      Spiel := TSpiel.Create;
+      Spiel.Team1 := FState.GetTeams.Items[FCurrentTeams.Items[Ndx].Key];
+      Spiel.Team2 := FState.GetTeams.Items[FCurrentTeams.Items[Ndx].Value];
+      Spiel.Stadion := Default(TStadion);
+
+      Simulation.Add(TSimulation.Create(FState, 5));
+      Simulation.Last.SpielSimulieren(KOPhaseCallback, Spiel, FCurrentTeams.Items[Ndx]);
+
+      FCurrentLabels[Ndx].Caption := clrUtils.StringFormating.FormatSpielString(Spiel);
+      Spiel.Destroy;
 
       FCurrentLabels[Ndx].Font.Style := [];
       FCurrentLabels[Ndx].Font.Color := clWindowText;
@@ -237,8 +251,16 @@ begin
     FCurrentLabels[0].Font.Style := [fsBold];
     FCurrentLabels[0].Font.Color := clGreen;
 
-    Myself.Add(TSimulation.Create(FState, 5));
-    Myself.Last.SpielSimulieren(KOPhaseCallback, Spiel, FCurrentTeams.Items[Ndx]);
+    Spiel := TSpiel.Create;
+    Spiel.Team1 := FState.GetTeams.Items[FCurrentTeams.Items[0].Key];
+    Spiel.Team2 := FState.GetTeams.Items[FCurrentTeams.Items[0].Value];
+    Spiel.Stadion := Default(TStadion);
+
+    Simulation.Add(TSimulation.Create(FState, 5));
+    Simulation.Last.SpielSimulieren(KOPhaseCallback, Spiel, FCurrentTeams.Items[0]);
+
+    FCurrentLabels[0].Caption := clrUtils.StringFormating.FormatSpielString(Spiel);
+    Spiel.Destroy;
 
     FCurrentLabels[0].Font.Style := [];
     FCurrentLabels[0].Font.Color := clWindowText;
@@ -263,8 +285,16 @@ begin
     FCurrentLabels[0].Font.Style := [fsBold];
     FCurrentLabels[0].Font.Color := clGreen;
 
-    Myself.Add(TSimulation.Create(FState, 5));
-    Myself.Last.SpielSimulieren(KOPhaseCallback, Spiel, FCurrentTeams.Items[Ndx]);
+    Spiel := TSpiel.Create;
+    Spiel.Team1 := FState.GetTeams.Items[FCurrentTeams.Items[0].Key];
+    Spiel.Team2 := FState.GetTeams.Items[FCurrentTeams.Items[0].Value];
+    Spiel.Stadion := Default(TStadion);
+
+    Simulation.Add(TSimulation.Create(FState, 3));
+    Simulation.Last.SpielSimulieren(KOPhaseCallback, Spiel, FCurrentTeams.Items[0]);
+
+    FCurrentLabels[0].Caption := clrUtils.StringFormating.FormatSpielString(Spiel);
+    Spiel.Destroy;
 
     FCurrentLabels[0].Font.Style := [];
     FCurrentLabels[0].Font.Color := clWindowText;
@@ -275,31 +305,25 @@ begin
   finally
     FNextStage.Clear;
     FCurrentTeams.Clear;
-    Myself.Free;
+    Simulation.Free;
   end;
 
 end;
 
 
 procedure TKOphaseUI.KOPhaseCallback(Sender: TObject; ASpiel: TSpiel; ASpielIDs: TSpielIDs);
-var
-  Team1, Team2: TTeam;
 begin
-  Team1 := FState.GetTeams.Items[ASpielIDs.Key];
-  Team2 := FState.GetTeams.Items[ASpielIDs.Value];
-
-  // FCurrentLabels[ANdx].Caption := clrUtils.StringFormating.FormatSpielString(Team1.Name, Team2.Name, ASpiel.Team1Tore, ASpiel.Team2Tore);
 
   // Update state
   if ( ASpiel.Team1Tore > ASpiel.Team2Tore ) then
   begin
-    FNextStage.Add(Team1.ID);
-    FNextStageSpielUmPlatz3.Add(Team2.ID);
+    FNextStage.Add(ASpiel.Team1.ID);
+    FNextStageSpielUmPlatz3.Add(ASpiel.Team2.ID);
   end
   else
   begin
-    FNextStage.Add(Team2.ID);
-    FNextStageSpielUmPlatz3.Add(Team1.ID);
+    FNextStage.Add(ASpiel.Team2.ID);
+    FNextStageSpielUmPlatz3.Add(ASpiel.Team1.ID);
   end;
 
 end;
