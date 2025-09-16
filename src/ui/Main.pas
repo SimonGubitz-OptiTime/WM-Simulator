@@ -454,6 +454,8 @@ begin
     FVerlosungLogik.Starten();
     FVerlosungFertig := FVerlosungUI.Starten(VerlosungSheet);
   except
+  on E: ESkipStepException
+    ShowMessage(E.Message);
   on E: Exception do
     ShowMessage('Fehler bei der Verlosung: ' + E.Message);
   end;

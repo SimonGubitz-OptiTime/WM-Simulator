@@ -73,7 +73,7 @@ begin
 
   if ( (FState.Teams.Count mod 4) <> 0 ) then
   begin
-    raise Exception.Create('TVerlosungUI.Starten Error: The number of FUITeams must be divisible by 4.');
+    raise ESkipStepException.Create('Bitte genügend Teams hinzufügen.');
   end;
 
 
