@@ -8,7 +8,8 @@ uses
   damTypes;
 
 function FormatSpielerListe(AList: TList<String>): String;
-function FormatSpielString(ASpiel: TSpiel): String;
+function FormatSpielString(ASpiel: TSpiel): String; overload;
+function FormatSpielString(Team1Name: String; Team2Name: String; Team1Score: Integer; Team2Score: Integer): String; inline; overload;
 
 implementation
 
@@ -42,6 +43,11 @@ end;
 function FormatSpielString(ASpiel: TSpiel): String;
 begin
   Result := ASpiel.Team1.Name + ' ' + IntToStr(ASpiel.Team1Tore) + ':' + IntToStr(ASpiel.Team2Tore) + ' ' + ASpiel.Team2.Name;
+end;
+
+function FormatSpielString(Team1Name: String; Team2Name: String; Team1Score: Integer; Team2Score: Integer): String;
+begin
+  Result := Team1Name + ' ' + IntToStr(Team1Score) + ':' + IntToStr(Team2Score) + ' ' + Team2Name;
 end;
 
 

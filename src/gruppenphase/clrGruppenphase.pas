@@ -4,6 +4,9 @@ interface
 
 uses
   System.Generics.Collections,
+  System.Math,
+  System.SysUtils,
+  Vcl.Dialogs,
   damTypes,
   clrState,
   clrSimulation,
@@ -22,7 +25,8 @@ type
       /// <summary>
       ///   Algorithmisch Spiele verteilen
       /// </summary>
-      function CreateUniqueMatches(AGroup: TGruppe): TList<TSpielIDs>;
+      function CreateUniqueMatches(AGruppe: TGruppe): TList<TSpielIDs>;
+      procedure ResetTeamStandings(AGruppe: TGruppe);
 
     public
 
@@ -52,13 +56,12 @@ end;
 
 /// .ID nutzen, da es schneller ist in Lookups, als ein TTeam mit SizeOf() ≈ 28 Bytes vs .ID 1Byte
 /// Nachteil -> man muss das Objekt in Gruppenphase wieder per Array Lookup finden, da ID fest zu dem globalen Array steht
-function TGruppenphaseLogik.CreateUniqueMatches(AGroup: TGruppe): TList<TSpielIDs>;
+function TGruppenphaseLogik.CreateUniqueMatches(AGruppe: TGruppe): TList<TSpielIDs>;
 var
   Team: TTeam;
   Team2: TTeam;
   IDList: TList<Byte>;
   GameDict: TDictionary<Byte, TList<Byte>>;
-
   AsArray: TArray<TPair<Byte, TList<Byte>>>;
   ArrVal: TPair<Byte, Byte>;
   Ndx: Integer;
@@ -66,9 +69,9 @@ begin
 
   GameDict := TDictionary<Byte, TList<Byte>>.Create;
 
-  for Team in AGroup do
+  for Team in AGruppe do
   begin
-    for Team2 in AGroup do
+    for Team2 in AGruppe do
     begin
       // wenn es den Wert bereits als Schlüssels gibt
       if ( (GameDict.ContainsKey(Team.ID)
@@ -114,6 +117,16 @@ begin
 
 end;
 
+procedure TGruppenphaseLogik.ResetTeamStandings(AGruppe: TGruppe);
+var
+  Team: TTeam;
+begin
+  for Team in AGruppe do
+  begin
+    FState.AddOrSetTeamStandByID(Team.ID, Default(TTeamStatistik));
+  end;
+end;
+
 procedure TGruppenphaseLogik.Starten(ACallbackOnSpielFertig: TSpielFertigCallbackFn);
 var
   Ndx: Integer;
@@ -129,6 +142,12 @@ var
   OutTempState1, OutTempState2: TTeamSTatistik;
 begin
 
+  if ( FState.Gruppen.Count = 0 ) then
+  begin
+    raise Exception.Create('Gruppen sind leer. Bitte zuerst Verlosung starten.');
+  end;
+
+
   TopTeams := TList<Byte>.Create;
   ThirdPlaceTeams := TList<Byte>.Create;
   RoundOf32Teams := TList<Byte>.Create;
@@ -140,6 +159,11 @@ begin
     begin
 
       Matches := CreateUniqueMatches(CurrentGroup);
+
+      // set the teams in the group to baseline 0
+      ResetTeamStandings(CurrentGroup);
+
+
       for Ndx := 0 to Matches.Count - 1 do
       begin
 
@@ -159,16 +183,11 @@ begin
           end,
           Spiel, Matches[Ndx]
         );
-
-
-
-
       end;
 
-      Simulation.Destroy;
 
 
-
+      var y_y := GroupStandings;
 
       // Extract the top 2 teams
       var x := clrUtils.SortHashMap.THashMapUtils.Sort<Byte, TTeamStatistik>(
@@ -180,31 +199,52 @@ begin
         true // as array, as to avoid object copying and ambiguous cleanup behavior
       );
 
+
+      if TopTeams.Contains(x[0].Key) then
+        ShowMessage(Format('x[0].Key: %d is contained', [x[0].Key]));
+
+      if TopTeams.Contains(x[1].Key) then
+        ShowMessage(Format('%d is contained', [x[1].Key]));
+
       TopTeams.Add(x[0].Key);
       TopTeams.Add(x[1].Key);
       ThirdPlaceTeams.Add(x[2].Key);
 
-
-      // Das Team sortieren
-      var sorted_teams := clrUtils.SortHashMap.THashMapUtils.Sort<Byte, TTeamStatistik>(
-        GroupStandings,
-        function(Left: TTeamStatistik; Right: TTeamStatistik): Boolean
-        begin
-          Result := (Left.Punkte - Right.Punkte) > 0;
-        end
-      );
-
-      // und in den dafür vorgesehenen Grid reinschreiben
-      for var team in sorted_teams do
-      begin
-        // clrUtils.TableFormating.
-      end;
-
-
-
-
     end;
+
+    // Compose round-of-32 teams
+    RoundOf32Teams.AddRange(TopTeams);
+    RoundOf32Teams.AddRange([ThirdPlaceTeams[0], ThirdPlaceTeams[1], ThirdPlaceTeams[2], ThirdPlaceTeams[3], ThirdPlaceTeams[4], ThirdPlaceTeams[5], ThirdPlaceTeams[6], ThirdPlaceTeams[7]]);
+
+    var teams__ := FState.Teams;
+
+    if RoundOf32Teams.Count <> 32 then
+      raise Exception.CreateFmt('Expected 32 teams, got %d', [RoundOf32Teams.Count]);
+
+
+    // Die jeweiligen top Einträge als Spiele für das Sechzehntelfinale eintragen
+    for var i := 0 to Floor(RoundOf32Teams.Count / 2) - 1 do
+    begin
+      var Team1Index := i;
+      var Team2Index := RoundOf32Teams.Count - 1 - i;
+
+      if (Team1Index < RoundOf32Teams.Count) and
+         (Team2Index < RoundOf32Teams.Count) and
+         (RoundOf32Teams[Team1Index] <> RoundOf32Teams[Team2Index]) then
+      begin
+        FState.AddSechzehntelFinalist(TSpielIDs.Create(RoundOf32Teams[Team1Index], RoundOf32Teams[Team2Index]));
+      end
+      else
+      begin
+        ShowMessage(Format('Error: Invalid pairing for match %d', [i]));
+      end;
+    end;
+
+
+    ShowMessage('Die Gruppenphase ist abgeschlossen.');
+
   finally
+    Simulation.Destroy;
     TopTeams.Free;
     ThirdPlaceTeams.Free;
     RoundOf32Teams.Free;

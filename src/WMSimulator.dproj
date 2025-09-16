@@ -215,7 +215,7 @@
                     <Excluded_Packages Name="$(BDSBIN)\dclofficexp290.bpl">Microsoft Office XP Beispiele für gekapselte Komponenten für Automation Server</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
-            <Deployment Version="5">
+            <Deployment Version="4">
                 <DeployFile LocalName="..\bin\Win32\Debug\WMSimulator.exe" Configuration="Debug" Class="ProjectOutput"/>
                 <DeployFile LocalName="..\bin\Win32\Debug\WMSimulator.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
@@ -239,6 +239,16 @@
                     </Platform>
                     <Platform Name="Win32">
                         <Operation>0</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidClasses">
+                    <Platform Name="Android">
+                        <RemoteDir>classes</RemoteDir>
+                        <Operation>64</Operation>
+                    </Platform>
+                    <Platform Name="Android64">
+                        <RemoteDir>classes</RemoteDir>
+                        <Operation>64</Operation>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="AndroidFileProvider">
@@ -1184,7 +1194,7 @@
                 <Platform value="Win32">True</Platform>
                 <Platform value="Win64">True</Platform>
             </Platforms>
-            <ModelSupport>True</ModelSupport>
+            <ModelSupport>False</ModelSupport>
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>
     </ProjectExtensions>

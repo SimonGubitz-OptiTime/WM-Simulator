@@ -38,6 +38,7 @@ type TGruppenphaseUI = class
 
     procedure Starten(ASpiel: TSpiel; AGruppe: TGruppe; ANdx: Integer);
     procedure GruppenphaseUebersichtZeichnen();
+    procedure SechzehntelFinaleEintragen();
 
   end;
 
@@ -103,12 +104,32 @@ begin
   begin
     for TeamNdx := 0 to FState.Gruppen[GruppenNdx].Count - 1 do
     begin
-      ShowMessage('GroupIndex: ' + IntToStr(GruppenNdx));
       clrUtils.TableFormating.TeamZeileZeichnen(FGruppenphaseUebersichtGrids[GruppenNdx], FState.Gruppen[GruppenNdx][TeamNdx], TeamNdx);
     end;
   end;
 end;
 
+procedure TGruppenphaseUI.SechzehntelFinaleEintragen();
+var
+  Ndx: Integer;
+  Team1: TTeam;
+  Team2: TTeam;
+begin
+    Ndx := 0;
+    while Ndx < Floor(FState.SechzehntelFinalisten.Count / 2 ) - 1 do
+    begin
+      Team1 := FState.Teams[Ndx];
+      Team2 := FState.Teams[Ndx + 1];
+
+      FSechzehntelfinaleLabels[Ndx].Caption := clrUtils.StringFormating.FormatSpielString(
+        Team1.Name,
+        Team2.Name,
+        0, 0
+      );
+
+      Inc(Ndx, 2);
+    end;
+end;
 
 end.
 
